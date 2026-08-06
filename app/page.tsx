@@ -16,7 +16,7 @@ export default function CompanyProfileLandingPage() {
     <div style={{ background: '#f8fafc', color: '#1e293b', minHeight: '100vh', fontFamily: "'Plus Jakarta Sans', sans-serif", position: 'relative', overflowX: 'hidden', paddingBottom: '60px' }}>
 
       {/* SVG DOTTED DECORATIVE LOOPS BACKGROUND (POSITIONED PERFECTLY BELOW HEADER MENU LINKS) */}
-      <svg style={{ position: 'absolute', top: '75px', right: 0, width: '100%', height: '1800px', pointerEvents: 'none', zIndex: 0, opacity: 0.35 }} viewBox="0 0 1440 1800" fill="none">
+      <svg style={{ position: 'absolute', top: '115px', right: 0, width: '100%', height: '1800px', pointerEvents: 'none', zIndex: 0, opacity: 0.35 }} viewBox="0 0 1440 1800" fill="none">
         <path d="M 100 90 Q 600 10 1100 180 T 1350 670" stroke="#4f46e5" strokeWidth="2" strokeDasharray="6 6" />
         <path d="M 200 390 Q 700 740 1250 340" stroke="#ef4444" strokeWidth="2" strokeDasharray="6 6" />
         <path d="M -50 790 Q 500 1040 1150 840" stroke="#10b981" strokeWidth="2" strokeDasharray="6 6" />
@@ -34,7 +34,7 @@ export default function CompanyProfileLandingPage() {
       </div>
 
       {/* 🧭 HEADER BAR (SPACIOUS PREMIUM TOP PADDING) */}
-      <header className="animate-slide-up" style={{ maxWidth: '1400px', margin: '0 auto', padding: '36px 32px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', zIndex: 20, gap: '28px' }}>
+      <header className="animate-slide-up" style={{ maxWidth: '1400px', margin: '0 auto', padding: '16px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', zIndex: 20, gap: '28px' }}>
         
         {/* Hello Playful Badge Logo */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
