@@ -13,7 +13,7 @@ export default function CompanyProfileLandingPage() {
   const { branches } = useERP();
 
   return (
-    <div style={{ background: '#f8fafc', color: '#1e293b', minHeight: '100vh', fontFamily: "'Plus Jakarta Sans', sans-serif", position: 'relative', overflowX: 'hidden', paddingBottom: '60px' }}>
+    <div style={{ background: '#f8fafc', color: '#1e293b', minHeight: '100vh', fontFamily: "'Plus Jakarta Sans', sans-serif", position: 'relative', overflowX: 'hidden', paddingBottom: '120px' }}>
 
       {/* SVG DOTTED DECORATIVE LOOPS BACKGROUND (POSITIONED PERFECTLY BELOW HEADER MENU LINKS) */}
       <svg style={{ position: 'absolute', top: '75px', right: 0, width: '100%', height: '1800px', pointerEvents: 'none', zIndex: 0, opacity: 0.35 }} viewBox="0 0 1440 1800" fill="none">
@@ -21,17 +21,6 @@ export default function CompanyProfileLandingPage() {
         <path d="M 200 390 Q 700 740 1250 340" stroke="#ef4444" strokeWidth="2" strokeDasharray="6 6" />
         <path d="M -50 790 Q 500 1040 1150 840" stroke="#10b981" strokeWidth="2" strokeDasharray="6 6" />
       </svg>
-
-      {/* 📜 ELEGANT LIGHT TOP RUNNING TEXT TICKER (60s SLOW READING SPEED) */}
-      <div style={{ background: '#eef2ff', color: '#1e1b4b', padding: '10px 0', overflow: 'hidden', whiteSpace: 'nowrap', borderBottom: '1px solid #c7d2fe', position: 'relative', zIndex: 30 }}>
-        <div style={{ display: 'inline-flex', gap: '48px', fontSize: '0.875rem', fontWeight: 700, animation: 'marquee 60s linear infinite' }}>
-          <span>🔥 HELLO ACADEMY PONTIANAK - BIMBINGAN BELAJAR TERBAIK DI PONTIANAK</span>
-          <span>✨ 3 CABANG UTAMA: SERDAM PUSAT • KARYA BARU • DANAU SENTARUM</span>
-          <span>🚀 PENDAFTARAN PPDB 2026 / 2027 KINI DIBUKA - DISKON BEASISWA TEST PLACEMENT</span>
-          <span>🎓 MENCETAK GENERASI UNGGUL LULUS PTN FAVORIT, KEDOKTERAN, & KEDINASAN</span>
-          <span>📞 WHATSAPP RESMI: +62 821-5378-9821</span>
-        </div>
-      </div>
 
       {/* 🧭 HEADER BAR (SPACIOUS PREMIUM TOP PADDING) */}
       <header className="animate-slide-up" style={{ maxWidth: '1400px', margin: '0 auto', padding: '36px 32px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', zIndex: 20, gap: '28px' }}>
@@ -151,6 +140,16 @@ export default function CompanyProfileLandingPage() {
           </div>
         </div>
       </section>
+
+      {/* 📜 RUNNING MARQUEE TICKER ANIMATION (FIXED AT THE VERY BOTTOM OF SCREEN ABOVE TASKBAR - SMOOTH 60s SPEED) */}
+      <div style={{ position: 'fixed', bottom: 0, left: 0, width: '100%', background: '#1e1b4b', color: '#fff', padding: '14px 0', overflow: 'hidden', whiteSpace: 'nowrap', zIndex: 9999, borderTop: '2px solid #312e81', boxShadow: '0 -4px 20px rgba(0,0,0,0.25)' }}>
+        <div style={{ display: 'inline-flex', gap: '44px', fontSize: '0.95rem', fontWeight: 700, animation: 'marquee 60s linear infinite' }}>
+          <span>🔥 HELLO ACADEMY PONTIANAK - PROFIL LEMBAGA PENDIDIKAN TERINTEGRASI</span>
+          <span>✨ 3 CABANG UTAMA: SERDAM PUSAT • KARYA BARU • DANAU SENTARUM</span>
+          <span>🚀 MENCETAK GENERASI UNGGUL BERSTANDAR NASIONAL BERBASIS DIGITAL</span>
+          <span>🎓 HELLO ACADEMY PONTIANAK - MAJU BERSAMA MENUJU MASA DEPAN CEMERLANG</span>
+        </div>
+      </div>
 
       {/* 🏛️ 2. PROFIL SINGKAT & SEJARAH LEMBAGA */}
       <section id="profile" className="animate-slide-up" style={{ maxWidth: '1400px', margin: '0 auto', padding: '50px 36px 80px', marginTop: '10px' }}>
