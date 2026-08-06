@@ -39,7 +39,6 @@ export default function CompanyProfileLandingPage() {
 
         {/* Navigation Links */}
         <nav style={{ display: 'flex', gap: '22px', fontSize: '0.9rem', fontWeight: 600, color: '#334155', whiteSpace: 'nowrap', alignItems: 'center', flexShrink: 0 }}>
-          <a href="#profile" className="hover-lift" style={{ textDecoration: 'none', color: 'inherit' }}>Profil Lembaga</a>
           <a href="#vision-mission" className="hover-lift" style={{ textDecoration: 'none', color: 'inherit' }}>Visi & Misi</a>
           <a href="#advantages" className="hover-lift" style={{ textDecoration: 'none', color: 'inherit' }}>Keunggulan</a>
           <a href="#programs" className="hover-lift" style={{ textDecoration: 'none', color: 'inherit' }}>Program Belajar</a>
@@ -141,69 +140,16 @@ export default function CompanyProfileLandingPage() {
         </div>
       </section>
 
-      {/* 🏛️ 2. PROFIL SINGKAT & SEJARAH LEMBAGA (POSITIONED ACCESSIBLE HIGHER ON HOMEPAGE) */}
-      <section id="profile" className="animate-slide-up" style={{ maxWidth: '1400px', margin: '0 auto', padding: '50px 36px 60px', marginTop: '10px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '48px', alignItems: 'center' }}>
-          <div>
-            <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#ef4444', textTransform: 'uppercase', letterSpacing: '0.05em' }}>TENTANG PERUSAHAAN</span>
-            <h2 style={{ fontSize: '2.4rem', fontWeight: 700, color: '#1e1b4b', marginTop: '8px', marginBottom: '20px' }}>
-              Sejarah & Komitmen Hello Academy Pontianak
-            </h2>
-            <p style={{ fontSize: '1rem', color: '#64748b', lineHeight: 1.8, marginBottom: '20px' }}>
-              Hello Academy Pontianak adalah lembaga pendidikan non-formal dan bimbingan belajar modern yang didirikan untuk memberikan solusi pendidikan berkualitas tinggi bagi peserta didik dari tingkat SD, SMP, SMA, hingga Gap Year di Kalimantan Barat.
-            </p>
-            <p style={{ fontSize: '1rem', color: '#64748b', lineHeight: 1.8, marginBottom: '28px' }}>
-              Dengan menggabungkan pengajar profesional bersertifikasi (*Super Teacher* lulusan PTN), kurikulum terstruktur berbasis IRT Analytics, serta dukungan sistem informasi digital Enterprise ERP terpadu di 3 cabang utama, kami berkomitmen mendampingi setiap siswa meraih impian akademis terbaiknya.
-            </p>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-              <div style={{ background: '#fff', padding: '20px', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
-                <Building2 size={24} style={{ color: '#4f46e5', marginBottom: '8px' }} />
-                <h4 style={{ fontSize: '1rem', fontWeight: 700, color: '#1e1b4b' }}>Fasilitas Modern</h4>
-                <p style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '4px' }}>Ruang AC, Lab CBT Computer, & Perpustakaan Digital.</p>
-              </div>
-
-              <div style={{ background: '#fff', padding: '20px', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
-                <Award size={24} style={{ color: '#10b981', marginBottom: '8px' }} />
-                <h4 style={{ fontSize: '1rem', fontWeight: 700, color: '#1e1b4b' }}>Pengajar Unggulan</h4>
-                <p style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '4px' }}>100% Super Teacher lulusan PTN favorit.</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="glass-card" style={{ background: '#fff', padding: '40px', borderRadius: '32px', border: '1px solid #e2e8f0', boxShadow: '0 15px 40px rgba(0,0,0,0.06)' }}>
-            <h3 style={{ fontSize: '1.4rem', fontWeight: 700, color: '#1e1b4b', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <ShieldCheck style={{ color: '#4f46e5' }} /> Pilar Pelayanan Pendidikan
-            </h3>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              <div style={{ display: 'flex', gap: '16px' }}>
-                <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: '#e0e7ff', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4f46e5', fontWeight: 700, flexShrink: 0 }}>01</div>
-                <div>
-                  <h4 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#1e1b4b' }}>Pengajaran Berorientasi Hasil</h4>
-                  <p style={{ fontSize: '0.9rem', color: '#64748b', marginTop: '4px' }}>Fokus pada pemahaman konsep dasar, logika penyelesaian soal cepat, & kesiapan ujian CBT.</p>
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', gap: '16px' }}>
-                <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: '#fee2e2', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ef4444', fontWeight: 700, flexShrink: 0 }}>02</div>
-                <div>
-                  <h4 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#1e1b4b' }}>Kemitraan Dengan Orang Tua</h4>
-                  <p style={{ fontSize: '0.9rem', color: '#64748b', marginTop: '4px' }}>Transparansi laporan nilai, presensi QR realtime, & E-Rapor digital melalui Portal Wali Murid.</p>
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', gap: '16px' }}>
-                <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: '#d1fae5', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#10b981', fontWeight: 700, flexShrink: 0 }}>03</div>
-                <div>
-                  <h4 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#1e1b4b' }}>Integritas & Karakter</h4>
-                  <p style={{ fontSize: '0.9rem', color: '#64748b', marginTop: '4px' }}>Membentuk kedisiplinan, etika belajar, serta kepercayaan diri tinggi peserta didik.</p>
-                </div>
-              </div>
-            </div>
-          </div>
+      {/* 📜 SMOOTH SLOW RUNNING TICKER MARQUEE (60s SPEED FOR COMFORTABLE READING) */}
+      <div style={{ background: '#1e1b4b', color: '#ffffff', padding: '16px 0', overflow: 'hidden', whiteSpace: 'nowrap', zIndex: 10, borderTop: '2px solid #312e81', borderBottom: '2px solid #312e81', margin: '40px 0 0' }}>
+        <div style={{ display: 'inline-flex', gap: '48px', fontSize: '0.95rem', fontWeight: 700, animation: 'marquee 60s linear infinite' }}>
+          <span>🔥 HELLO ACADEMY PONTIANAK - BIMBINGAN BELAJAR TERBAIK DI PONTIANAK</span>
+          <span>✨ 3 CABANG UTAMA: SERDAM PUSAT • KARYA BARU • DANAU SENTARUM</span>
+          <span>🚀 PENDAFTARAN PPDB 2026 / 2027 KINI DIBUKA - DISKON BEASISWA TEST PLACEMENT</span>
+          <span>🎓 MENCETAK GENERASI UNGGUL LULUS PTN FAVORIT, KEDOKTERAN, & KEDINASAN</span>
+          <span>📞 WHATSAPP RESMI: +62 821-5378-9821</span>
         </div>
-      </section>
+      </div>
 
       {/* 🎯 3. VISI & MISI PERUSAHAAN */}
       <section id="vision-mission" className="animate-slide-up" style={{ background: '#fff', padding: '90px 36px', position: 'relative', zIndex: 10 }}>
