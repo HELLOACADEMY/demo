@@ -49,6 +49,23 @@ export default function AttendancePage() {
     };
   }, []);
 
+  // Live Digital Clock State with Seconds
+  const [liveTime, setLiveTime] = useState('');
+  const [liveDate, setLiveDate] = useState('');
+
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      const timeString = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }).replace(/\./g, ':');
+      const dateString = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+      setLiveTime(`${timeString} WIB`);
+      setLiveDate(dateString);
+    };
+    updateTime();
+    const timer = setInterval(updateTime, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
   // Success Scan Pop-Up Modal State
   const [successModal, setSuccessModal] = useState<{
     entityName: string;
@@ -203,27 +220,22 @@ export default function AttendancePage() {
             textAlign: 'center',
             boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05)',
           }}>
-            {/* Entity Category Selector */}
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', marginBottom: '20px' }}>
-              {(['Siswa', 'Guru', 'Staff'] as const).map(type => (
-                <button
-                  key={type}
-                  onClick={() => setSelectedEntityType(type)}
-                  style={{
-                    padding: '8px 20px',
-                    borderRadius: '20px',
-                    border: '1px solid',
-                    borderColor: selectedEntityType === type ? '#4f46e5' : '#cbd5e1',
-                    background: selectedEntityType === type ? '#eef2ff' : '#ffffff',
-                    color: selectedEntityType === type ? '#4f46e5' : '#475569',
-                    fontWeight: 500,
-                    fontSize: '0.85rem',
-                    cursor: 'pointer',
-                  }}
-                >
-                  Kategori: {type}
-                </button>
-              ))}
+            {/* LIVE DIGITAL CLOCK DISPLAY WITH DETIK */}
+            <div style={{
+              margin: '0 auto 24px',
+              padding: '14px 28px',
+              background: '#f8fafc',
+              border: '2px solid #c7d2fe',
+              borderRadius: '16px',
+              display: 'inline-block',
+              boxShadow: '0 4px 14px rgba(79, 70, 229, 0.08)',
+            }}>
+              <div style={{ fontSize: '2rem', fontWeight: 800, color: '#4f46e5', letterSpacing: '0.05em', fontFamily: 'monospace', lineHeight: 1.1 }}>
+                ⏰ {liveTime}
+              </div>
+              <div style={{ fontSize: '0.875rem', fontWeight: 700, color: '#475569', marginTop: '4px' }}>
+                📅 {liveDate}
+              </div>
             </div>
 
             {/* LIVE WEBCAM VIDEO STREAM DISPLAY BOX */}
@@ -371,7 +383,7 @@ export default function AttendancePage() {
                   gap: '8px',
                 }}
               >
-                <QrCode size={18} /> {isScanning ? 'Memproses Barcode...' : `Tangkap & Scan Barcode (${selectedEntityType})`}
+                <QrCode size={18} /> {isScanning ? 'Memproses Barcode...' : 'Deteksi & Scan Barcode QR Kamera'}
               </button>
             </div>
           </div>
@@ -379,11 +391,11 @@ export default function AttendancePage() {
           {/* Quick Barcode Tap Selector */}
           <div style={{ background: '#ffffff', padding: '24px', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
             <h3 style={{ fontSize: '1rem', color: '#0f172a', fontWeight: 600, marginBottom: '16px' }}>
-              Pilih Kartu Barcode Siap Scan (Tap untuk Scan Masuk / Pulang):
+              Simulasi Pindai Kartu Barcode (Siswa, Guru, & Staff):
             </h3>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '14px' }}>
-              {selectedEntityType === 'Siswa' && students.slice(0, 6).map(std => {
+              {students.slice(0, 4).map(std => {
                 const today = new Date().toISOString().split('T')[0];
                 const existing = attendanceLogs.find(att => att.entityName === std.name && att.date === today);
                 return (
@@ -406,7 +418,7 @@ export default function AttendancePage() {
                   >
                     <div>
                       <div style={{ fontWeight: 600, fontSize: '0.875rem', color: '#0f172a' }}>{std.name}</div>
-                      <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '2px' }}>NISN: {std.nisn} • {std.grade}</div>
+                      <div style={{ fontSize: '0.75rem', color: '#4f46e5', fontWeight: 600, marginTop: '2px' }}>SISWA • {std.grade}</div>
                     </div>
                     <div style={{ textAlign: 'right' }}>
                       <span style={{
@@ -417,14 +429,14 @@ export default function AttendancePage() {
                         background: existing ? '#dbeafe' : '#dcfce7',
                         color: existing ? '#1e40af' : '#166534',
                       }}>
-                        {existing ? 'Berikutnya: PULANG' : 'Berikutnya: MASUK'}
+                        {existing ? 'PULANG' : 'MASUK'}
                       </span>
                     </div>
                   </div>
                 );
               })}
 
-              {selectedEntityType === 'Guru' && teachers.map(tch => {
+              {teachers.slice(0, 2).map(tch => {
                 const today = new Date().toISOString().split('T')[0];
                 const existing = attendanceLogs.find(att => att.entityName === tch.name && att.date === today);
                 return (
@@ -444,7 +456,7 @@ export default function AttendancePage() {
                   >
                     <div>
                       <div style={{ fontWeight: 600, fontSize: '0.875rem', color: '#0f172a' }}>{tch.name}</div>
-                      <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '2px' }}>NIP: {tch.nip} • {tch.subject}</div>
+                      <div style={{ fontSize: '0.75rem', color: '#7c3aed', fontWeight: 600, marginTop: '2px' }}>GURU • {tch.subject}</div>
                     </div>
                     <div>
                       <span style={{
@@ -455,14 +467,14 @@ export default function AttendancePage() {
                         background: existing ? '#dbeafe' : '#dcfce7',
                         color: existing ? '#1e40af' : '#166534',
                       }}>
-                        {existing ? 'Berikutnya: PULANG' : 'Berikutnya: MASUK'}
+                        {existing ? 'PULANG' : 'MASUK'}
                       </span>
                     </div>
                   </div>
                 );
               })}
 
-              {selectedEntityType === 'Staff' && staffList.map(stf => {
+              {staffList.slice(0, 2).map(stf => {
                 const today = new Date().toISOString().split('T')[0];
                 const existing = attendanceLogs.find(att => att.entityName === stf.name && att.date === today);
                 return (
@@ -482,7 +494,7 @@ export default function AttendancePage() {
                   >
                     <div>
                       <div style={{ fontWeight: 600, fontSize: '0.875rem', color: '#0f172a' }}>{stf.name}</div>
-                      <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '2px' }}>ID: {stf.id} • {stf.role}</div>
+                      <div style={{ fontSize: '0.75rem', color: '#0284c7', fontWeight: 600, marginTop: '2px' }}>STAFF • {stf.role}</div>
                     </div>
                     <div>
                       <span style={{
@@ -493,7 +505,7 @@ export default function AttendancePage() {
                         background: existing ? '#dbeafe' : '#dcfce7',
                         color: existing ? '#1e40af' : '#166534',
                       }}>
-                        {existing ? 'Berikutnya: PULANG' : 'Berikutnya: MASUK'}
+                        {existing ? 'PULANG' : 'MASUK'}
                       </span>
                     </div>
                   </div>
@@ -563,8 +575,13 @@ export default function AttendancePage() {
               {successModal.entityName}
             </h2>
 
-            <div style={{ fontSize: '0.875rem', color: '#64748b', fontWeight: 600, marginBottom: '24px' }}>
-              Kategori: <span style={{ color: '#4f46e5', fontWeight: 700 }}>{successModal.entityType}</span> • {successModal.branchName}
+            <div style={{ fontSize: '0.9rem', fontWeight: 700, marginBottom: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+              <span style={{ padding: '4px 14px', borderRadius: '8px', background: '#eef2ff', color: '#4f46e5', border: '1px solid #c7d2fe', textTransform: 'uppercase' }}>
+                👤 PERAN: {successModal.entityType}
+              </span>
+              <span style={{ color: '#64748b', fontWeight: 600 }}>
+                • {successModal.branchName}
+              </span>
             </div>
 
             {/* Time Stamp Clock Highlight Card */}
