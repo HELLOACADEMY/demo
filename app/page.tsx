@@ -141,16 +141,6 @@ export default function CompanyProfileLandingPage() {
         </div>
       </section>
 
-      {/* 📜 RUNNING MARQUEE TICKER ANIMATION (NORMAL FLOW - NO OVERLAP WITH TEXT) */}
-      <div style={{ width: '100%', background: '#1e1b4b', color: '#fff', padding: '16px 0', overflow: 'hidden', whiteSpace: 'nowrap', position: 'relative', zIndex: 10, borderTop: '2px solid #312e81', borderBottom: '2px solid #312e81', margin: '40px 0 20px' }}>
-        <div style={{ display: 'inline-flex', gap: '44px', fontSize: '0.95rem', fontWeight: 700, animation: 'marquee 60s linear infinite' }}>
-          <span>🔥 HELLO ACADEMY PONTIANAK - PROFIL LEMBAGA PENDIDIKAN TERINTEGRASI</span>
-          <span>✨ 3 CABANG UTAMA: SERDAM PUSAT • KARYA BARU • DANAU SENTARUM</span>
-          <span>🚀 MENCETAK GENERASI UNGGUL BERSTANDAR NASIONAL BERBASIS DIGITAL</span>
-          <span>🎓 HELLO ACADEMY PONTIANAK - MAJU BERSAMA MENUJU MASA DEPAN CEMERLANG</span>
-        </div>
-      </div>
-
       {/* 🏛️ 2. PROFIL SINGKAT & SEJARAH LEMBAGA */}
       <section id="profile" className="animate-slide-up" style={{ maxWidth: '1400px', margin: '0 auto', padding: '50px 36px 80px', marginTop: '10px' }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '48px', alignItems: 'center' }}>
