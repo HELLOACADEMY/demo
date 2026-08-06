@@ -185,7 +185,7 @@ export default function AttendancePage() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
         <div>
           <h1 style={{ fontSize: '1.5rem', color: '#0f172a', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <QrCode style={{ color: '#4f46e5' }} /> Presensi Barcode QR Code Digital (Live Camera Stream)
+            <QrCode style={{ color: '#4f46e5' }} /> Presensi Barcode QR Code Digital
           </h1>
         </div>
       </div>
