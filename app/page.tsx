@@ -70,8 +70,7 @@ export default function CompanyProfileLandingPage() {
       {/* 🧭 COMPACT CLEAN MOBILE HEADER (MOBILE ONLY) */}
       <header className="mobile-only" style={{ padding: '16px 16px 10px', flexDirection: 'column', width: '100%', position: 'relative', zIndex: 30 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-          
-          {/* Mobile Badge Logo */}
+                {/* Mobile Badge Logo */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <div style={{ display: 'flex', gap: '3px', alignItems: 'center' }}>
               <span style={{ width: '26px', height: '26px', borderRadius: '6px', background: '#4f46e5', color: '#fff', fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem' }}>H</span>
@@ -80,7 +79,6 @@ export default function CompanyProfileLandingPage() {
               <span style={{ width: '26px', height: '26px', borderRadius: '6px', background: '#10b981', color: '#fff', fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem' }}>L</span>
               <span style={{ width: '26px', height: '26px', borderRadius: '6px', background: '#06b6d4', color: '#fff', fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem' }}>O!</span>
             </div>
-            <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#4f46e5' }}>PONTIANAK</span>
           </div>
 
           {/* Right Mobile Controls (Login + Hamburger Menu Toggle) */}
