@@ -2,309 +2,220 @@
 
 import React, { useState, useEffect, Suspense } from 'react';
 import { useERP } from '@/context/ERPContext';
-import { useSearchParams } from 'next/navigation';
-import { UserCheck, Plus, CheckCircle, FileText, Download, Phone, MapPin, School, GraduationCap, Eye, User, Calendar, ShieldCheck, Send } from 'lucide-react';
-import { PPDBApplication } from '@/lib/store';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { UserCheck, CheckCircle2, Phone, MapPin, School, GraduationCap, ArrowLeft, Send, Sparkles } from 'lucide-react';
+import Link from 'next/link';
 
-function PPDBContent() {
-  const { ppdbList, filteredPpdbList, branches, addStudent, addAuditLog, isSuperAdmin } = useERP();
+function PublicPPDBContent() {
+  const { branches, addAuditLog } = useERP();
   const searchParams = useSearchParams();
+  const router = useRouter();
 
-  const [applications, setApplications] = useState<PPDBApplication[]>(filteredPpdbList);
-  const [showModal, setShowModal] = useState(false);
-  const [selectedDetailApp, setSelectedDetailApp] = useState<PPDBApplication | null>(null);
-  const [successAlert, setSuccessAlert] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (searchParams.get('register') === 'true') {
-      setShowModal(true);
-    }
-  }, [searchParams]);
-
-  // Form Complete Registration Data Fields
   const [applicantName, setApplicantName] = useState('');
   const [nisn, setNisn] = useState('');
   const [gender, setGender] = useState<'L' | 'P'>('L');
   const [birthInfo, setBirthInfo] = useState('Pontianak, 14 Mei 2008');
-  const [previousSchool, setPreviousSchool] = useState('SMA Negeri 1 Pontianak');
+  const [previousSchool, setPreviousSchool] = useState('');
   const [grade, setGrade] = useState('XII SMA (Kedokteran)');
-  const [parentName, setParentName] = useState('Hendra Wijaya');
+  const [parentName, setParentName] = useState('');
   const [parentPhone, setParentPhone] = useState('');
-  const [homeAddress, setHomeAddress] = useState('Jl. Ahmad Yani No. 45, Pontianak');
+  const [homeAddress, setHomeAddress] = useState('');
   const [targetBranchId, setTargetBranchId] = useState(branches[0]?.id || 'br-1');
 
-  const approveApplicant = (id: string) => {
-    const app = applications.find(a => a.id === id);
-    if (!app) return;
+  const [submitted, setSubmitted] = useState(false);
+  const [regNumber, setRegNumber] = useState('');
 
-    setApplications(prev => prev.map(a => a.id === id ? { ...a, status: 'Approved' } : a));
-
-    // Automatically convert to registered student
-    addStudent({
-      nisn: `00${Math.floor(10000000 + Math.random() * 90000000)}`,
-      name: app.applicantName,
-      gender: 'L',
-      grade: app.grade,
-      branchId: app.targetBranchId,
-      parentId: 'prt-1',
-      status: 'Aktif'
-    });
-
-    addAuditLog('Approve PPDB Registration', 'PPDB', `Calon siswa ${app.applicantName} resmi diterima & terdaftar di database siswa`);
-    setSuccessAlert(`Calon siswa ${app.applicantName} berhasil diterima & otomatis terdaftar di Direktori Siswa!`);
-    setTimeout(() => setSuccessAlert(null), 4000);
-  };
-
-  const handleCreateFullRegistration = (e: React.FormEvent) => {
+  const handleSubmitRegistration = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!applicantName || !parentPhone) return;
+    if (!applicantName || !parentPhone || !previousSchool) return;
 
-    const newApp: PPDBApplication = {
-      id: `ppdb-${Date.now()}`,
-      regNumber: `REG/2026/08/${Math.floor(100 + Math.random() * 900)}`,
-      applicantName,
-      targetBranchId,
-      grade,
-      parentPhone,
-      status: 'Pending',
-      testScore: Math.floor(75 + Math.random() * 20),
-      downpaymentStatus: 'Paid'
-    };
+    const newRegNum = `REG/2026/08/${Math.floor(1000 + Math.random() * 9000)}`;
+    setRegNumber(newRegNum);
 
-    setApplications(prev => [newApp, ...prev]);
-    addAuditLog('Submit PPDB Registration', 'PPDB', `Form registrasi lengkap calon siswa ${applicantName} berhasil dikirim`);
-    setShowModal(false);
+    try {
+      await fetch('/api/ppdb', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          regNumber: newRegNum,
+          applicantName,
+          targetBranchId,
+          grade,
+          parentPhone,
+          status: 'Pending',
+          testScore: 85,
+          downpaymentStatus: 'Unpaid',
+        }),
+      });
+    } catch (e) {
+      console.error('Failed to submit PPDB to API:', e);
+    }
 
-    // Reset Form
-    setApplicantName(''); setNisn(''); setParentPhone('');
-    setSuccessAlert(`Form Registrasi Lengkap Siswa ${applicantName} Berhasil Diterbitkan!`);
-    setTimeout(() => setSuccessAlert(null), 4000);
+    await addAuditLog('Public PPDB Form Submit', 'PPDB', `Pendaftaran calon siswa baru ${applicantName} (${newRegNum})`);
+    setSubmitted(true);
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      {/* Header Page */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
-        <div>
-          <h1 style={{ fontSize: '1.5rem', color: '#0f172a', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <UserCheck style={{ color: '#2575b9' }} /> Daftar Registrasi Calon Siswa Baru (PPDB Online)
-          </h1>
-          <p style={{ fontSize: '0.875rem', color: '#64748b' }}>
-            Data registrasi biodata lengkap calon siswa baru, berkas administrasi, nilai placement test, dan verifikasi cabang.
-          </p>
-        </div>
+    <div style={{ background: '#f8fafc', color: '#1e293b', minHeight: '100vh', fontFamily: "'Plus Jakarta Sans', sans-serif", padding: '36px 20px 80px' }}>
+      <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+        
+        {/* Top Public Header */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px', flexWrap: 'wrap', gap: '16px' }}>
+          <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: '#4f46e5', fontWeight: 700, textDecoration: 'none', fontSize: '0.95rem' }}>
+            <ArrowLeft size={18} /> Kembali ke Beranda
+          </Link>
 
-        <button
-          onClick={() => setShowModal(true)}
-          style={{ padding: '10px 20px', background: '#2575b9', border: 'none', borderRadius: '8px', color: '#ffffff', fontWeight: 500, fontSize: '0.875rem', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px' }}
-        >
-          <Plus size={16} /> + Registrasi Calon Siswa Baru (Data Lengkap)
-        </button>
-      </div>
-
-      {successAlert && (
-        <div style={{ padding: '16px', background: '#dcfce7', border: '1px solid #bbf7d0', borderRadius: '12px', color: '#166534', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <CheckCircle size={20} /> {successAlert}
-        </div>
-      )}
-
-      {/* Tabel Daftar Registrasi Calon Siswa */}
-      <div style={{ background: '#ffffff', padding: '24px', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
-        <h3 style={{ fontSize: '1.1rem', color: '#0f172a', fontWeight: 600, marginBottom: '16px' }}>
-          Pendaftar PPDB Online 2026 / 2027
-        </h3>
-
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem' }}>
-            <thead>
-              <tr style={{ background: '#f8fafc', borderBottom: '2px solid #e2e8f0', textAlign: 'left', color: '#475569' }}>
-                <th style={{ padding: '12px 14px', fontWeight: 600 }}>No. Registrasi</th>
-                <th style={{ padding: '12px 14px', fontWeight: 600 }}>Nama Lengkap Siswa</th>
-                <th style={{ padding: '12px 14px', fontWeight: 600 }}>Program / Tingkat</th>
-                <th style={{ padding: '12px 14px', fontWeight: 600 }}>WhatsApp Orang Tua</th>
-                <th style={{ padding: '12px 14px', fontWeight: 600 }}>Target Cabang</th>
-                <th style={{ padding: '12px 14px', fontWeight: 600 }}>Test Score</th>
-                <th style={{ padding: '12px 14px', fontWeight: 600 }}>Status Pendaftaran</th>
-                <th style={{ padding: '12px 14px', fontWeight: 600 }}>Aksi Detail</th>
-              </tr>
-            </thead>
-            <tbody>
-              {applications.map(p => {
-                const brName = branches.find(b => b.id === p.targetBranchId)?.name || 'Serdam Pusat';
-                return (
-                  <tr key={p.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                    <td style={{ padding: '12px 14px', fontWeight: 600, color: '#2575b9' }}>{p.regNumber}</td>
-                    <td style={{ padding: '12px 14px', fontWeight: 600, color: '#0f172a' }}>{p.applicantName}</td>
-                    <td style={{ padding: '12px 14px', color: '#475569' }}>{p.grade}</td>
-                    <td style={{ padding: '12px 14px', color: '#475569' }}>📞 {p.parentPhone}</td>
-                    <td style={{ padding: '12px 14px' }}><span className="badge badge-success">{brName}</span></td>
-                    <td style={{ padding: '12px 14px', fontWeight: 600, color: '#2575b9' }}>{p.testScore || 85} / 100</td>
-                    <td style={{ padding: '12px 14px' }}>
-                      <span className={`badge ${p.status === 'Approved' ? 'badge-success' : p.status === 'Pending' ? 'badge-warning' : 'badge-danger'}`}>
-                        {p.status}
-                      </span>
-                    </td>
-                    <td style={{ padding: '12px 14px' }}>
-                      <div style={{ display: 'flex', gap: '6px' }}>
-                        <button
-                          onClick={() => setSelectedDetailApp(p)}
-                          style={{ padding: '6px 10px', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '6px', color: '#2575b9', fontSize: '0.75rem', fontWeight: 500, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
-                        >
-                          <Eye size={14} /> Lihat Biodata
-                        </button>
-                        {p.status === 'Pending' && (
-                          <button
-                            onClick={() => approveApplicant(p.id)}
-                            style={{ padding: '6px 12px', background: '#2575b9', color: '#ffffff', border: 'none', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 500, cursor: 'pointer' }}
-                          >
-                            Terima Siswa
-                          </button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* MODAL BIODATA LENGKAP CALON SISWA */}
-      {selectedDetailApp && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.5)', backdropFilter: 'blur(5px)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-          <div style={{ width: '100%', maxWidth: '540px', padding: '28px', background: '#ffffff', borderRadius: '16px', border: '1px solid #e2e8f0', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid #f1f5f9', paddingBottom: '12px' }}>
-              <h2 style={{ fontSize: '1.2rem', color: '#0f172a', fontWeight: 600, margin: 0 }}>BIODATA LENGKAP REGISTRASI SISWA</h2>
-              <button type="button" onClick={() => setSelectedDetailApp(null)} style={{ background: 'none', border: 'none', color: '#64748b', fontSize: '1.4rem', cursor: 'pointer' }}>✕</button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{ display: 'flex', gap: '3px', alignItems: 'center' }}>
+              <span style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#4f46e5', color: '#fff', fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem' }}>H</span>
+              <span style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#ef4444', color: '#fff', fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem' }}>E</span>
+              <span style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#f59e0b', color: '#fff', fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem' }}>L</span>
+              <span style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#10b981', color: '#fff', fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem' }}>L</span>
+              <span style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#06b6d4', color: '#fff', fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem' }}>O!</span>
             </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.875rem', color: '#475569' }}>
-              <div style={{ padding: '12px', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between' }}>
-                <span>No. Registrasi: <strong style={{ color: '#2575b9' }}>{selectedDetailApp.regNumber}</strong></span>
-                <span className="badge badge-success">{selectedDetailApp.status}</span>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                <div>Nama Lengkap: <strong style={{ color: '#0f172a', display: 'block' }}>{selectedDetailApp.applicantName}</strong></div>
-                <div>NISN: <strong style={{ color: '#0f172a', display: 'block' }}>0058291030</strong></div>
-                <div>Tempat, Tanggal Lahir: <strong style={{ color: '#0f172a', display: 'block' }}>Pontianak, 14 Mei 2008</strong></div>
-                <div>Jenis Kelamin: <strong style={{ color: '#0f172a', display: 'block' }}>Laki-laki (L)</strong></div>
-                <div>Asal Sekolah: <strong style={{ color: '#0f172a', display: 'block' }}>SMA Negeri 1 Pontianak</strong></div>
-                <div>Program Pilihan: <strong style={{ color: '#2575b9', display: 'block' }}>{selectedDetailApp.grade}</strong></div>
-                <div>Nama Orang Tua / Wali: <strong style={{ color: '#0f172a', display: 'block' }}>Hendra Wijaya</strong></div>
-                <div>No. WhatsApp Wali: <strong style={{ color: '#0f172a', display: 'block' }}>📞 {selectedDetailApp.parentPhone}</strong></div>
-              </div>
-
-              <div>Alamat Rumah Lengkap: <strong style={{ color: '#0f172a', display: 'block' }}>Jl. Ahmad Yani No. 45, Kota Pontianak</strong></div>
-
-              <div style={{ padding: '10px', background: '#eef2ff', borderRadius: '8px', color: '#2575b9', fontWeight: 600, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span>Hasil Test Placement SNBT:</span>
-                <span style={{ fontSize: '1.1rem', color: '#16a34a' }}>{selectedDetailApp.testScore || 85} / 100</span>
-              </div>
-            </div>
-
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '20px', paddingTop: '12px', borderTop: '1px solid #f1f5f9' }}>
-              <button type="button" onClick={() => setSelectedDetailApp(null)} style={{ padding: '10px 16px', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '6px', color: '#475569', cursor: 'pointer', fontSize: '0.875rem' }}>Tutup</button>
-              {selectedDetailApp.status === 'Pending' && (
-                <button type="button" onClick={() => { approveApplicant(selectedDetailApp.id); setSelectedDetailApp(null); }} style={{ padding: '10px 20px', background: '#2575b9', border: 'none', borderRadius: '6px', color: '#ffffff', fontWeight: 500, cursor: 'pointer', fontSize: '0.875rem' }}>Terima Sebagai Siswa Aktif</button>
-              )}
-            </div>
+            <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#4f46e5' }}>PONTIANAK</span>
           </div>
         </div>
-      )}
 
-      {/* MODAL FORM REGISTRASI CALON SISWA DATA LENGKAP */}
-      {showModal && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.5)', backdropFilter: 'blur(5px)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-          <form onSubmit={handleCreateFullRegistration} style={{ width: '100%', maxWidth: '580px', maxHeight: '90vh', overflowY: 'auto', padding: '28px', background: '#ffffff', borderRadius: '16px', border: '1px solid #e2e8f0', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid #f1f5f9', paddingBottom: '12px' }}>
-              <h2 style={{ fontSize: '1.25rem', color: '#0f172a', fontWeight: 600, margin: 0 }}>Form Registrasi Data Lengkap Calon Siswa Baru</h2>
-              <button type="button" onClick={() => setShowModal(false)} style={{ background: 'none', border: 'none', color: '#64748b', fontSize: '1.4rem', cursor: 'pointer' }}>✕</button>
+        {submitted ? (
+          /* SUCCESS SUBMISSION CARD */
+          <div style={{ background: '#fff', padding: '48px 36px', borderRadius: '24px', boxShadow: '0 10px 35px rgba(0,0,0,0.06)', border: '1px solid #bbf7d0', textAlign: 'center' }}>
+            <div style={{ width: '72px', height: '72px', borderRadius: '50%', background: '#dcfce7', color: '#16a34a', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
+              <CheckCircle2 size={42} />
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <h2 style={{ fontSize: '1.8rem', fontWeight: 700, color: '#1e1b4b', marginBottom: '10px' }}>
+              Pendaftaran PPDB Berhasil Terkirim!
+            </h2>
+            <p style={{ fontSize: '1rem', color: '#475569', maxWidth: '540px', margin: '0 auto 24px', lineHeight: 1.6 }}>
+              Selamat <strong>{applicantName}</strong>! Data registrasi Anda telah tercatat di sistem akademik Hello Academy Pontianak.
+            </p>
+
+            <div style={{ background: '#f8fafc', padding: '20px', borderRadius: '16px', border: '1px solid #e2e8f0', display: 'inline-block', textAlign: 'left', marginBottom: '28px', minWidth: '280px' }}>
+              <div style={{ fontSize: '0.85rem', color: '#64748b' }}>Nomor Registrasi Resmi:</div>
+              <div style={{ fontSize: '1.4rem', fontWeight: 700, color: '#4f46e5', letterSpacing: '0.05em', marginTop: '4px' }}>{regNumber}</div>
+            </div>
+
+            <div style={{ fontSize: '0.9rem', color: '#64748b', marginBottom: '32px' }}>
+              Tim Admin Cabang kami akan segera menghubungi WhatsApp <strong>{parentPhone}</strong> untuk konfirmasi jadwal Placement Test & rincian bea siswa.
+            </div>
+
+            <div style={{ display: 'flex', gap: '14px', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <Link href="/" style={{ padding: '12px 28px', background: '#4f46e5', color: '#fff', borderRadius: '999px', textDecoration: 'none', fontWeight: 700, fontSize: '0.9rem' }}>
+                Kembali ke Beranda Utama
+              </Link>
+              <a href="https://wa.me/6282153789821" target="_blank" rel="noreferrer" style={{ padding: '12px 28px', background: '#dcfce7', color: '#16a34a', borderRadius: '999px', textDecoration: 'none', fontWeight: 700, fontSize: '0.9rem', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                <Phone size={16} /> Hubungi CS WhatsApp
+              </a>
+            </div>
+          </div>
+        ) : (
+          /* FORM PENDAFTARAN PPDB PUBLIC */
+          <div style={{ background: '#fff', padding: '40px 36px', borderRadius: '24px', boxShadow: '0 10px 35px rgba(0,0,0,0.06)', border: '1px solid #e2e8f0' }}>
+            
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '24px' }}>
+              <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: '#fee2e2', color: '#ef4444', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <UserCheck size={26} />
+              </div>
+              <div>
+                <h1 style={{ fontSize: '1.65rem', fontWeight: 700, color: '#1e1b4b', margin: 0 }}>
+                  Form Pendaftaran PPDB 2026 / 2027
+                </h1>
+                <p style={{ fontSize: '0.875rem', color: '#64748b', margin: 0 }}>
+                  Isikan data lengkap calon siswa baru Hello Academy Pontianak di bawah ini.
+                </p>
+              </div>
+            </div>
+
+            <hr style={{ border: 'none', borderTop: '1px solid #f1f5f9', margin: '0 0 24px' }} />
+
+            <form onSubmit={handleSubmitRegistration} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              
+              <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '16px' }}>
                 <div>
-                  <label style={{ fontSize: '0.8rem', color: '#2575b9', fontWeight: 500, display: 'block', marginBottom: '4px' }}>Nama Lengkap Siswa *</label>
-                  <input type="text" placeholder="Nama lengkap siswa" value={applicantName} onChange={e => setApplicantName(e.target.value)} required className="input-field" />
+                  <label style={{ fontSize: '0.85rem', color: '#1e1b4b', fontWeight: 700, display: 'block', marginBottom: '6px' }}>Nama Lengkap Siswa *</label>
+                  <input type="text" placeholder="Masukkan nama lengkap siswa" value={applicantName} onChange={e => setApplicantName(e.target.value)} required className="input-field" style={{ padding: '12px 14px', borderRadius: '10px' }} />
                 </div>
                 <div>
-                  <label style={{ fontSize: '0.8rem', color: '#2575b9', fontWeight: 500, display: 'block', marginBottom: '4px' }}>NISN Siswa *</label>
-                  <input type="text" placeholder="Nomor Induk Siswa Nasional" value={nisn} onChange={e => setNisn(e.target.value)} required className="input-field" />
+                  <label style={{ fontSize: '0.85rem', color: '#1e1b4b', fontWeight: 700, display: 'block', marginBottom: '6px' }}>NISN Siswa *</label>
+                  <input type="text" placeholder="10 digit NISN" value={nisn} onChange={e => setNisn(e.target.value)} required className="input-field" style={{ padding: '12px 14px', borderRadius: '10px' }} />
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div>
-                  <label style={{ fontSize: '0.8rem', color: '#2575b9', fontWeight: 500, display: 'block', marginBottom: '4px' }}>Jenis Kelamin *</label>
-                  <select value={gender} onChange={e => setGender(e.target.value as 'L' | 'P')} className="select-field">
+                  <label style={{ fontSize: '0.85rem', color: '#1e1b4b', fontWeight: 700, display: 'block', marginBottom: '6px' }}>Jenis Kelamin *</label>
+                  <select value={gender} onChange={e => setGender(e.target.value as 'L' | 'P')} className="select-field" style={{ padding: '12px 14px', borderRadius: '10px' }}>
                     <option value="L">Laki-laki (L)</option>
                     <option value="P">Perempuan (P)</option>
                   </select>
                 </div>
                 <div>
-                  <label style={{ fontSize: '0.8rem', color: '#2575b9', fontWeight: 500, display: 'block', marginBottom: '4px' }}>Tempat & Tanggal Lahir *</label>
-                  <input type="text" value={birthInfo} onChange={e => setBirthInfo(e.target.value)} required className="input-field" />
+                  <label style={{ fontSize: '0.85rem', color: '#1e1b4b', fontWeight: 700, display: 'block', marginBottom: '6px' }}>Tempat & Tanggal Lahir *</label>
+                  <input type="text" placeholder="Contoh: Pontianak, 14 Mei 2008" value={birthInfo} onChange={e => setBirthInfo(e.target.value)} required className="input-field" style={{ padding: '12px 14px', borderRadius: '10px' }} />
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div>
-                  <label style={{ fontSize: '0.8rem', color: '#2575b9', fontWeight: 500, display: 'block', marginBottom: '4px' }}>Asal Sekolah *</label>
-                  <input type="text" value={previousSchool} onChange={e => setPreviousSchool(e.target.value)} required className="input-field" />
+                  <label style={{ fontSize: '0.85rem', color: '#1e1b4b', fontWeight: 700, display: 'block', marginBottom: '6px' }}>Asal Sekolah *</label>
+                  <input type="text" placeholder="Contoh: SMA Negeri 1 Pontianak" value={previousSchool} onChange={e => setPreviousSchool(e.target.value)} required className="input-field" style={{ padding: '12px 14px', borderRadius: '10px' }} />
                 </div>
                 <div>
-                  <label style={{ fontSize: '0.8rem', color: '#2575b9', fontWeight: 500, display: 'block', marginBottom: '4px' }}>Program / Kelas Pilihan *</label>
-                  <select value={grade} onChange={e => setGrade(e.target.value)} className="select-field">
-                    <option value="XII SMA (Kedokteran)">XII SMA - Garansi Kedokteran</option>
-                    <option value="XI SMA (Intensif)">XI SMA - Intensif SNBT</option>
-                    <option value="IX SMP (Kedinasan)">IX SMP - Persiapan Kedinasan</option>
+                  <label style={{ fontSize: '0.85rem', color: '#1e1b4b', fontWeight: 700, display: 'block', marginBottom: '6px' }}>Program / Kelas Pilihan *</label>
+                  <select value={grade} onChange={e => setGrade(e.target.value)} className="select-field" style={{ padding: '12px 14px', borderRadius: '10px' }}>
+                    <option value="XII SMA (Kedokteran)">XII SMA - Garansi Kedokteran & UTBK PTN</option>
+                    <option value="XI SMA (Intensif)">XI SMA - Program Intensif SNBT</option>
+                    <option value="IX SMP (Kedinasan)">IX SMP - Persiapan SMA Unggulan / Kedinasan</option>
+                    <option value="SD (Juara)">SD - Bimbel Juara Kelas & Fondasi Karakter</option>
                   </select>
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div>
-                  <label style={{ fontSize: '0.8rem', color: '#2575b9', fontWeight: 500, display: 'block', marginBottom: '4px' }}>Nama Orang Tua / Wali *</label>
-                  <input type="text" value={parentName} onChange={e => setParentName(e.target.value)} required className="input-field" />
+                  <label style={{ fontSize: '0.85rem', color: '#1e1b4b', fontWeight: 700, display: 'block', marginBottom: '6px' }}>Nama Orang Tua / Wali *</label>
+                  <input type="text" placeholder="Nama lengkap ibu / ayah" value={parentName} onChange={e => setParentName(e.target.value)} required className="input-field" style={{ padding: '12px 14px', borderRadius: '10px' }} />
                 </div>
                 <div>
-                  <label style={{ fontSize: '0.8rem', color: '#2575b9', fontWeight: 500, display: 'block', marginBottom: '4px' }}>No. WhatsApp Wali *</label>
-                  <input type="text" placeholder="08xxxxxxxxxx" value={parentPhone} onChange={e => setParentPhone(e.target.value)} required className="input-field" />
+                  <label style={{ fontSize: '0.85rem', color: '#1e1b4b', fontWeight: 700, display: 'block', marginBottom: '6px' }}>No. WhatsApp Wali *</label>
+                  <input type="text" placeholder="08xxxxxxxxxx" value={parentPhone} onChange={e => setParentPhone(e.target.value)} required className="input-field" style={{ padding: '12px 14px', borderRadius: '10px' }} />
                 </div>
               </div>
 
               <div>
-                <label style={{ fontSize: '0.8rem', color: '#2575b9', fontWeight: 500, display: 'block', marginBottom: '4px' }}>Target Cabang Hello Academy *</label>
-                <select value={targetBranchId} onChange={e => setTargetBranchId(e.target.value)} className="select-field">
+                <label style={{ fontSize: '0.85rem', color: '#1e1b4b', fontWeight: 700, display: 'block', marginBottom: '6px' }}>Target Cabang Belajar *</label>
+                <select value={targetBranchId} onChange={e => setTargetBranchId(e.target.value)} className="select-field" style={{ padding: '12px 14px', borderRadius: '10px' }}>
                   {branches.map(b => (
-                    <option key={b.id} value={b.id}>{b.name}</option>
+                    <option key={b.id} value={b.id}>{b.name} ({b.address})</option>
                   ))}
                 </select>
               </div>
 
               <div>
-                <label style={{ fontSize: '0.8rem', color: '#2575b9', fontWeight: 500, display: 'block', marginBottom: '4px' }}>Alamat Rumah Lengkap *</label>
-                <textarea value={homeAddress} onChange={e => setHomeAddress(e.target.value)} required className="input-field" style={{ minHeight: '70px' }} />
+                <label style={{ fontSize: '0.85rem', color: '#1e1b4b', fontWeight: 700, display: 'block', marginBottom: '6px' }}>Alamat Rumah Lengkap *</label>
+                <textarea placeholder="Alamat domisili lengkap di Kota Pontianak" value={homeAddress} onChange={e => setHomeAddress(e.target.value)} required className="input-field" style={{ minHeight: '80px', padding: '12px 14px', borderRadius: '10px' }} />
               </div>
-            </div>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '20px', paddingTop: '12px', borderTop: '1px solid #f1f5f9' }}>
-              <button type="button" onClick={() => setShowModal(false)} style={{ padding: '10px 16px', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '6px', color: '#475569', cursor: 'pointer', fontSize: '0.875rem' }}>Batal</button>
-              <button type="submit" style={{ padding: '10px 20px', background: '#2575b9', border: 'none', borderRadius: '6px', color: '#ffffff', fontWeight: 500, cursor: 'pointer', fontSize: '0.875rem' }}>Submit Registrasi Lengkap →</button>
-            </div>
-          </form>
-        </div>
-      )}
+              <div style={{ marginTop: '10px', paddingTop: '16px', borderTop: '1px solid #f1f5f9' }}>
+                <button type="submit" className="btn btn-red animate-glow hover-lift" style={{ width: '100%', padding: '16px', borderRadius: '999px', fontSize: '1rem', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', cursor: 'pointer', border: 'none' }}>
+                  <Send size={18} /> Kirim Pendaftaran PPDB 2026 Sekarang →
+                </button>
+              </div>
+
+            </form>
+          </div>
+        )}
+
+      </div>
     </div>
   );
 }
 
-export default function PPDBPage() {
+export default function PublicPPDBPage() {
   return (
     <Suspense fallback={<div style={{ padding: '30px', color: '#64748b' }}>Memuat Form Pendaftaran PPDB...</div>}>
-      <PPDBContent />
+      <PublicPPDBContent />
     </Suspense>
   );
 }
