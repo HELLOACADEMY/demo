@@ -359,6 +359,8 @@ export default function CompanyProfileLandingPage() {
               <a href="#vision-mission" style={{ color: 'inherit', textDecoration: 'none' }}>Visi & Misi Perusahaan</a>
               <a href="#programs" style={{ color: 'inherit', textDecoration: 'none' }}>Program Belajar</a>
               <a href="#branches" style={{ color: 'inherit', textDecoration: 'none' }}>3 Lokasi Cabang</a>
+              <Link href="/terms" style={{ color: '#cbd5e1', textDecoration: 'none' }} className="hover-lift">Syarat & Ketentuan</Link>
+              <Link href="/privacy" style={{ color: '#cbd5e1', textDecoration: 'none' }} className="hover-lift">Kebijakan Privasi</Link>
             </div>
           </div>
 
@@ -373,8 +375,13 @@ export default function CompanyProfileLandingPage() {
           </div>
         </div>
 
-        <div style={{ maxWidth: '1400px', margin: '0 auto', paddingTop: '24px', borderTop: '1px solid rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.8rem' }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', paddingTop: '24px', borderTop: '1px solid rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.8rem', flexWrap: 'wrap', gap: '12px' }}>
           <div>© 2026 Hello Academy Pontianak. All rights reserved.</div>
+          <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+            <Link href="/terms" style={{ color: '#cbd5e1', textDecoration: 'none' }}>Syarat & Ketentuan</Link>
+            <span style={{ color: '#64748b' }}>•</span>
+            <Link href="/privacy" style={{ color: '#cbd5e1', textDecoration: 'none' }}>Kebijakan Privasi</Link>
+          </div>
           <div>Pontianak • Kalimantan Barat</div>
         </div>
       </footer>
