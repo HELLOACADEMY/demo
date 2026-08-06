@@ -169,16 +169,13 @@ export default function AttendancePage() {
           </div>
           <div>
             <div style={{ fontSize: '1rem', fontWeight: 800, color: '#0f172a' }}>STANDALONE SCANNER PRESENSI QR CODE</div>
-            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#4f46e5' }}>HELLO ACADEMY PONTIANAK • KIOSK PRESENSI MANDIRI</div>
+            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#4f46e5' }}>HELLO ACADEMY PONTIANAK</div>
           </div>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <Link href="/" className="btn btn-secondary" style={{ textDecoration: 'none', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 600 }}>
             <Home size={16} /> Landing Page Utama
-          </Link>
-          <Link href="/dashboard" className="btn btn-primary" style={{ textDecoration: 'none', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 600 }}>
-            <LayoutDashboard size={16} /> Portal Admin ERP
           </Link>
         </div>
       </header>
