@@ -9,8 +9,8 @@ export default function LoginPage() {
   const router = useRouter();
   const { setCurrentRole, setIsAuthenticated, addAuditLog } = useERP();
 
-  const [email, setEmail] = useState('admin@hello-academy.sch.id');
-  const [password, setPassword] = useState('password123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
 
@@ -314,21 +314,22 @@ export default function LoginPage() {
               }}>
                 Kode Keamanan CAPTCHA
               </label>
-              <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center', width: '100%' }}>
                 <div style={{
-                  padding: '10px 16px',
+                  padding: '8px 12px',
                   background: 'linear-gradient(135deg, #2575b9, #1d5f9a)',
                   color: '#ffffff',
-                  fontWeight: 600,
-                  fontSize: '1.25rem',
-                  letterSpacing: '0.25em',
+                  fontWeight: 700,
+                  fontSize: '1.1rem',
+                  letterSpacing: '0.15em',
                   borderRadius: '4px',
                   userSelect: 'none',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '8px',
+                  justifyContent: 'center',
                   boxShadow: 'inset 0 0 8px rgba(0,0,0,0.2)',
                   fontStyle: 'italic',
+                  flexShrink: 0,
                 }}>
                   {captchaCode}
                 </div>
@@ -337,7 +338,8 @@ export default function LoginPage() {
                   onClick={generateCaptcha}
                   title="Acak Ulang Kode CAPTCHA"
                   style={{
-                    padding: '10px',
+                    width: '40px',
+                    height: '40px',
                     background: '#f1f5f9',
                     border: '1px solid #c5d5e4',
                     borderRadius: '4px',
@@ -346,6 +348,7 @@ export default function LoginPage() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
+                    flexShrink: 0,
                   }}
                 >
                   <RefreshCw size={18} />
@@ -359,12 +362,14 @@ export default function LoginPage() {
                   maxLength={5}
                   style={{
                     flex: 1,
-                    padding: '11px 12px',
+                    minWidth: 0,
+                    width: '100%',
+                    padding: '10px 10px',
                     background: '#ffffff',
                     border: '1px solid #c5d5e4',
                     borderRadius: '4px',
                     color: '#2c3e50',
-                    fontSize: '0.925rem',
+                    fontSize: '0.85rem',
                     outline: 'none',
                     textTransform: 'uppercase',
                     letterSpacing: '0.1em',
