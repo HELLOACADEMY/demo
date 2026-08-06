@@ -5,15 +5,16 @@ import { useERP } from '@/context/ERPContext';
 import {
   Phone, ArrowRight, Lock, Sparkles, CheckCircle2, ChevronRight,
   Globe, GraduationCap, Heart, Award, ShieldCheck, Users,
-  BookOpen, Clock, Star, MapPin, Target, Eye, Compass, Building2, QrCode
+  BookOpen, Clock, Star, MapPin, Target, Eye, Compass, Building2, QrCode, Menu, X
 } from 'lucide-react';
 import Link from 'next/link';
 
 export default function CompanyProfileLandingPage() {
   const { branches } = useERP();
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
   return (
-    <div style={{ background: '#f8fafc', color: '#1e293b', minHeight: '100vh', fontFamily: "'Plus Jakarta Sans', sans-serif", position: 'relative', overflowX: 'hidden', paddingBottom: '60px' }}>
+    <div style={{ background: '#f8fafc', color: '#1e293b', minHeight: '100vh', fontFamily: "'Plus Jakarta Sans', sans-serif", position: 'relative', overflowX: 'hidden', paddingBottom: '100px' }}>
 
       {/* SVG DOTTED DECORATIVE LOOPS BACKGROUND (POSITIONED PERFECTLY BELOW HEADER MENU LINKS) */}
       <svg style={{ position: 'absolute', top: '75px', right: 0, width: '100%', height: '1800px', pointerEvents: 'none', zIndex: 0, opacity: 0.35 }} viewBox="0 0 1440 1800" fill="none">
@@ -22,11 +23,11 @@ export default function CompanyProfileLandingPage() {
         <path d="M -50 790 Q 500 1040 1150 840" stroke="#10b981" strokeWidth="2" strokeDasharray="6 6" />
       </svg>
 
-      {/* 🧭 HEADER BAR (SPACIOUS PREMIUM TOP PADDING & MOBILE RESPONSIVE) */}
-      <header className="animate-slide-up main-header" style={{ maxWidth: '1400px', margin: '0 auto', padding: '36px 32px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', zIndex: 20, gap: '28px' }}>
+      {/* 🧭 HEADER BAR (DESKTOP VIEW) */}
+      <header className="animate-slide-up desktop-only" style={{ maxWidth: '1400px', margin: '0 auto', padding: '36px 32px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', zIndex: 20, gap: '28px' }}>
         
         {/* Hello Playful Badge Logo */}
-        <div className="header-logo-row" style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
           <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
             <span style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#4f46e5', color: '#fff', fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', boxShadow: '0 4px 10px rgba(79,70,229,0.25)' }}>H</span>
             <span style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#ef4444', color: '#fff', fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', boxShadow: '0 4px 10px rgba(239,68,68,0.25)' }}>E</span>
@@ -38,7 +39,7 @@ export default function CompanyProfileLandingPage() {
         </div>
 
         {/* Navigation Links */}
-        <nav className="nav-menu-links" style={{ display: 'flex', gap: '22px', fontSize: '0.9rem', fontWeight: 600, color: '#334155', whiteSpace: 'nowrap', alignItems: 'center', flexShrink: 0 }}>
+        <nav style={{ display: 'flex', gap: '22px', fontSize: '0.9rem', fontWeight: 600, color: '#334155', whiteSpace: 'nowrap', alignItems: 'center', flexShrink: 0 }}>
           <a href="#profile" className="hover-lift" style={{ textDecoration: 'none', color: 'inherit' }}>Profil Lembaga</a>
           <a href="#vision-mission" className="hover-lift" style={{ textDecoration: 'none', color: 'inherit' }}>Visi & Misi</a>
           <a href="#advantages" className="hover-lift" style={{ textDecoration: 'none', color: 'inherit' }}>Keunggulan</a>
@@ -48,7 +49,7 @@ export default function CompanyProfileLandingPage() {
         </nav>
 
         {/* Phone Contact, Scan QR, & Login Button */}
-        <div className="header-actions-row" style={{ display: 'flex', alignItems: 'center', gap: '16px', whiteSpace: 'nowrap', flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', whiteSpace: 'nowrap', flexShrink: 0 }}>
           <a href="https://wa.me/6282153789821" target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', color: '#1e1b4b', fontWeight: 700, fontSize: '0.95rem', whiteSpace: 'nowrap' }}>
             <div style={{ width: '38px', height: '38px', borderRadius: '50%', background: '#dcfce7', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: '#16a34a', flexShrink: 0, boxShadow: '0 4px 12px rgba(22,163,74,0.15)' }}>
               <Phone size={18} />
@@ -64,6 +65,62 @@ export default function CompanyProfileLandingPage() {
             <Lock size={16} /> Login
           </Link>
         </div>
+      </header>
+
+      {/* 🧭 COMPACT CLEAN MOBILE HEADER (MOBILE ONLY) */}
+      <header className="mobile-only" style={{ padding: '16px 16px 10px', flexDirection: 'column', width: '100%', position: 'relative', zIndex: 30 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+          
+          {/* Mobile Badge Logo */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ display: 'flex', gap: '3px', alignItems: 'center' }}>
+              <span style={{ width: '26px', height: '26px', borderRadius: '6px', background: '#4f46e5', color: '#fff', fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem' }}>H</span>
+              <span style={{ width: '26px', height: '26px', borderRadius: '6px', background: '#ef4444', color: '#fff', fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem' }}>E</span>
+              <span style={{ width: '26px', height: '26px', borderRadius: '6px', background: '#f59e0b', color: '#fff', fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem' }}>L</span>
+              <span style={{ width: '26px', height: '26px', borderRadius: '6px', background: '#10b981', color: '#fff', fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem' }}>L</span>
+              <span style={{ width: '26px', height: '26px', borderRadius: '6px', background: '#06b6d4', color: '#fff', fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem' }}>O!</span>
+            </div>
+            <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#4f46e5' }}>PONTIANAK</span>
+          </div>
+
+          {/* Right Mobile Controls (Login + Hamburger Menu Toggle) */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Link href="/login" className="btn btn-primary" style={{ padding: '8px 16px', borderRadius: '999px', fontSize: '0.8rem', fontWeight: 700, textDecoration: 'none' }}>
+              <Lock size={14} /> Login
+            </Link>
+
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle Mobile Menu"
+              style={{ width: '38px', height: '38px', borderRadius: '10px', background: '#e0e7ff', color: '#4f46e5', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+            >
+              {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+            </button>
+          </div>
+        </div>
+
+        {/* Collapsible Mobile Nav Menu Drawer */}
+        {mobileMenuOpen && (
+          <div style={{ background: '#fff', marginTop: '12px', padding: '20px', borderRadius: '20px', boxShadow: '0 10px 30px rgba(0,0,0,0.1)', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', gap: '14px', width: '100%', animation: 'slideUpFade 0.25s ease-out' }}>
+            <nav style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.9rem', fontWeight: 600, color: '#334155' }}>
+              <a href="#profile" onClick={() => setMobileMenuOpen(false)} style={{ textDecoration: 'none', color: 'inherit', padding: '6px 0', borderBottom: '1px solid #f1f5f9' }}>Profil Lembaga</a>
+              <a href="#vision-mission" onClick={() => setMobileMenuOpen(false)} style={{ textDecoration: 'none', color: 'inherit', padding: '6px 0', borderBottom: '1px solid #f1f5f9' }}>Visi & Misi</a>
+              <a href="#advantages" onClick={() => setMobileMenuOpen(false)} style={{ textDecoration: 'none', color: 'inherit', padding: '6px 0', borderBottom: '1px solid #f1f5f9' }}>Keunggulan</a>
+              <a href="#programs" onClick={() => setMobileMenuOpen(false)} style={{ textDecoration: 'none', color: 'inherit', padding: '6px 0', borderBottom: '1px solid #f1f5f9' }}>Program Belajar</a>
+              <a href="#branches" onClick={() => setMobileMenuOpen(false)} style={{ textDecoration: 'none', color: 'inherit', padding: '6px 0', borderBottom: '1px solid #f1f5f9' }}>3 Cabang Pontianak</a>
+              <a href="#contacts" onClick={() => setMobileMenuOpen(false)} style={{ textDecoration: 'none', color: 'inherit', padding: '6px 0' }}>Kontak</a>
+            </nav>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', paddingTop: '10px', borderTop: '1px solid #e2e8f0' }}>
+              <a href="https://wa.me/6282153789821" target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', color: '#16a34a', fontWeight: 700, fontSize: '0.9rem' }}>
+                <Phone size={16} /> WhatsApp: +62 821-5378-9821
+              </a>
+              <Link href="/attendance" onClick={() => setMobileMenuOpen(false)} className="btn btn-secondary" style={{ borderRadius: '999px', padding: '10px 16px', fontSize: '0.85rem', fontWeight: 700, textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', color: '#047857', background: '#d1fae5' }}>
+                <QrCode size={16} /> Scan QR Kehadiran
+              </Link>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* 🚀 1. HERO SECTION (MOBILE RESPONSIVE GRID) */}
