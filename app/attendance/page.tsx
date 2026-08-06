@@ -49,6 +49,16 @@ export default function AttendancePage() {
     };
   }, []);
 
+  // Success Scan Pop-Up Modal State
+  const [successModal, setSuccessModal] = useState<{
+    entityName: string;
+    entityType: 'Siswa' | 'Guru' | 'Staff';
+    scanType: 'JAM MASUK' | 'JAM PULANG';
+    time: string;
+    date: string;
+    branchName: string;
+  } | null>(null);
+
   // Sample Staff List for Pontianak Branches
   const staffList = [
     { id: 'stf-1', name: 'Hendra Saputra', role: 'Staff Keuangan', branchId: 'br-1', qrCode: 'QR-STF-1-HENDRA' },
@@ -61,6 +71,7 @@ export default function AttendancePage() {
     setIsScanning(true);
     const currentTime = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
     const today = new Date().toISOString().split('T')[0];
+    const brName = branches.find(b => b.id === branchId)?.name || 'Cabang Serdam Pontianak';
 
     // Check existing record today
     const existing = attendanceLogs.find(att => att.entityName === entityName && att.date === today);
@@ -83,6 +94,14 @@ export default function AttendancePage() {
           message: `Scan Ke-2 Berhasil! [${entityName}] Presensi JAM PULANG pukul ${currentTime}`,
           type: 'CHECK_OUT',
         });
+        setSuccessModal({
+          entityName,
+          entityType,
+          scanType: 'JAM PULANG',
+          time: currentTime,
+          date: today,
+          branchName: brName,
+        });
       } else {
         // Scan 1 = Jam Masuk
         addAttendance({
@@ -99,9 +118,17 @@ export default function AttendancePage() {
           message: `Scan Ke-1 Berhasil! [${entityName}] Presensi JAM MASUK pukul ${currentTime}`,
           type: 'CHECK_IN',
         });
+        setSuccessModal({
+          entityName,
+          entityType,
+          scanType: 'JAM MASUK',
+          time: currentTime,
+          date: today,
+          branchName: brName,
+        });
       }
       setIsScanning(false);
-    }, 1000);
+    }, 800);
   };
 
   const simulateRandomScan = () => {
@@ -816,6 +843,122 @@ export default function AttendancePage() {
         </div>
       )}
       </div>
+
+      {/* POPUP MODAL SUKSES PRESENSI WITH TIMESTAMP & DETAILS */}
+      {successModal && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(15, 23, 42, 0.65)',
+          backdropFilter: 'blur(8px)',
+          zIndex: 9999,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '20px',
+        }}>
+          <div className="animate-slide-up" style={{
+            background: '#ffffff',
+            borderRadius: '24px',
+            padding: '36px 32px',
+            maxWidth: '480px',
+            width: '100%',
+            textAlign: 'center',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+            border: successModal.scanType === 'JAM MASUK' ? '3px solid #16a34a' : '3px solid #2563eb',
+            position: 'relative',
+          }}>
+            {/* Glowing Icon Badge */}
+            <div style={{
+              width: '88px',
+              height: '88px',
+              borderRadius: '50%',
+              background: successModal.scanType === 'JAM MASUK' ? '#dcfce7' : '#dbeafe',
+              color: successModal.scanType === 'JAM MASUK' ? '#16a34a' : '#2563eb',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 20px',
+              boxShadow: successModal.scanType === 'JAM MASUK' ? '0 0 25px rgba(22, 163, 74, 0.35)' : '0 0 25px rgba(37, 99, 235, 0.35)',
+            }}>
+              {successModal.scanType === 'JAM MASUK' ? <CheckCircle2 size={52} /> : <LogOut size={52} />}
+            </div>
+
+            <div style={{
+              fontSize: '0.8rem',
+              fontWeight: 800,
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+              color: successModal.scanType === 'JAM MASUK' ? '#16a34a' : '#2563eb',
+              background: successModal.scanType === 'JAM MASUK' ? '#f0fdf4' : '#eff6ff',
+              padding: '6px 16px',
+              borderRadius: '999px',
+              display: 'inline-block',
+              marginBottom: '12px',
+              border: `1px solid ${successModal.scanType === 'JAM MASUK' ? '#bbf7d0' : '#bfdbfe'}`,
+            }}>
+              ✨ PRESENSI {successModal.scanType} BERHASIL
+            </div>
+
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0f172a', margin: '0 0 6px' }}>
+              {successModal.entityName}
+            </h2>
+
+            <div style={{ fontSize: '0.875rem', color: '#64748b', fontWeight: 600, marginBottom: '24px' }}>
+              Kategori: <span style={{ color: '#4f46e5', fontWeight: 700 }}>{successModal.entityType}</span> • {successModal.branchName}
+            </div>
+
+            {/* Time Stamp Clock Highlight Card */}
+            <div style={{
+              background: '#f8fafc',
+              border: '1px solid #e2e8f0',
+              borderRadius: '16px',
+              padding: '18px 24px',
+              marginBottom: '28px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-around',
+            }}>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>WAKTU PRESENSI</div>
+                <div style={{ fontSize: '1.8rem', fontWeight: 800, color: successModal.scanType === 'JAM MASUK' ? '#16a34a' : '#2563eb', lineHeight: 1.2, marginTop: '4px' }}>
+                  {successModal.time} <span style={{ fontSize: '1rem', fontWeight: 700, color: '#64748b' }}>WIB</span>
+                </div>
+              </div>
+
+              <div style={{ width: '1px', height: '40px', background: '#cbd5e1' }} />
+
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>TANGGAL</div>
+                <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#0f172a', marginTop: '6px' }}>
+                  {new Date(successModal.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setSuccessModal(null)}
+              style={{
+                width: '100%',
+                padding: '14px',
+                background: successModal.scanType === 'JAM MASUK' ? '#16a34a' : '#2563eb',
+                border: 'none',
+                borderRadius: '12px',
+                color: '#ffffff',
+                fontWeight: 700,
+                fontSize: '1rem',
+                cursor: 'pointer',
+                boxShadow: successModal.scanType === 'JAM MASUK' ? '0 8px 20px rgba(22, 163, 74, 0.3)' : '0 8px 20px rgba(37, 99, 235, 0.3)',
+                transition: 'transform 0.15s ease',
+              }}
+              onMouseDown={e => e.currentTarget.style.transform = 'scale(0.98)'}
+              onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
+            >
+              ✅ Tutup & Lanjut Scan Berikutnya
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
