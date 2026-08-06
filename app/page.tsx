@@ -5,7 +5,7 @@ import { useERP } from '@/context/ERPContext';
 import {
   Phone, ArrowRight, Lock, Sparkles, CheckCircle2, ChevronRight,
   Globe, GraduationCap, Heart, Award, ShieldCheck, Users,
-  BookOpen, Clock, Star, MapPin, Target, Eye, Compass, Building2
+  BookOpen, Clock, Star, MapPin, Target, Eye, Compass, Building2, QrCode
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -22,11 +22,11 @@ export default function CompanyProfileLandingPage() {
         <path d="M -50 790 Q 500 1040 1150 840" stroke="#10b981" strokeWidth="2" strokeDasharray="6 6" />
       </svg>
 
-      {/* 🧭 HEADER BAR (SPACIOUS PREMIUM TOP PADDING) */}
-      <header className="animate-slide-up" style={{ maxWidth: '1400px', margin: '0 auto', padding: '36px 32px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', zIndex: 20, gap: '28px' }}>
+      {/* 🧭 HEADER BAR (SPACIOUS PREMIUM TOP PADDING & MOBILE RESPONSIVE) */}
+      <header className="animate-slide-up main-header" style={{ maxWidth: '1400px', margin: '0 auto', padding: '36px 32px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', zIndex: 20, gap: '28px' }}>
         
         {/* Hello Playful Badge Logo */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
+        <div className="header-logo-row" style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
           <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
             <span style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#4f46e5', color: '#fff', fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', boxShadow: '0 4px 10px rgba(79,70,229,0.25)' }}>H</span>
             <span style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#ef4444', color: '#fff', fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', boxShadow: '0 4px 10px rgba(239,68,68,0.25)' }}>E</span>
@@ -38,7 +38,7 @@ export default function CompanyProfileLandingPage() {
         </div>
 
         {/* Navigation Links */}
-        <nav style={{ display: 'flex', gap: '22px', fontSize: '0.9rem', fontWeight: 600, color: '#334155', whiteSpace: 'nowrap', alignItems: 'center', flexShrink: 0 }}>
+        <nav className="nav-menu-links" style={{ display: 'flex', gap: '22px', fontSize: '0.9rem', fontWeight: 600, color: '#334155', whiteSpace: 'nowrap', alignItems: 'center', flexShrink: 0 }}>
           <a href="#profile" className="hover-lift" style={{ textDecoration: 'none', color: 'inherit' }}>Profil Lembaga</a>
           <a href="#vision-mission" className="hover-lift" style={{ textDecoration: 'none', color: 'inherit' }}>Visi & Misi</a>
           <a href="#advantages" className="hover-lift" style={{ textDecoration: 'none', color: 'inherit' }}>Keunggulan</a>
@@ -48,16 +48,16 @@ export default function CompanyProfileLandingPage() {
         </nav>
 
         {/* Phone Contact, Scan QR, & Login Button */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', whiteSpace: 'nowrap', flexShrink: 0 }}>
-          <a href="tel:0561734567" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', color: '#1e1b4b', fontWeight: 700, fontSize: '0.95rem', whiteSpace: 'nowrap' }}>
-            <div style={{ width: '38px', height: '38px', borderRadius: '50%', background: '#e0e7ff', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: '#4f46e5', flexShrink: 0, boxShadow: '0 4px 12px rgba(79,70,229,0.15)' }}>
+        <div className="header-actions-row" style={{ display: 'flex', alignItems: 'center', gap: '16px', whiteSpace: 'nowrap', flexShrink: 0 }}>
+          <a href="https://wa.me/6282153789821" target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', color: '#1e1b4b', fontWeight: 700, fontSize: '0.95rem', whiteSpace: 'nowrap' }}>
+            <div style={{ width: '38px', height: '38px', borderRadius: '50%', background: '#dcfce7', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: '#16a34a', flexShrink: 0, boxShadow: '0 4px 12px rgba(22,163,74,0.15)' }}>
               <Phone size={18} />
             </div>
-            <span>0561-734567</span>
+            <span>+62 821-5378-9821</span>
           </a>
 
-          <Link href="/attendance" className="btn btn-secondary hover-lift" style={{ borderRadius: '999px', padding: '12px 20px', fontSize: '0.875rem', fontWeight: 700, textDecoration: 'none', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#047857', background: '#d1fae5', border: '1px solid #a7f3d0' }}>
-            📷 Scan QR Kehadiran
+          <Link href="/attendance" className="btn btn-secondary hover-lift" style={{ borderRadius: '999px', padding: '12px 20px', fontSize: '0.875rem', fontWeight: 700, textDecoration: 'none', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '8px', color: '#047857', background: '#d1fae5', border: '1px solid #a7f3d0' }}>
+            <QrCode size={18} /> Scan QR Kehadiran
           </Link>
 
           <Link href="/login" className="btn btn-primary animate-glow hover-lift" style={{ borderRadius: '999px', padding: '12px 24px', fontSize: '0.875rem', fontWeight: 700, textDecoration: 'none', whiteSpace: 'nowrap' }}>
@@ -66,22 +66,22 @@ export default function CompanyProfileLandingPage() {
         </div>
       </header>
 
-      {/* 🚀 1. HERO SECTION (LARGE PHOTO 1.55X FILLING RIGHT DESKTOP COLUMN) */}
-      <section className="animate-slide-up" style={{ maxWidth: '1400px', margin: '0 auto', padding: '10px 32px 0', display: 'grid', gridTemplateColumns: '1.1fr 0.9fr', gap: '32px', alignItems: 'end', position: 'relative', zIndex: 10 }}>
+      {/* 🚀 1. HERO SECTION (MOBILE RESPONSIVE GRID) */}
+      <section className="animate-slide-up hero-grid-section" style={{ maxWidth: '1400px', margin: '0 auto', padding: '10px 32px 0', display: 'grid', gridTemplateColumns: '1.1fr 0.9fr', gap: '32px', alignItems: 'end', position: 'relative', zIndex: 10 }}>
         
         {/* Hero Left Content Column */}
         <div style={{ paddingBottom: '32px', zIndex: 2 }}>
-          <h1 style={{ fontSize: '2.95rem', fontWeight: 700, color: '#1e1b4b', lineHeight: 1.22, letterSpacing: '-0.01em', marginBottom: '20px', maxWidth: '600px' }}>
+          <h1 className="hero-headline" style={{ fontSize: '2.95rem', fontWeight: 700, color: '#1e1b4b', lineHeight: 1.22, letterSpacing: '-0.01em', marginBottom: '20px', maxWidth: '600px' }}>
             Meraih Prestasi Tertinggi Bersama <br />
             <span style={{ color: '#ef4444', fontWeight: 700 }}>Hello Academy Pontianak</span>
           </h1>
 
-          <p style={{ fontSize: '1.05rem', color: '#64748b', lineHeight: 1.75, marginBottom: '28px', maxWidth: '540px', fontWeight: 400 }}>
+          <p className="hero-subtitle" style={{ fontSize: '1.05rem', color: '#64748b', lineHeight: 1.75, marginBottom: '28px', maxWidth: '540px', fontWeight: 400 }}>
             Mencetak Generasi Berprestasi, Berkarakter, dan Siap Bersaing Masuk Perguruan Tinggi Negeri (PTN) Favorit, Kedokteran, & Sekolah Kedinasan Indonesia melalui 3 Cabang Utama Kota Pontianak.
           </p>
 
-          <div style={{ display: 'flex', gap: '18px', alignItems: 'center' }}>
-            <Link href="/ppdb" className="btn btn-red hover-lift" style={{ borderRadius: '999px', padding: '16px 36px', fontSize: '1rem', fontWeight: 700, textDecoration: 'none' }}>
+          <div className="hero-cta-buttons" style={{ display: 'flex', gap: '18px', alignItems: 'center' }}>
+            <Link href="/ppdb?register=true" className="btn btn-red hover-lift" style={{ borderRadius: '999px', padding: '16px 36px', fontSize: '1rem', fontWeight: 700, textDecoration: 'none' }}>
               Pendaftaran PPDB 2026 →
             </Link>
             <a href="#profile" className="btn btn-secondary hover-lift" style={{ borderRadius: '999px', padding: '16px 32px', fontSize: '1rem', fontWeight: 600, textDecoration: 'none' }}>
@@ -90,7 +90,7 @@ export default function CompanyProfileLandingPage() {
           </div>
 
           {/* Key Company Fast Stats */}
-          <div style={{ display: 'flex', gap: '32px', marginTop: '36px', paddingTop: '20px', borderTop: '1px solid #e2e8f0' }}>
+          <div className="hero-fast-stats" style={{ display: 'flex', gap: '32px', marginTop: '36px', paddingTop: '20px', borderTop: '1px solid #e2e8f0' }}>
             <div>
               <div style={{ fontSize: '1.6rem', fontWeight: 700, color: '#4f46e5' }}>1.150+</div>
               <div style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 500 }}>Siswa Aktif</div>
@@ -106,18 +106,18 @@ export default function CompanyProfileLandingPage() {
           </div>
         </div>
 
-        {/* Hero Right Visual Column (LARGE 1.55X PHOTO) */}
-        <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'flex-end', height: '580px', width: '100%', overflow: 'visible' }}>
+        {/* Hero Right Visual Column */}
+        <div className="hero-visual-col" style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'flex-end', height: '580px', width: '100%', overflow: 'visible' }}>
           
-          {/* Top Badge Floating Closer to Student Photo */}
-          <div className="animate-float" style={{ position: 'absolute', top: '55px', right: '10px', background: '#fff', padding: '12px 26px', borderRadius: '999px', fontSize: '1.15rem', fontWeight: 700, color: '#1e1b4b', boxShadow: '0 10px 25px rgba(0,0,0,0.08)', border: '1px solid #e0e7ff', zIndex: 12, display: 'flex', alignItems: 'center', gap: '12px' }}>
+          {/* Top Badge Floating */}
+          <div className="animate-float floating-badge-top" style={{ position: 'absolute', top: '55px', right: '10px', background: '#fff', padding: '12px 26px', borderRadius: '999px', fontSize: '1.15rem', fontWeight: 700, color: '#1e1b4b', boxShadow: '0 10px 25px rgba(0,0,0,0.08)', border: '1px solid #e0e7ff', zIndex: 12, display: 'flex', alignItems: 'center', gap: '12px' }}>
             <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: '#e0e7ff', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4f46e5', flexShrink: 0, boxShadow: '0 4px 10px rgba(79,70,229,0.2)' }}>
               <GraduationCap size={26} />
             </div>
             <span>100% Pengajar dari PTN</span>
           </div>
 
-          {/* Photo Scaled Up Large */}
+          {/* Student Photo */}
           <img
             src="/images/hero_students.png?v=2026"
             alt="Siswa Berprestasi Hello Academy Pontianak"
@@ -132,7 +132,7 @@ export default function CompanyProfileLandingPage() {
             }}
           />
 
-          <div className="animate-float" style={{ position: 'absolute', bottom: '20px', left: '-35px', background: '#fff', padding: '12px 26px', borderRadius: '999px', fontSize: '1.15rem', fontWeight: 700, color: '#10b981', boxShadow: '0 10px 25px rgba(0,0,0,0.08)', zIndex: 10, border: '1px solid #e0e7ff', display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div className="animate-float floating-badge-bottom" style={{ position: 'absolute', bottom: '20px', left: '-35px', background: '#fff', padding: '12px 26px', borderRadius: '999px', fontSize: '1.15rem', fontWeight: 700, color: '#10b981', boxShadow: '0 10px 25px rgba(0,0,0,0.08)', zIndex: 10, border: '1px solid #e0e7ff', display: 'flex', alignItems: 'center', gap: '12px' }}>
             <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: '#fef3c7', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#f59e0b', flexShrink: 0, boxShadow: '0 4px 10px rgba(245,158,11,0.2)' }}>
               <Star size={26} style={{ fill: '#f59e0b' }} />
             </div>
@@ -141,9 +141,9 @@ export default function CompanyProfileLandingPage() {
         </div>
       </section>
 
-      {/* 📜 RUNNING MARQUEE TICKER ANIMATION (FIXED AT THE VERY BOTTOM OF SCREEN ABOVE TASKBAR) */}
+      {/* 📜 RUNNING MARQUEE TICKER ANIMATION (FIXED AT THE VERY BOTTOM OF SCREEN ABOVE TASKBAR - VERY SLOW 75s SPEED) */}
       <div style={{ position: 'fixed', bottom: 0, left: 0, width: '100%', background: '#1e1b4b', color: '#fff', padding: '14px 0', overflow: 'hidden', whiteSpace: 'nowrap', zIndex: 9999, borderTop: '2px solid #312e81', boxShadow: '0 -4px 20px rgba(0,0,0,0.25)' }}>
-        <div style={{ display: 'inline-flex', gap: '44px', fontSize: '0.95rem', fontWeight: 700, animation: 'marquee 22s linear infinite' }}>
+        <div style={{ display: 'inline-flex', gap: '44px', fontSize: '0.95rem', fontWeight: 700, animation: 'marquee 75s linear infinite' }}>
           <span>🔥 HELLO ACADEMY PONTIANAK - PROFIL LEMBAGA PENDIDIKAN TERINTEGRASI</span>
           <span>✨ 3 CABANG UTAMA: SERDAM PUSAT • KARYA BARU • DANAU SENTARUM</span>
           <span>🚀 MENCETAK GENERASI UNGGUL BERSTANDAR NASIONAL BERBASIS DIGITAL</span>
@@ -151,8 +151,8 @@ export default function CompanyProfileLandingPage() {
         </div>
       </div>
 
-      {/* 🏛️ 2. PROFIL SINGKAT & SEJARAH LEMBAGA (HIDDEN BELOW INITIAL SCREEN FOLD) */}
-      <section id="profile" className="animate-slide-up" style={{ maxWidth: '1400px', margin: '0 auto', padding: '140px 36px 90px', marginTop: '40px' }}>
+      {/* 🏛️ 2. PROFIL SINGKAT & SEJARAH LEMBAGA (PUSHED LOWER DOWN BELOW INITIAL SCREEN FOLD) */}
+      <section id="profile" className="animate-slide-up" style={{ maxWidth: '1400px', margin: '0 auto', padding: '180px 36px 90px', marginTop: '180px' }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '48px', alignItems: 'center' }}>
           <div>
             <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#ef4444', textTransform: 'uppercase', letterSpacing: '0.05em' }}>TENTANG PERUSAHAAN</span>
