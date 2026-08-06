@@ -69,8 +69,12 @@ export default function AttendancePage() {
   // Perform Scan (Scan 1 = Jam Masuk, Scan 2 = Jam Pulang)
   const handleQRScan = (entityName: string, entityType: 'Siswa' | 'Guru' | 'Staff', branchId: string) => {
     setIsScanning(true);
-    const currentTime = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-    const today = new Date().toISOString().split('T')[0];
+    const now = new Date();
+    // Jam : Menit : Detik (24h / 2-digit format)
+    const currentTime = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }).replace(/\./g, ':');
+    // Hari, Tanggal Bulan Tahun (e.g., Kamis, 6 Agustus 2026)
+    const fullDateFormatted = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    const today = now.toISOString().split('T')[0];
     const brName = branches.find(b => b.id === branchId)?.name || 'Cabang Serdam Pontianak';
 
     // Check existing record today
@@ -91,15 +95,15 @@ export default function AttendancePage() {
           checkOutTime: currentTime,
         });
         setScanResult({
-          message: `Scan Ke-2 Berhasil! [${entityName}] Presensi JAM PULANG pukul ${currentTime}`,
+          message: `Scan Ke-2 Berhasil! [${entityName}] Presensi JAM PULANG pukul ${currentTime} WIB`,
           type: 'CHECK_OUT',
         });
         setSuccessModal({
           entityName,
           entityType,
           scanType: 'JAM PULANG',
-          time: currentTime,
-          date: today,
+          time: `${currentTime} WIB`,
+          date: fullDateFormatted,
           branchName: brName,
         });
       } else {
@@ -110,20 +114,20 @@ export default function AttendancePage() {
           entityName,
           branchId,
           status: 'Hadir',
-          time: currentTime,
+          time: `${currentTime} WIB`,
           scanType: 'Jam Masuk',
-          checkInTime: currentTime,
+          checkInTime: `${currentTime} WIB`,
         });
         setScanResult({
-          message: `Scan Ke-1 Berhasil! [${entityName}] Presensi JAM MASUK pukul ${currentTime}`,
+          message: `Scan Ke-1 Berhasil! [${entityName}] Presensi JAM MASUK pukul ${currentTime} WIB`,
           type: 'CHECK_IN',
         });
         setSuccessModal({
           entityName,
           entityType,
           scanType: 'JAM MASUK',
-          time: currentTime,
-          date: today,
+          time: `${currentTime} WIB`,
+          date: fullDateFormatted,
           branchName: brName,
         });
       }
@@ -576,17 +580,17 @@ export default function AttendancePage() {
             }}>
               <div style={{ textAlign: 'center' }}>
                 <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>WAKTU PRESENSI</div>
-                <div style={{ fontSize: '1.8rem', fontWeight: 800, color: successModal.scanType === 'JAM MASUK' ? '#16a34a' : '#2563eb', lineHeight: 1.2, marginTop: '4px' }}>
-                  {successModal.time} <span style={{ fontSize: '1rem', fontWeight: 700, color: '#64748b' }}>WIB</span>
+                <div style={{ fontSize: '1.6rem', fontWeight: 800, color: successModal.scanType === 'JAM MASUK' ? '#16a34a' : '#2563eb', lineHeight: 1.2, marginTop: '4px' }}>
+                  {successModal.time}
                 </div>
               </div>
 
               <div style={{ width: '1px', height: '40px', background: '#cbd5e1' }} />
 
               <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>TANGGAL</div>
+                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>TANGGAL LENGKAP</div>
                 <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#0f172a', marginTop: '6px' }}>
-                  {new Date(successModal.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                  {successModal.date}
                 </div>
               </div>
             </div>

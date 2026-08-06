@@ -112,7 +112,7 @@ export default function ParentsPage() {
                   return (
                     <tr key={att.id || idx} style={{ borderBottom: '1px solid #f1f5f9' }}>
                       <td style={{ padding: '12px 14px', fontWeight: 600, color: '#0f172a' }}>
-                        {new Date(att.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                        {new Date(att.date).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
                       </td>
                       <td style={{ padding: '12px 14px' }}>
                         <span style={{
