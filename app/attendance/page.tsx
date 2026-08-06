@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useERP } from '@/context/ERPContext';
 import Link from 'next/link';
-import { QrCode, CheckCircle2, Clock, Camera, User, Printer, LogIn, LogOut, ShieldAlert, Award, Home, LayoutDashboard } from 'lucide-react';
+import { QrCode, CheckCircle2, Clock, Camera, CameraOff, User, Printer, LogIn, LogOut, ShieldAlert, Award, Home, LayoutDashboard, RefreshCw } from 'lucide-react';
 
 export default function AttendancePage() {
   const { attendanceLogs, addAttendance, students, teachers, branches } = useERP();
@@ -11,6 +11,43 @@ export default function AttendancePage() {
   const [selectedEntityType, setSelectedEntityType] = useState<'Siswa' | 'Guru' | 'Staff'>('Siswa');
   const [isScanning, setIsScanning] = useState(false);
   const [scanResult, setScanResult] = useState<{ message: string; type: 'CHECK_IN' | 'CHECK_OUT' } | null>(null);
+
+  // Live WebCam State
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const [isCameraActive, setIsCameraActive] = useState(false);
+  const [cameraError, setCameraError] = useState<string | null>(null);
+
+  const startCamera = async () => {
+    setCameraError(null);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } }
+      });
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+      setIsCameraActive(true);
+    } catch (err: any) {
+      console.error('Camera access error:', err);
+      setCameraError('Izin kamera ditolak atau perangkat kamera tidak ditemukan pada browser ini.');
+      setIsCameraActive(false);
+    }
+  };
+
+  const stopCamera = () => {
+    if (videoRef.current && videoRef.current.srcObject) {
+      const stream = videoRef.current.srcObject as MediaStream;
+      stream.getTracks().forEach(track => track.stop());
+      videoRef.current.srcObject = null;
+    }
+    setIsCameraActive(false);
+  };
+
+  useEffect(() => {
+    return () => {
+      stopCamera();
+    };
+  }, []);
 
   // Sample Staff List for Pontianak Branches
   const staffList = [
@@ -124,7 +161,7 @@ export default function AttendancePage() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
         <div>
           <h1 style={{ fontSize: '1.5rem', color: '#0f172a', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <QrCode style={{ color: '#4f46e5' }} /> Presensi Barcode QR Code Digital
+            <QrCode style={{ color: '#4f46e5' }} /> Presensi Barcode QR Code Digital (Live Camera Stream)
           </h1>
           <p style={{ fontSize: '0.875rem', color: '#64748b', marginTop: '4px' }}>
             Sistem otomatis 2x Scan Barcode per hari: <strong>Scan 1 = Jam Masuk</strong> dan <strong>Scan 2 = Jam Pulang</strong> (Siswa, Guru, & Staff).
@@ -194,9 +231,9 @@ export default function AttendancePage() {
             </div>
           )}
 
-          {/* Interactive Scanner Box Simulator */}
+          {/* Interactive Live Camera Scanner Box */}
           <div style={{
-            padding: '36px 24px',
+            padding: '32px 24px',
             background: '#ffffff',
             borderRadius: '16px',
             border: '1px solid #e2e8f0',
@@ -204,7 +241,7 @@ export default function AttendancePage() {
             boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05)',
           }}>
             {/* Entity Category Selector */}
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', marginBottom: '24px' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', marginBottom: '20px' }}>
               {(['Siswa', 'Guru', 'Staff'] as const).map(type => (
                 <button
                   key={type}
@@ -226,48 +263,154 @@ export default function AttendancePage() {
               ))}
             </div>
 
+            {/* LIVE WEBCAM VIDEO STREAM DISPLAY BOX */}
             <div style={{
-              width: '130px',
-              height: '130px',
+              width: '100%',
+              maxWidth: '480px',
+              height: '280px',
               margin: '0 auto 20px',
-              border: '3px dashed #4f46e5',
+              border: isCameraActive ? '3px solid #10b981' : '3px dashed #4f46e5',
               borderRadius: '20px',
+              position: 'relative',
+              overflow: 'hidden',
+              background: '#0f172a',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              background: '#f8fafc',
+              boxShadow: isCameraActive ? '0 0 25px rgba(16, 185, 129, 0.25)' : 'none',
             }}>
-              <QrCode size={70} style={{ color: isScanning ? '#16a34a' : '#4f46e5', transition: 'all 0.3s ease' }} />
+              <video
+                ref={videoRef}
+                autoPlay
+                playsInline
+                muted
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  display: isCameraActive ? 'block' : 'none',
+                  transform: 'scaleX(-1)', // Mirror display for front webcam
+                }}
+              />
+
+              {!isCameraActive && (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', color: '#ffffff', padding: '20px' }}>
+                  <QrCode size={64} style={{ color: '#818cf8' }} />
+                  <div style={{ fontSize: '0.95rem', fontWeight: 600, color: '#e2e8f0' }}>Kamera Live Belum Aktif</div>
+                  <div style={{ fontSize: '0.775rem', color: '#94a3b8', maxWidth: '300px' }}>
+                    Klik tombol <strong>"Aktifkan Kamera Live"</strong> di bawah untuk membuka feed video dari Webcam Komputer / HP Anda.
+                  </div>
+                </div>
+              )}
+
+              {/* Scanning Laser Animation Overlay when Active */}
+              {isCameraActive && (
+                <div style={{
+                  position: 'absolute',
+                  inset: 0,
+                  pointerEvents: 'none',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                  <div style={{
+                    width: '220px',
+                    height: '220px',
+                    border: '2px solid rgba(16, 185, 129, 0.8)',
+                    borderRadius: '16px',
+                    boxShadow: '0 0 0 4000px rgba(15, 23, 42, 0.45)',
+                    position: 'relative',
+                  }}>
+                    <div style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      height: '3px',
+                      background: '#10b981',
+                      boxShadow: '0 0 10px #10b981',
+                      animation: 'pulseGlow 2s infinite',
+                    }} />
+                  </div>
+                  <span style={{ position: 'absolute', bottom: '12px', background: 'rgba(15,23,42,0.8)', color: '#10b981', padding: '4px 12px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 700 }}>
+                    🔴 LIVE CAMERA SCANNER FEED
+                  </span>
+                </div>
+              )}
             </div>
 
-            <h3 style={{ fontSize: '1.25rem', color: '#0f172a', fontWeight: 600, margin: '0 0 6px' }}>
-              Stand Camera Barcode QR Reader
-            </h3>
-            <p style={{ fontSize: '0.875rem', color: '#64748b', maxWidth: '440px', margin: '0 auto 24px' }}>
-              Arahkan Kartu QR / Barcode milik Siswa, Guru, atau Staff ke kamera.
-              System otomatis mendeteksi <strong>Scan 1 = JAM MASUK</strong> dan <strong>Scan 2 = JAM PULANG</strong>.
-            </p>
+            {cameraError && (
+              <div style={{ padding: '10px 16px', background: '#fee2e2', color: '#991b1b', borderRadius: '8px', fontSize: '0.825rem', marginBottom: '16px', maxWidth: '480px', margin: '0 auto 16px' }}>
+                ⚠️ {cameraError}
+              </div>
+            )}
 
-            <button
-              onClick={simulateRandomScan}
-              disabled={isScanning}
-              style={{
-                padding: '12px 28px',
-                background: 'linear-gradient(135deg, #4f46e5, #6366f1)',
-                border: 'none',
-                borderRadius: '10px',
-                color: '#ffffff',
-                fontWeight: 500,
-                fontSize: '0.9rem',
-                cursor: 'pointer',
-                boxShadow: '0 8px 18px -4px rgba(79, 70, 229, 0.35)',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-              }}
-            >
-              <Camera size={18} /> {isScanning ? 'Memproses Barcode...' : `Simulasi Scan QR Kamera (${selectedEntityType})`}
-            </button>
+            {/* Camera Control Buttons */}
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'wrap' }}>
+              {!isCameraActive ? (
+                <button
+                  onClick={startCamera}
+                  style={{
+                    padding: '12px 24px',
+                    background: '#10b981',
+                    border: 'none',
+                    borderRadius: '10px',
+                    color: '#ffffff',
+                    fontWeight: 600,
+                    fontSize: '0.9rem',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    boxShadow: '0 4px 14px rgba(16, 185, 129, 0.3)',
+                  }}
+                >
+                  <Camera size={18} /> Aktifkan Kamera Live
+                </button>
+              ) : (
+                <button
+                  onClick={stopCamera}
+                  style={{
+                    padding: '12px 24px',
+                    background: '#ef4444',
+                    border: 'none',
+                    borderRadius: '10px',
+                    color: '#ffffff',
+                    fontWeight: 600,
+                    fontSize: '0.9rem',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    boxShadow: '0 4px 14px rgba(239, 68, 68, 0.3)',
+                  }}
+                >
+                  <CameraOff size={18} /> Matikan Kamera Live
+                </button>
+              )}
+
+              <button
+                onClick={simulateRandomScan}
+                disabled={isScanning}
+                style={{
+                  padding: '12px 24px',
+                  background: 'linear-gradient(135deg, #4f46e5, #6366f1)',
+                  border: 'none',
+                  borderRadius: '10px',
+                  color: '#ffffff',
+                  fontWeight: 600,
+                  fontSize: '0.9rem',
+                  cursor: 'pointer',
+                  boxShadow: '0 8px 18px -4px rgba(79, 70, 229, 0.35)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
+                <QrCode size={18} /> {isScanning ? 'Memproses Barcode...' : `Tangkap & Scan Barcode (${selectedEntityType})`}
+              </button>
+            </div>
           </div>
 
           {/* Quick Barcode Tap Selector */}
