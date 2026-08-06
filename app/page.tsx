@@ -49,11 +49,11 @@ export default function CompanyProfileLandingPage() {
 
         {/* Phone Contact, Scan QR, & Login Button */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', whiteSpace: 'nowrap', flexShrink: 0 }}>
-          <a href="tel:0561734567" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', color: '#1e1b4b', fontWeight: 700, fontSize: '0.95rem', whiteSpace: 'nowrap' }}>
-            <div style={{ width: '38px', height: '38px', borderRadius: '50%', background: '#e0e7ff', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: '#4f46e5', flexShrink: 0, boxShadow: '0 4px 12px rgba(79,70,229,0.15)' }}>
+          <a href="https://wa.me/6282153789821" target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', color: '#1e1b4b', fontWeight: 700, fontSize: '0.95rem', whiteSpace: 'nowrap' }}>
+            <div style={{ width: '38px', height: '38px', borderRadius: '50%', background: '#dcfce7', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: '#16a34a', flexShrink: 0, boxShadow: '0 4px 12px rgba(22,163,74,0.15)' }}>
               <Phone size={18} />
             </div>
-            <span>0561-734567</span>
+            <span>+62 821-5378-9821</span>
           </a>
 
           <Link href="/attendance" className="btn btn-secondary hover-lift" style={{ borderRadius: '999px', padding: '12px 20px', fontSize: '0.875rem', fontWeight: 700, textDecoration: 'none', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#047857', background: '#d1fae5', border: '1px solid #a7f3d0' }}>
@@ -81,7 +81,7 @@ export default function CompanyProfileLandingPage() {
           </p>
 
           <div style={{ display: 'flex', gap: '18px', alignItems: 'center' }}>
-            <Link href="/ppdb" className="btn btn-red hover-lift" style={{ borderRadius: '999px', padding: '16px 36px', fontSize: '1rem', fontWeight: 700, textDecoration: 'none' }}>
+            <Link href="/ppdb?register=true" className="btn btn-red hover-lift" style={{ borderRadius: '999px', padding: '16px 36px', fontSize: '1rem', fontWeight: 700, textDecoration: 'none' }}>
               Pendaftaran PPDB 2026 →
             </Link>
             <a href="#profile" className="btn btn-secondary hover-lift" style={{ borderRadius: '999px', padding: '16px 32px', fontSize: '1rem', fontWeight: 600, textDecoration: 'none' }}>
@@ -347,8 +347,9 @@ export default function CompanyProfileLandingPage() {
             <p style={{ fontSize: '0.9rem', color: '#cbd5e1', lineHeight: 1.7, maxWidth: '420px' }}>
               Lembaga Pendidikan & Bimbingan Belajar Terintegrasi dengan Sistem Informasi Manajemen Enterprise Multi-Cabang ERP.
             </p>
-            <div style={{ marginTop: '16px', fontSize: '0.85rem', color: '#94a3b8' }}>
-              📍 <strong>Kantor Pusat:</strong> Jl. Sungai Raya Dalam (Serdam) No. 88, Pontianak
+            <div style={{ marginTop: '16px', fontSize: '0.85rem', color: '#94a3b8', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <div>📍 <strong>Kantor Pusat:</strong> Jl. Sungai Raya Dalam (Serdam) No. 88, Pontianak</div>
+              <div>💬 <strong>WhatsApp Resmi:</strong> <a href="https://wa.me/6282153789821" target="_blank" rel="noreferrer" style={{ color: '#10b981', fontWeight: 700, textDecoration: 'none' }}>+62 821-5378-9821</a></div>
             </div>
           </div>
 

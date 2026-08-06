@@ -1,16 +1,25 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useERP } from '@/context/ERPContext';
-import { UserCheck, Plus, CheckCircle, FileText, Download, Phone, MapPin, School, GraduationCap, Eye, User, Calendar, ShieldCheck } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
+import { UserCheck, Plus, CheckCircle, FileText, Download, Phone, MapPin, School, GraduationCap, Eye, User, Calendar, ShieldCheck, Send } from 'lucide-react';
 import { PPDBApplication } from '@/lib/store';
 
-export default function PPDBPage() {
+function PPDBContent() {
   const { ppdbList, filteredPpdbList, branches, addStudent, addAuditLog, isSuperAdmin } = useERP();
+  const searchParams = useSearchParams();
+
   const [applications, setApplications] = useState<PPDBApplication[]>(filteredPpdbList);
   const [showModal, setShowModal] = useState(false);
   const [selectedDetailApp, setSelectedDetailApp] = useState<PPDBApplication | null>(null);
   const [successAlert, setSuccessAlert] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (searchParams.get('register') === 'true') {
+      setShowModal(true);
+    }
+  }, [searchParams]);
 
   // Form Complete Registration Data Fields
   const [applicantName, setApplicantName] = useState('');
@@ -289,5 +298,13 @@ export default function PPDBPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function PPDBPage() {
+  return (
+    <Suspense fallback={<div style={{ padding: '30px', color: '#64748b' }}>Memuat Form Pendaftaran PPDB...</div>}>
+      <PPDBContent />
+    </Suspense>
   );
 }
