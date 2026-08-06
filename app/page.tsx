@@ -110,9 +110,9 @@ export default function CompanyProfileLandingPage() {
         <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'flex-end', height: '580px', width: '100%', overflow: 'visible' }}>
           
           {/* Top Badge Floating Closer to Student Photo */}
-          <div className="animate-float" style={{ position: 'absolute', top: '55px', right: '10px', background: '#fff', padding: '12px 26px', borderRadius: '999px', fontSize: '1.15rem', fontWeight: 700, color: '#1e1b4b', boxShadow: '0 10px 25px rgba(0,0,0,0.08)', border: '1px solid #e0e7ff', zIndex: 12, display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: '#e0e7ff', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4f46e5', flexShrink: 0, boxShadow: '0 4px 10px rgba(79,70,229,0.2)' }}>
-              <GraduationCap size={26} />
+          <div className="animate-float" style={{ position: 'absolute', top: '45px', right: '10px', background: '#ffffff', padding: '14px 26px', borderRadius: '999px', fontSize: '1.1rem', fontWeight: 700, color: '#1e1b4b', boxShadow: '0 10px 25px rgba(79, 70, 229, 0.15)', border: '2px solid #e0e7ff', zIndex: 12, display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ width: '46px', height: '46px', borderRadius: '50%', background: '#e0e7ff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <GraduationCap size={28} style={{ color: '#4f46e5' }} />
             </div>
             <span>100% Pengajar dari PTN</span>
           </div>
@@ -132,9 +132,9 @@ export default function CompanyProfileLandingPage() {
             }}
           />
 
-          <div className="animate-float" style={{ position: 'absolute', bottom: '20px', left: '-35px', background: '#fff', padding: '12px 26px', borderRadius: '999px', fontSize: '1.15rem', fontWeight: 700, color: '#10b981', boxShadow: '0 10px 25px rgba(0,0,0,0.08)', zIndex: 10, border: '1px solid #e0e7ff', display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: '#fef3c7', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#f59e0b', flexShrink: 0, boxShadow: '0 4px 10px rgba(245,158,11,0.2)' }}>
-              <Star size={26} style={{ fill: '#f59e0b' }} />
+          <div className="animate-float" style={{ position: 'absolute', bottom: '20px', left: '-35px', background: '#ffffff', padding: '14px 26px', borderRadius: '999px', fontSize: '1.1rem', fontWeight: 700, color: '#10b981', boxShadow: '0 10px 25px rgba(16, 185, 129, 0.15)', zIndex: 10, border: '2px solid #d1fae5', display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ width: '46px', height: '46px', borderRadius: '50%', background: '#fef3c7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Star size={28} style={{ color: '#f59e0b', fill: '#f59e0b' }} />
             </div>
             <span>Lulus PTN & Kedinasan 2026</span>
           </div>
@@ -151,8 +151,8 @@ export default function CompanyProfileLandingPage() {
         </div>
       </div>
 
-      {/* 🏛️ 2. PROFIL SINGKAT & SEJARAH LEMBAGA (HIDDEN BELOW INITIAL SCREEN FOLD) */}
-      <section id="profile" className="animate-slide-up" style={{ maxWidth: '1400px', margin: '0 auto', padding: '140px 36px 90px', marginTop: '40px' }}>
+      {/* 🏛️ 2. PROFIL SINGKAT & SEJARAH LEMBAGA (POSITIONED ACCESSIBLE HIGHER ON HOMEPAGE) */}
+      <section id="profile" className="animate-slide-up" style={{ maxWidth: '1400px', margin: '0 auto', padding: '50px 36px 60px', marginTop: '10px' }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '48px', alignItems: 'center' }}>
           <div>
             <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#ef4444', textTransform: 'uppercase', letterSpacing: '0.05em' }}>TENTANG PERUSAHAAN</span>
