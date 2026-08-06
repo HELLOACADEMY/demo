@@ -168,7 +168,7 @@ export default function AttendancePage() {
             <span style={{ width: '28px', height: '28px', borderRadius: '7px', background: '#06b6d4', color: '#fff', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem' }}>O!</span>
           </div>
           <div>
-            <div style={{ fontSize: '1rem', fontWeight: 800, color: '#0f172a' }}>STANDALONE SCANNER PRESENSI QR CODE</div>
+            <div style={{ fontSize: '1rem', fontWeight: 800, color: '#0f172a' }}>SCANNER PRESENSI QR CODE</div>
             <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#4f46e5' }}>HELLO ACADEMY PONTIANAK</div>
           </div>
         </div>
