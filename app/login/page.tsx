@@ -221,7 +221,7 @@ export default function LoginPage() {
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                   required
-                  placeholder="admin@hello-academy.sch.id"
+                  placeholder="Masukkan Username / Email"
                   style={{
                     width: '100%',
                     padding: '12px 40px 12px 14px',
@@ -264,7 +264,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={e => setPassword(e.target.value)}
                   required
-                  placeholder="••••••••"
+                  placeholder="Masukkan Password"
                   style={{
                     width: '100%',
                     padding: '12px 40px 12px 14px',

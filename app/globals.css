@@ -395,11 +395,11 @@ p, span, label, div, td, th {
   }
 
   .hero-visual-col img {
-    transform: scale(1.15) !important;
+    transform: scale(1.0) !important;
     height: 100% !important;
     width: 100% !important;
-    object-fit: cover !important;
-    object-position: center top !important;
+    object-fit: contain !important;
+    object-position: center center !important;
   }
 
   .floating-badge-top, .floating-badge-bottom {
