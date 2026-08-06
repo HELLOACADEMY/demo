@@ -187,9 +187,6 @@ export default function AttendancePage() {
           <h1 style={{ fontSize: '1.5rem', color: '#0f172a', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '10px' }}>
             <QrCode style={{ color: '#4f46e5' }} /> Presensi Barcode QR Code Digital (Live Camera Stream)
           </h1>
-          <p style={{ fontSize: '0.875rem', color: '#64748b', marginTop: '4px' }}>
-            Sistem otomatis 2x Scan Barcode per hari: <strong>Scan 1 = Jam Masuk</strong> dan <strong>Scan 2 = Jam Pulang</strong> (Siswa, Guru, & Staff).
-          </p>
         </div>
 
         {/* Tab Switcher */}
