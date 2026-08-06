@@ -5,7 +5,7 @@ import { useERP } from '@/context/ERPContext';
 import {
   Phone, ArrowRight, Lock, Sparkles, CheckCircle2, ChevronRight,
   Globe, GraduationCap, Heart, Award, ShieldCheck, Users,
-  BookOpen, Clock, Star, MapPin, Target, Eye, Compass, Building2
+  BookOpen, Clock, Star, MapPin, Target, Eye, Compass, Building2, QrCode
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -56,8 +56,8 @@ export default function CompanyProfileLandingPage() {
             <span>+62 821-5378-9821</span>
           </a>
 
-          <Link href="/attendance" className="btn btn-secondary hover-lift" style={{ borderRadius: '999px', padding: '12px 20px', fontSize: '0.875rem', fontWeight: 700, textDecoration: 'none', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#047857', background: '#d1fae5', border: '1px solid #a7f3d0' }}>
-            📷 Scan QR Kehadiran
+          <Link href="/attendance" className="btn btn-secondary hover-lift" style={{ borderRadius: '999px', padding: '12px 20px', fontSize: '0.875rem', fontWeight: 700, textDecoration: 'none', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '8px', color: '#047857', background: '#d1fae5', border: '1px solid #a7f3d0' }}>
+            <QrCode size={18} /> Scan QR Kehadiran
           </Link>
 
           <Link href="/login" className="btn btn-primary animate-glow hover-lift" style={{ borderRadius: '999px', padding: '12px 24px', fontSize: '0.875rem', fontWeight: 700, textDecoration: 'none', whiteSpace: 'nowrap' }}>
@@ -140,16 +140,6 @@ export default function CompanyProfileLandingPage() {
           </div>
         </div>
       </section>
-
-      {/* 📜 RUNNING MARQUEE TICKER ANIMATION (FIXED AT THE VERY BOTTOM OF SCREEN ABOVE TASKBAR) */}
-      <div style={{ position: 'fixed', bottom: 0, left: 0, width: '100%', background: '#1e1b4b', color: '#fff', padding: '14px 0', overflow: 'hidden', whiteSpace: 'nowrap', zIndex: 9999, borderTop: '2px solid #312e81', boxShadow: '0 -4px 20px rgba(0,0,0,0.25)' }}>
-        <div style={{ display: 'inline-flex', gap: '44px', fontSize: '0.95rem', fontWeight: 700, animation: 'marquee 22s linear infinite' }}>
-          <span>🔥 HELLO ACADEMY PONTIANAK - PROFIL LEMBAGA PENDIDIKAN TERINTEGRASI</span>
-          <span>✨ 3 CABANG UTAMA: SERDAM PUSAT • KARYA BARU • DANAU SENTARUM</span>
-          <span>🚀 MENCETAK GENERASI UNGGUL BERSTANDAR NASIONAL BERBASIS DIGITAL</span>
-          <span>🎓 HELLO ACADEMY PONTIANAK - MAJU BERSAMA MENUJU MASA DEPAN CEMERLANG</span>
-        </div>
-      </div>
 
       {/* 🏛️ 2. PROFIL SINGKAT & SEJARAH LEMBAGA (POSITIONED ACCESSIBLE HIGHER ON HOMEPAGE) */}
       <section id="profile" className="animate-slide-up" style={{ maxWidth: '1400px', margin: '0 auto', padding: '50px 36px 60px', marginTop: '10px' }}>
