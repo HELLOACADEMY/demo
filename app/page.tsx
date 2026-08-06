@@ -22,6 +22,17 @@ export default function CompanyProfileLandingPage() {
         <path d="M -50 790 Q 500 1040 1150 840" stroke="#10b981" strokeWidth="2" strokeDasharray="6 6" />
       </svg>
 
+      {/* 📜 ELEGANT LIGHT TOP RUNNING TEXT TICKER (60s SLOW READING SPEED) */}
+      <div style={{ background: '#eef2ff', color: '#1e1b4b', padding: '10px 0', overflow: 'hidden', whiteSpace: 'nowrap', borderBottom: '1px solid #c7d2fe', position: 'relative', zIndex: 30 }}>
+        <div style={{ display: 'inline-flex', gap: '48px', fontSize: '0.875rem', fontWeight: 700, animation: 'marquee 60s linear infinite' }}>
+          <span>🔥 HELLO ACADEMY PONTIANAK - BIMBINGAN BELAJAR TERBAIK DI PONTIANAK</span>
+          <span>✨ 3 CABANG UTAMA: SERDAM PUSAT • KARYA BARU • DANAU SENTARUM</span>
+          <span>🚀 PENDAFTARAN PPDB 2026 / 2027 KINI DIBUKA - DISKON BEASISWA TEST PLACEMENT</span>
+          <span>🎓 MENCETAK GENERASI UNGGUL LULUS PTN FAVORIT, KEDOKTERAN, & KEDINASAN</span>
+          <span>📞 WHATSAPP RESMI: +62 821-5378-9821</span>
+        </div>
+      </div>
+
       {/* 🧭 HEADER BAR (SPACIOUS PREMIUM TOP PADDING) */}
       <header className="animate-slide-up" style={{ maxWidth: '1400px', margin: '0 auto', padding: '36px 32px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', zIndex: 20, gap: '28px' }}>
         
