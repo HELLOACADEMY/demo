@@ -122,8 +122,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     setTimeout(() => setToastMessage(null), 3500);
   };
 
-  // Full-bleed mode for public landing page & login
-  const isPublicRoute = pathname === '/' || pathname === '/login';
+  // Full-bleed mode for public landing page, login, & standalone kiosk scanner page
+  const isPublicRoute = pathname === '/' || pathname === '/login' || pathname === '/attendance';
 
   if (isPublicRoute) {
     return <main style={{ width: '100%', minHeight: '100vh' }}>{children}</main>;

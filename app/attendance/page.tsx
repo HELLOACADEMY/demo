@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react';
 import { useERP } from '@/context/ERPContext';
-import { QrCode, CheckCircle2, Clock, Camera, User, Printer, LogIn, LogOut, ShieldAlert, Award } from 'lucide-react';
+import Link from 'next/link';
+import { QrCode, CheckCircle2, Clock, Camera, User, Printer, LogIn, LogOut, ShieldAlert, Award, Home, LayoutDashboard } from 'lucide-react';
 
 export default function AttendancePage() {
   const { attendanceLogs, addAttendance, students, teachers, branches } = useERP();
@@ -80,7 +81,45 @@ export default function AttendancePage() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div style={{ minHeight: '100vh', background: '#f8fafc', color: '#0f172a', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+      {/* Standalone Kiosk Scanner Header */}
+      <header style={{
+        background: '#ffffff',
+        borderBottom: '1px solid #e2e8f0',
+        padding: '16px 32px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        boxShadow: '0 4px 14px rgba(0,0,0,0.03)',
+        position: 'sticky',
+        top: 0,
+        zIndex: 50,
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ display: 'flex', gap: '3px' }}>
+            <span style={{ width: '28px', height: '28px', borderRadius: '7px', background: '#4f46e5', color: '#fff', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem' }}>H</span>
+            <span style={{ width: '28px', height: '28px', borderRadius: '7px', background: '#ef4444', color: '#fff', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem' }}>E</span>
+            <span style={{ width: '28px', height: '28px', borderRadius: '7px', background: '#f59e0b', color: '#fff', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem' }}>L</span>
+            <span style={{ width: '28px', height: '28px', borderRadius: '7px', background: '#10b981', color: '#fff', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem' }}>L</span>
+            <span style={{ width: '28px', height: '28px', borderRadius: '7px', background: '#06b6d4', color: '#fff', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem' }}>O!</span>
+          </div>
+          <div>
+            <div style={{ fontSize: '1rem', fontWeight: 800, color: '#0f172a' }}>STANDALONE SCANNER PRESENSI QR CODE</div>
+            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#4f46e5' }}>HELLO ACADEMY PONTIANAK • KIOSK PRESENSI MANDIRI</div>
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <Link href="/" className="btn btn-secondary" style={{ textDecoration: 'none', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 600 }}>
+            <Home size={16} /> Landing Page Utama
+          </Link>
+          <Link href="/dashboard" className="btn btn-primary" style={{ textDecoration: 'none', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 600 }}>
+            <LayoutDashboard size={16} /> Portal Admin ERP
+          </Link>
+        </div>
+      </header>
+
+      <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '32px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
       {/* Header Title */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
         <div>
@@ -633,6 +672,7 @@ export default function AttendancePage() {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }
