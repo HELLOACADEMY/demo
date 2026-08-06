@@ -228,30 +228,6 @@ export default function AttendancePage() {
 
       {activeTab === 'scan' ? (
         <>
-          {/* Alert Notification Scan Result */}
-          {scanResult && (
-            <div style={{
-              padding: '16px 20px',
-              background: scanResult.type === 'CHECK_IN' ? '#f0fdf4' : '#eff6ff',
-              border: `1px solid ${scanResult.type === 'CHECK_IN' ? '#bbf7d0' : '#bfdbfe'}`,
-              borderRadius: '12px',
-              color: scanResult.type === 'CHECK_IN' ? '#166534' : '#1e40af',
-              fontWeight: 600,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                {scanResult.type === 'CHECK_IN' ? <LogIn size={22} /> : <LogOut size={22} />}
-                <span>{scanResult.message}</span>
-              </div>
-              <span style={{ fontSize: '0.75rem', background: scanResult.type === 'CHECK_IN' ? '#dcfce7' : '#dbeafe', padding: '4px 10px', borderRadius: '20px' }}>
-                {scanResult.type === 'CHECK_IN' ? 'JAM MASUK' : 'JAM PULANG'}
-              </span>
-            </div>
-          )}
-
           {/* Interactive Live Camera Scanner Box */}
           <div style={{
             padding: '32px 24px',
