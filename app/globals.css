@@ -76,6 +76,11 @@ p, span, label, div, td, th {
   100% { transform: translateY(0px); }
 }
 
+@keyframes marquee {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
 /* Utility Animation Classes */
 .animate-slide-up {
   animation: slideUpFade 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
