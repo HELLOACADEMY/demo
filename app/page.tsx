@@ -70,7 +70,7 @@ export default function CompanyProfileLandingPage() {
       <section className="animate-slide-up hero-grid-section" style={{ maxWidth: '1400px', margin: '0 auto', padding: '10px 32px 0', display: 'grid', gridTemplateColumns: '1.1fr 0.9fr', gap: '32px', alignItems: 'end', position: 'relative', zIndex: 10 }}>
         
         {/* Hero Left Content Column */}
-        <div style={{ paddingBottom: '32px', zIndex: 2 }}>
+        <div className="hero-left-col" style={{ paddingBottom: '32px', zIndex: 2 }}>
           <h1 className="hero-headline" style={{ fontSize: '2.95rem', fontWeight: 700, color: '#1e1b4b', lineHeight: 1.22, letterSpacing: '-0.01em', marginBottom: '20px', maxWidth: '600px' }}>
             Meraih Prestasi Tertinggi Bersama <br />
             <span style={{ color: '#ef4444', fontWeight: 700 }}>Hello Academy Pontianak</span>

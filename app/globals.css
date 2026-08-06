@@ -265,7 +265,7 @@ p, span, label, div, td, th {
   background: #94a3b8;
 }
 
-/* 📱 Mobile Responsiveness (Screen <= 768px) */
+/* 📱 Mobile First Hero Order & Compact Spacing (Screen <= 768px) */
 @media (max-width: 768px) {
   html, body {
     overflow-x: hidden !important;
@@ -273,10 +273,9 @@ p, span, label, div, td, th {
   }
 
   .main-header {
-    padding: 16px !important;
+    padding: 8px 12px !important;
     flex-direction: column !important;
-    align-items: stretch !important;
-    gap: 14px !important;
+    gap: 8px !important;
   }
 
   .header-logo-row {
@@ -289,78 +288,109 @@ p, span, label, div, td, th {
   .nav-menu-links {
     display: flex !important;
     overflow-x: auto !important;
-    padding: 8px 4px !important;
-    gap: 16px !important;
+    padding: 4px 0 !important;
+    gap: 12px !important;
+    font-size: 0.8rem !important;
+    border: none !important;
     white-space: nowrap !important;
     -webkit-overflow-scrolling: touch;
-    border-top: 1px solid #f1f5f9;
-    border-bottom: 1px solid #f1f5f9;
-    font-size: 0.85rem !important;
   }
 
   .header-actions-row {
     display: flex !important;
-    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+
+  .header-actions-row a {
+    padding: 8px 14px !important;
+    font-size: 0.8rem !important;
+  }
+
+  .hero-grid-section {
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 10px 14px 0 !important;
+    gap: 12px !important;
+    text-align: center !important;
+  }
+
+  .hero-left-col {
+    display: flex !important;
+    flex-direction: column !important;
+    padding-bottom: 0 !important;
+  }
+
+  .hero-headline {
+    font-size: 1.45rem !important;
+    line-height: 1.25 !important;
+    margin: 0 auto 8px !important;
+  }
+
+  .hero-visual-col {
+    order: -1 !important;
+    height: 250px !important;
+    margin: 4px 0 10px !important;
+  }
+
+  .hero-visual-col img {
+    transform: scale(1.0) !important;
+    height: 100% !important;
+  }
+
+  .floating-badge-top {
+    top: 5px !important;
+    right: 0px !important;
+    padding: 6px 12px !important;
+    font-size: 0.75rem !important;
+  }
+
+  .floating-badge-bottom {
+    bottom: 5px !important;
+    left: 0px !important;
+    padding: 6px 12px !important;
+    font-size: 0.75rem !important;
+  }
+
+  .hero-subtitle {
+    font-size: 0.875rem !important;
+    line-height: 1.5 !important;
+    margin: 0 auto 14px !important;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .hero-cta-buttons {
+    flex-direction: row !important;
     justify-content: center !important;
     gap: 10px !important;
     width: 100% !important;
   }
 
-  .hero-grid-section {
-    grid-template-columns: 1fr !important;
-    padding: 16px 16px 0 !important;
-    gap: 20px !important;
-    text-align: center !important;
-  }
-
-  .hero-headline {
-    font-size: 1.85rem !important;
-    line-height: 1.25 !important;
-    margin: 0 auto 16px !important;
-  }
-
-  .hero-subtitle {
-    font-size: 0.95rem !important;
-    margin: 0 auto 20px !important;
-  }
-
-  .hero-cta-buttons {
-    flex-direction: column !important;
-    gap: 12px !important;
-    width: 100% !important;
-  }
-
   .hero-cta-buttons a {
-    width: 100% !important;
+    padding: 12px 20px !important;
+    font-size: 0.85rem !important;
+    flex: 1;
     justify-content: center !important;
     text-align: center !important;
   }
 
   .hero-fast-stats {
-    justify-content: center !important;
-    gap: 20px !important;
+    margin-top: 16px !important;
+    padding-top: 12px !important;
+    justify-content: space-around !important;
+    gap: 12px !important;
   }
 
-  .hero-visual-col {
-    height: 380px !important;
+  .hero-fast-stats div div:first-child {
+    font-size: 1.2rem !important;
   }
 
-  .hero-visual-col img {
-    transform: scale(1.1) !important;
-  }
-
-  .floating-badge-top {
-    top: 10px !important;
-    right: 5px !important;
-    padding: 8px 14px !important;
-    font-size: 0.85rem !important;
-  }
-
-  .floating-badge-bottom {
-    bottom: 10px !important;
-    left: 5px !important;
-    padding: 8px 14px !important;
-    font-size: 0.85rem !important;
+  .hero-fast-stats div div:last-child {
+    font-size: 0.75rem !important;
   }
 
   .section-container {
