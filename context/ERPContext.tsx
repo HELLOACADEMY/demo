@@ -7,6 +7,9 @@ import {
 } from '@/lib/store';
 
 interface ERPContextType {
+  isAuthenticated: boolean;
+  setIsAuthenticated: (b: boolean) => void;
+  logout: () => void;
   currentRole: Role;
   setCurrentRole: (r: Role) => void;
   isSuperAdmin: boolean;
@@ -42,6 +45,32 @@ interface ERPContextType {
 const ERPContext = createContext<ERPContextType | undefined>(undefined);
 
 export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [isAuthenticated, setIsAuthenticatedState] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedAuth = localStorage.getItem('hello_erp_logged_in');
+      if (savedAuth === 'true') {
+        setIsAuthenticatedState(true);
+      }
+    }
+  }, []);
+
+  const setIsAuthenticated = (auth: boolean) => {
+    setIsAuthenticatedState(auth);
+    if (typeof window !== 'undefined') {
+      if (auth) {
+        localStorage.setItem('hello_erp_logged_in', 'true');
+      } else {
+        localStorage.removeItem('hello_erp_logged_in');
+      }
+    }
+  };
+
+  const logout = () => {
+    setIsAuthenticated(false);
+  };
+
   const [currentRole, setCurrentRole] = useState<Role>('super_admin');
   const [currentBranchId, setCurrentBranchId] = useState<string>('ALL');
 
@@ -280,6 +309,9 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   return (
     <ERPContext.Provider
       value={{
+        isAuthenticated,
+        setIsAuthenticated,
+        logout,
         currentRole,
         setCurrentRole,
         isSuperAdmin: currentRole === 'super_admin',

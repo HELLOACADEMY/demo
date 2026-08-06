@@ -7,7 +7,7 @@ import { useERP } from '@/context/ERPContext';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { setCurrentRole, addAuditLog } = useERP();
+  const { setCurrentRole, setIsAuthenticated, addAuditLog } = useERP();
 
   const [email, setEmail] = useState('admin@hello-academy.sch.id');
   const [password, setPassword] = useState('password123');
@@ -58,6 +58,7 @@ export default function LoginPage() {
     }
 
     // Direct Login without OTP modal
+    setIsAuthenticated(true);
     setCurrentRole('super_admin');
     addAuditLog('User Login Success', 'Authentication', `User ${email} berhasil login dengan verifikasi CAPTCHA`);
     router.push('/dashboard');

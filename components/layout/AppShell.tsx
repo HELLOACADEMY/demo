@@ -97,23 +97,29 @@ const roleLabels: Record<Role, string> = {
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { currentRole, setCurrentRole, currentBranchId, setCurrentBranchId, branches, addAuditLog } = useERP();
+  const { isAuthenticated, logout, currentRole, setCurrentRole, currentBranchId, setCurrentBranchId, branches, addAuditLog } = useERP();
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Filter navigation items dynamically based on currentRole
   const allowedHrefs = roleAllowedRoutes[currentRole] || roleAllowedRoutes.super_admin;
   const filteredNavItems = navItems.filter(item => allowedHrefs.includes(item.href));
 
-  // Redirect if currently on a forbidden route for the selected role
+  const publicRoutes = ['/', '/login', '/ppdb', '/attendance', '/terms', '/privacy'];
+
+  // Redirect unauthenticated users or forbidden routes
   useEffect(() => {
-    if (pathname !== '/' && pathname !== '/login') {
-      if (!allowedHrefs.includes(pathname)) {
+    if (!publicRoutes.includes(pathname)) {
+      if (!isAuthenticated) {
+        router.push('/login');
+        setToastMessage('Akses Ditolak: Anda wajib Login terlebih dahulu untuk mengakses Panel Admin ERP.');
+        setTimeout(() => setToastMessage(null), 4000);
+      } else if (!allowedHrefs.includes(pathname)) {
         router.push('/dashboard');
         setToastMessage(`Peran ${roleLabels[currentRole]} tidak memiliki akses ke halaman "${pathname}". Anda dialihkan ke Dashboard.`);
         setTimeout(() => setToastMessage(null), 4000);
       }
     }
-  }, [currentRole, pathname, allowedHrefs, router]);
+  }, [isAuthenticated, currentRole, pathname, allowedHrefs, router]);
 
   const handleRoleChange = (newRole: Role) => {
     setCurrentRole(newRole);
@@ -285,9 +291,9 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               </select>
             </div>
 
-            <Link href="/login" className="btn btn-secondary" style={{ padding: '8px 14px', fontSize: '0.8rem' }}>
+            <button onClick={() => { logout(); router.push('/login'); }} className="btn btn-secondary" style={{ padding: '8px 14px', fontSize: '0.8rem', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
               <LogOut size={14} /> Keluar
-            </Link>
+            </button>
           </div>
         </header>
 
