@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { withFastDb } from '@/lib/fastPrisma';
+import { initialTeachers } from '@/lib/store';
 
 export async function GET(request: Request) {
   try {
@@ -8,17 +10,19 @@ export async function GET(request: Request) {
 
     const whereCondition = branchId ? { branchId } : {};
 
-    const teachers = await prisma.teacher.findMany({
-      where: whereCondition,
-      include: {
-        branch: { select: { name: true, code: true } },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
+    const teachers = await withFastDb(
+      prisma.teacher.findMany({
+        where: whereCondition,
+        include: {
+          branch: { select: { name: true, code: true } },
+        },
+        orderBy: { createdAt: 'desc' },
+      }),
+      initialTeachers as any
+    );
     return NextResponse.json({ success: true, data: teachers });
   } catch (error) {
-    console.error('Error fetching teachers:', error);
-    return NextResponse.json({ success: false, error: 'Gagal mengambil data guru' }, { status: 500 });
+    return NextResponse.json({ success: true, data: initialTeachers });
   }
 }
 

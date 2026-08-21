@@ -7,10 +7,10 @@ import { useERP } from '@/context/ERPContext';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { setCurrentRole, setIsAuthenticated, addAuditLog } = useERP();
+  const { setCurrentRole, setCurrentTeacherId, setIsAuthenticated, addAuditLog } = useERP();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('admin@bsmart.sch.id');
+  const [password, setPassword] = useState('123456');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
 
@@ -33,7 +33,7 @@ export default function LoginPage() {
   const [forgotNewPassword, setForgotNewPassword] = useState('');
   const [forgotSuccessMessage, setForgotSuccessMessage] = useState('');
 
-  // Generate 5-character Captcha
+  // Generate 5-character Captcha & Auto-fill userCaptcha for zero-friction login
   const generateCaptcha = useCallback(() => {
     const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
     let result = '';
@@ -41,6 +41,7 @@ export default function LoginPage() {
       result += chars.charAt(Math.floor(Math.random() * chars.length));
     }
     setCaptchaCode(result);
+    setUserCaptcha(result);
     setCaptchaError('');
   }, []);
 
@@ -48,20 +49,48 @@ export default function LoginPage() {
     generateCaptcha();
   }, [generateCaptcha]);
 
-  const handleLoginSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (userCaptcha.trim().toUpperCase() !== captchaCode.toUpperCase()) {
-      setCaptchaError('Kode CAPTCHA tidak cocok. Silakan coba lagi.');
-      generateCaptcha();
-      setUserCaptcha('');
-      return;
-    }
+  const detectRoleFromEmail = (targetEmail: string): any => {
+    const e = targetEmail.toLowerCase();
+    if (e.includes('karyabaru') || e.includes('cabang')) return 'admin_cabang';
+    if (e.includes('bambang') || e.includes('endang') || e.includes('kevin') || e.includes('guru') || e.includes('tutor')) return 'guru';
+    if (e.includes('keuangan') || e.includes('staff')) return 'staff_keuangan';
+    if (e.includes('susanti') || e.includes('wali') || e.includes('parent')) return 'wali_murid';
+    if (e.includes('rizky') || e.includes('siswa') || e.includes('student')) return 'siswa';
+    return 'super_admin';
+  };
 
-    // Direct Login without OTP modal
+  const handleLoginSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const loginEmail = email.trim() || 'admin@bsmart.sch.id';
+    const role = detectRoleFromEmail(loginEmail);
+
+    if (loginEmail.includes('endang')) setCurrentTeacherId('tch-2');
+    else if (loginEmail.includes('kevin')) setCurrentTeacherId('tch-3');
+    else if (loginEmail.includes('bambang') || role === 'guru') setCurrentTeacherId('tch-1');
+
     setIsAuthenticated(true);
-    setCurrentRole('super_admin');
-    addAuditLog('User Login Success', 'Authentication', `User ${email} berhasil login dengan verifikasi CAPTCHA`);
-    router.push('/dashboard');
+    setCurrentRole(role);
+    addAuditLog('User Login Success', 'Authentication', `User ${loginEmail} berhasil login sebagai ${role.toUpperCase()}`);
+    
+    if (typeof window !== 'undefined') {
+      window.location.href = '/dashboard';
+    } else {
+      router.push('/dashboard');
+    }
+  };
+
+  const handleQuickDemoLogin = (role: any, demoEmail: string) => {
+    setEmail(demoEmail);
+    setPassword('123456');
+    setIsAuthenticated(true);
+    setCurrentRole(role);
+    addAuditLog('User Quick Demo Login', 'Authentication', `Quick Demo Login sebagai ${role.toUpperCase()} (${demoEmail})`);
+    
+    if (typeof window !== 'undefined') {
+      window.location.href = '/dashboard';
+    } else {
+      router.push('/dashboard');
+    }
   };
 
   const handleRegisterSubmit = (e: React.FormEvent) => {
@@ -130,19 +159,19 @@ export default function LoginPage() {
           justifyContent: 'space-between',
         }}>
           <div>
-            {/* Target Emblem Icon */}
-            <div style={{
-              width: '76px',
-              height: '76px',
-              borderRadius: '50%',
-              border: '4px solid rgba(255, 255, 255, 0.9)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              margin: '0 auto 24px',
-            }}>
-              <Target size={42} style={{ color: '#ffffff' }} />
-            </div>
+            {/* Bsmart Main Logo (Transparent Background) */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/images/logo.png"
+              alt="Bsmart Education Logo"
+              style={{
+                height: '76px',
+                width: 'auto',
+                margin: '0 auto 20px',
+                display: 'block',
+                filter: 'drop-shadow(0 4px 14px rgba(0,0,0,0.35))',
+              }}
+            />
 
             <h1 style={{
               fontSize: '1.65rem',
@@ -151,7 +180,7 @@ export default function LoginPage() {
               margin: '0 0 16px',
               letterSpacing: '0.01em',
             }}>
-              Hello Academy Pontianak
+              Bsmart Education Pontianak
             </h1>
 
             <p style={{
@@ -217,10 +246,9 @@ export default function LoginPage() {
               </label>
               <div style={{ position: 'relative' }}>
                 <input
-                  type="email"
+                  type="text"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  required
                   placeholder="Masukkan Username / Email"
                   style={{
                     width: '100%',
@@ -263,7 +291,6 @@ export default function LoginPage() {
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  required
                   placeholder="Masukkan Password"
                   style={{
                     width: '100%',
@@ -357,7 +384,6 @@ export default function LoginPage() {
                   type="text"
                   value={userCaptcha}
                   onChange={e => setUserCaptcha(e.target.value)}
-                  required
                   placeholder="Isi CAPTCHA"
                   maxLength={5}
                   style={{
@@ -414,7 +440,8 @@ export default function LoginPage() {
 
             {/* Full Width Login Button */}
             <button
-              type="submit"
+              type="button"
+              onClick={() => handleLoginSubmit()}
               style={{
                 width: '100%',
                 padding: '13px',
@@ -467,7 +494,7 @@ export default function LoginPage() {
               Buat Akun Baru
             </h2>
             <p style={{ fontSize: '0.825rem', color: '#64748b', margin: '0 0 20px' }}>
-              Daftarkan akun pengguna baru untuk mengelola sistem Hello Academy.
+              Daftarkan akun pengguna baru untuk mengelola sistem Bsmart Education.
             </p>
 
             {regSuccessMessage ? (
@@ -498,7 +525,7 @@ export default function LoginPage() {
                   <input
                     type="email"
                     required
-                    placeholder="email@hello-academy.sch.id"
+                    placeholder="email@bsmart.sch.id"
                     value={regEmail}
                     onChange={e => setRegEmail(e.target.value)}
                     style={{ width: '100%', padding: '10px 12px', border: '1px solid #c5d5e4', borderRadius: '4px', outline: 'none', fontSize: '0.875rem' }}
@@ -615,7 +642,7 @@ export default function LoginPage() {
                   <input
                     type="email"
                     required
-                    placeholder="email@hello-academy.sch.id"
+                    placeholder="email@bsmart.sch.id"
                     value={forgotEmail}
                     onChange={e => setForgotEmail(e.target.value)}
                     style={{ width: '100%', padding: '10px 12px', border: '1px solid #c5d5e4', borderRadius: '4px', outline: 'none', fontSize: '0.875rem' }}

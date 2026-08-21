@@ -4,7 +4,7 @@ import { ERPProvider } from '@/context/ERPContext';
 import AppShell from '@/components/layout/AppShell';
 
 export const metadata: Metadata = {
-  title: 'Hello Academy Pontianak - Enterprise Multi-Branch Education ERP',
+  title: 'Bsmart Education Pontianak - Enterprise Multi-Branch Education ERP',
   description: 'Sistem Informasi Manajemen Pendidikan Terpadu (27 Modul Operasional)',
 };
 

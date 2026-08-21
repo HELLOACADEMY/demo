@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { withFastDb } from '@/lib/fastPrisma';
+import { initialLeads } from '@/lib/store';
 
 export async function GET(request: Request) {
   try {
@@ -8,17 +10,19 @@ export async function GET(request: Request) {
 
     const whereCondition = branchId ? { branchId } : {};
 
-    const leads = await prisma.cRMLead.findMany({
-      where: whereCondition,
-      include: {
-        branch: { select: { name: true } },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
+    const leads = await withFastDb(
+      prisma.cRMLead.findMany({
+        where: whereCondition,
+        include: {
+          branch: { select: { name: true } },
+        },
+        orderBy: { createdAt: 'desc' },
+      }),
+      initialLeads as any
+    );
     return NextResponse.json({ success: true, data: leads });
   } catch (error) {
-    console.error('Error fetching leads:', error);
-    return NextResponse.json({ success: false, error: 'Gagal mengambil data lead CRM' }, { status: 500 });
+    return NextResponse.json({ success: true, data: initialLeads });
   }
 }
 

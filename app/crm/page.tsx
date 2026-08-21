@@ -142,7 +142,7 @@ export default function CRMPage() {
               </div>
 
               <div>
-                <label style={{ fontSize: '0.8rem', color: '#2575b9', fontWeight: 500, display: 'block', marginBottom: '4px' }}>Target Cabang Hello Academy *</label>
+                <label style={{ fontSize: '0.8rem', color: '#2575b9', fontWeight: 500, display: 'block', marginBottom: '4px' }}>Target Cabang Bsmart Education *</label>
                 <select value={newLead.targetBranchId} onChange={e => setNewLead({ ...newLead, targetBranchId: e.target.value })} className="select-field">
                   {branches.map(b => (
                     <option key={b.id} value={b.id}>{b.name}</option>

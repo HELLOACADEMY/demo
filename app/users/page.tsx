@@ -4,11 +4,26 @@ import React, { useState } from 'react';
 import { initialUsers, Role, User } from '@/lib/store';
 import { Users, Plus, Shield, Mail, CheckCircle2 } from 'lucide-react';
 
+import { useERP } from '@/context/ERPContext';
+
 export default function UsersPage() {
+  const { isSuperAdmin } = useERP();
   const [users, setUsers] = useState<User[]>(initialUsers);
   const [roleFilter, setRoleFilter] = useState<string>('ALL');
 
   const filteredUsers = roleFilter === 'ALL' ? users : users.filter(u => u.role === roleFilter);
+
+  if (!isSuperAdmin) {
+    return (
+      <div style={{ padding: '32px', background: '#fee2e2', border: '1px solid #fca5a5', borderRadius: '16px', color: '#991b1b', textAlign: 'center' }}>
+        <Shield size={48} style={{ margin: '0 auto 12px' }} />
+        <h2 style={{ fontSize: '1.25rem', fontWeight: 800 }}>Akses Ditolak</h2>
+        <p style={{ fontSize: '0.875rem', marginTop: '6px' }}>
+          Modul User Management khusus diakses oleh peran <strong>Super Admin (Akses Penuh)</strong>.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>

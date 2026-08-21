@@ -19,7 +19,7 @@ export default function PrivacyPage() {
           </div>
           <div>
             <h1 style={{ fontSize: '2rem', fontWeight: 700, color: '#1e1b4b', margin: 0 }}>Kebijakan Privasi</h1>
-            <p style={{ fontSize: '0.85rem', color: '#64748b', margin: 0 }}>Terakhir diperbarui: 6 Agustus 2026 • Hello Academy Pontianak</p>
+            <p style={{ fontSize: '0.85rem', color: '#64748b', margin: 0 }}>Terakhir diperbarui: 6 Agustus 2026 • Bsmart Education Pontianak</p>
           </div>
         </div>
 
@@ -29,7 +29,7 @@ export default function PrivacyPage() {
           <section>
             <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#1e1b4b', marginBottom: '8px' }}>1. Perlindungan Data Pribadi</h2>
             <p>
-              Hello Academy Pontianak menghargai dan berkomitmen penuh untuk melindungi privasi data pribadi peserta didik, pengajar, dan orang tua/wali murid. Dokumen ini menjelaskan bagaimana data Anda dikumpulkan, disimpan, dan dilindungi oleh sistem ERP kami.
+              Bsmart Education Pontianak menghargai dan berkomitmen penuh untuk melindungi privasi data pribadi peserta didik, pengajar, dan orang tua/wali murid. Dokumen ini menjelaskan bagaimana data Anda dikumpulkan, disimpan, dan dilindungi oleh sistem ERP kami.
             </p>
           </section>
 
@@ -45,7 +45,7 @@ export default function PrivacyPage() {
           <section>
             <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#1e1b4b', marginBottom: '8px' }}>3. Penggunaan Informasi</h2>
             <p>
-              Data yang dikumpulkan digunakan semata-mata untuk kepentingan operasional pendidikan, manajemen kelas, pengiriman laporan presensi ke WhatsApp wali murid, evaluasi akademik, serta layanan administrasi keuangan internal Hello Academy Pontianak.
+              Data yang dikumpulkan digunakan semata-mata untuk kepentingan operasional pendidikan, manajemen kelas, pengiriman laporan presensi ke WhatsApp wali murid, evaluasi akademik, serta layanan administrasi keuangan internal Bsmart Education Pontianak.
             </p>
           </section>
 

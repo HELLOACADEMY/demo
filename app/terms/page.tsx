@@ -19,7 +19,7 @@ export default function TermsPage() {
           </div>
           <div>
             <h1 style={{ fontSize: '2rem', fontWeight: 700, color: '#1e1b4b', margin: 0 }}>Syarat & Ketentuan</h1>
-            <p style={{ fontSize: '0.85rem', color: '#64748b', margin: 0 }}>Terakhir diperbarui: 6 Agustus 2026 • Hello Academy Pontianak</p>
+            <p style={{ fontSize: '0.85rem', color: '#64748b', margin: 0 }}>Terakhir diperbarui: 6 Agustus 2026 • Bsmart Education Pontianak</p>
           </div>
         </div>
 
@@ -29,7 +29,7 @@ export default function TermsPage() {
           <section>
             <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#1e1b4b', marginBottom: '8px' }}>1. Ketentuan Umum pendaftaran</h2>
             <p>
-              Selamat datang di portal resmi Hello Academy Pontianak. Dengan melakukan pendaftaran program bimbingan belajar atau mengakses sistem ERP kami, peserta didik dan orang tua/wali dianggap telah membaca, memahami, dan menyetujui seluruh ketentuan di bawah ini.
+              Selamat datang di portal resmi Bsmart Education Pontianak. Dengan melakukan pendaftaran program bimbingan belajar atau mengakses sistem ERP kami, peserta didik dan orang tua/wali dianggap telah membaca, memahami, dan menyetujui seluruh ketentuan di bawah ini.
             </p>
           </section>
 
@@ -38,7 +38,7 @@ export default function TermsPage() {
             <ul>
               <li>Peserta didik berhak mendapatkan materi pengajaran, konsultasi belajar, Try Out IRT berkala, dan fasilitas akademik sesuai paket yang diambil.</li>
               <li>Peserta didik wajib mematuhi tata tertib bimbingan belajar, hadir tepat waktu, dan melakukan pemindaian QR Code Kehadiran saat kedatangan.</li>
-              <li>Dilarang keras melakukan penyebaran materi eksklusif atau pengrusakan sarana prasana di seluruh 3 cabang Hello Academy Pontianak.</li>
+              <li>Dilarang keras melakukan penyebaran materi eksklusif atau pengrusakan sarana prasana di seluruh 3 cabang Bsmart Education Pontianak.</li>
             </ul>
           </section>
 
@@ -52,7 +52,7 @@ export default function TermsPage() {
           <section>
             <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#1e1b4b', marginBottom: '8px' }}>4. Hak Cipta & Kekayaan Intelektual</h2>
             <p>
-              Seluruh modul, bank soal, modul CBT, dan konten digital pada platform ERP Hello Academy Pontianak merupakan hak cipta yang dilindungi undang-undang.
+              Seluruh modul, bank soal, modul CBT, dan konten digital pada platform ERP Bsmart Education Pontianak merupakan hak cipta yang dilindungi undang-undang.
             </p>
           </section>
 

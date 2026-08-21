@@ -6,10 +6,10 @@ import { useERP } from '@/context/ERPContext';
 
 export default function SettingsPage() {
   const { addAuditLog, isSuperAdmin } = useERP();
-  const [instituteName, setInstituteName] = useState('Hello Academy Pontianak');
+  const [instituteName, setInstituteName] = useState('Bsmart Education Pontianak');
   const [address, setAddress] = useState('Jl. Sungai Raya Dalam (Serdam) No. 88, Pontianak');
   const [phone, setPhone] = useState('0561-739201');
-  const [email, setEmail] = useState('admin@hello-academy.sch.id');
+  const [email, setEmail] = useState('admin@bsmart.sch.id');
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [backupSuccess, setBackupSuccess] = useState(false);
 

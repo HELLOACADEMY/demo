@@ -2,16 +2,40 @@
 
 import React, { useState } from 'react';
 import { useERP } from '@/context/ERPContext';
-import { GraduationCap, QrCode, ArrowRightLeft, Download, Share2, CheckCircle2 } from 'lucide-react';
+import { GraduationCap, QrCode, ArrowRightLeft, Download, Share2, CheckCircle2, Plus } from 'lucide-react';
 import { Student } from '@/lib/store';
 
 export default function StudentsPage() {
-  const { filteredStudents, branches, setStudents, addAuditLog, isSuperAdmin, currentRole } = useERP();
+  const { filteredStudents, branches, setStudents, addStudent, addAuditLog, isSuperAdmin, currentRole } = useERP();
   const [search, setSearch] = useState('');
   const [selectedStudentQR, setSelectedStudentQR] = useState<Student | null>(null);
   const [selectedStudentMutate, setSelectedStudentMutate] = useState<Student | null>(null);
   const [newBranchId, setNewBranchId] = useState(branches[0]?.id || 'br-1');
   const [downloadSuccess, setDownloadSuccess] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
+
+  // New Student Form state
+  const [newNisn, setNewNisn] = useState('');
+  const [newName, setNewName] = useState('');
+  const [newGender, setNewGender] = useState<'L' | 'P'>('L');
+  const [newGrade, setNewGrade] = useState('XII SMA (Kedokteran)');
+  const [newStudentBranch, setNewStudentBranch] = useState(branches[0]?.id || 'br-1');
+
+  const handleCreateStudent = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newName || !newNisn) return;
+    await addStudent({
+      nisn: newNisn,
+      name: newName,
+      gender: newGender,
+      grade: newGrade,
+      branchId: newStudentBranch,
+      parentId: 'pr-1',
+      status: 'Aktif',
+    });
+    setShowAddModal(false);
+    setNewNisn(''); setNewName('');
+  };
 
   const filtered = filteredStudents.filter(s => s.name.toLowerCase().includes(search.toLowerCase()) || s.nisn.includes(search));
 
@@ -49,7 +73,7 @@ export default function StudentsPage() {
     ctx.textAlign = 'center';
     ctx.fillText('KARTU PRESENSI DIGITAL SISWA', 300, 55);
     ctx.font = '400 18px Inter, system-ui, sans-serif';
-    ctx.fillText('HELLO ACADEMY PONTIANAK', 300, 92);
+    ctx.fillText('BSMART EDUCATION PONTIANAK', 300, 92);
 
     // Load QR Image
     const img = new Image();
@@ -123,14 +147,37 @@ export default function StudentsPage() {
             Manajemen direktori siswa, kartu Barcode QR digital scannable, dan mutasi antar cabang.
           </p>
         </div>
-        <div style={{ width: '280px' }}>
-          <input
-            type="text"
-            placeholder="Cari Nama / NISN Siswa..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            style={{ width: '100%', padding: '10px 14px', border: '1px solid #cbd5e1', borderRadius: '8px', fontSize: '0.875rem', outline: 'none' }}
-          />
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <div style={{ width: '260px' }}>
+            <input
+              type="text"
+              placeholder="Cari Nama / NISN Siswa..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              style={{ width: '100%', padding: '10px 14px', border: '1px solid #cbd5e1', borderRadius: '8px', fontSize: '0.875rem', outline: 'none' }}
+            />
+          </div>
+          {(isSuperAdmin || currentRole === 'admin_cabang') && (
+            <button
+              onClick={() => setShowAddModal(true)}
+              style={{
+                padding: '10px 18px',
+                background: '#4f46e5',
+                border: 'none',
+                borderRadius: '8px',
+                color: '#ffffff',
+                fontWeight: 500,
+                fontSize: '0.875rem',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <Plus size={16} /> Tambah Siswa Baru
+            </button>
+          )}
         </div>
       </div>
 
@@ -253,7 +300,7 @@ export default function StudentsPage() {
               KARTU PRESENSI DIGITAL SISWA
             </div>
             <div style={{ fontSize: '1rem', fontWeight: 600, color: '#0f172a', margin: '2px 0 16px' }}>
-              HELLO ACADEMY PONTIANAK
+              BSMART EDUCATION PONTIANAK
             </div>
 
             {/* Scannable Barcode QR Code Image */}
@@ -335,7 +382,7 @@ export default function StudentsPage() {
 
               <button
                 onClick={() => {
-                  const text = `Kartu Barcode QR Presensi Siswa Hello Academy:%0ANama: ${selectedStudentQR.name}%0ANISN: ${selectedStudentQR.nisn}%0AKelas: ${selectedStudentQR.grade}%0ABarcode ID: ${selectedStudentQR.qrCode}%0AQR Link: https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(selectedStudentQR.qrCode)}`;
+                  const text = `Kartu Barcode QR Presensi Siswa Bsmart Education:%0ANama: ${selectedStudentQR.name}%0ANISN: ${selectedStudentQR.nisn}%0AKelas: ${selectedStudentQR.grade}%0ABarcode ID: ${selectedStudentQR.qrCode}%0AQR Link: https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(selectedStudentQR.qrCode)}`;
                   window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
                 }}
                 style={{
@@ -438,6 +485,55 @@ export default function StudentsPage() {
               >
                 Konfirmasi Mutasi
               </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* Modal Tambah Siswa Baru */}
+      {showAddModal && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.5)', backdropFilter: 'blur(5px)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+          <form onSubmit={handleCreateStudent} style={{ width: '100%', maxWidth: '460px', padding: '28px', background: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 20px 45px rgba(0,0,0,0.15)' }}>
+            <h2 style={{ fontSize: '1.25rem', color: '#0f172a', fontWeight: 600, marginBottom: '16px' }}>Tambah Siswa Baru</h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div>
+                <label style={{ fontSize: '0.8rem', color: '#4f46e5', display: 'block', marginBottom: '4px', fontWeight: 500 }}>NISN (10 Digit)*</label>
+                <input type="text" placeholder="00xxxxxxxx" value={newNisn} onChange={e => setNewNisn(e.target.value)} required style={{ width: '100%', padding: '10px 12px', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '0.875rem', outline: 'none' }} />
+              </div>
+              <div>
+                <label style={{ fontSize: '0.8rem', color: '#4f46e5', display: 'block', marginBottom: '4px', fontWeight: 500 }}>Nama Lengkap Siswa *</label>
+                <input type="text" placeholder="Nama Siswa" value={newName} onChange={e => setNewName(e.target.value)} required style={{ width: '100%', padding: '10px 12px', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '0.875rem', outline: 'none' }} />
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div>
+                  <label style={{ fontSize: '0.8rem', color: '#4f46e5', display: 'block', marginBottom: '4px', fontWeight: 500 }}>Jenis Kelamin</label>
+                  <select value={newGender} onChange={e => setNewGender(e.target.value as 'L' | 'P')} style={{ width: '100%', padding: '10px 12px', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '0.875rem', outline: 'none' }}>
+                    <option value="L">Laki-Laki</option>
+                    <option value="P">Perempuan</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ fontSize: '0.8rem', color: '#4f46e5', display: 'block', marginBottom: '4px', fontWeight: 500 }}>Kelas / Program</label>
+                  <select value={newGrade} onChange={e => setNewGrade(e.target.value)} style={{ width: '100%', padding: '10px 12px', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '0.875rem', outline: 'none' }}>
+                    <option value="XII SMA (Kedokteran)">XII SMA (Kedokteran)</option>
+                    <option value="XI SMA (Intensif)">XI SMA (Intensif)</option>
+                    <option value="IX SMP (Kedinasan)">IX SMP (Kedinasan)</option>
+                    <option value="SD (Juara Kelas)">SD (Juara Kelas)</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label style={{ fontSize: '0.8rem', color: '#4f46e5', display: 'block', marginBottom: '4px', fontWeight: 500 }}>Cabang Pendaftaran</label>
+                <select value={newStudentBranch} onChange={e => setNewStudentBranch(e.target.value)} style={{ width: '100%', padding: '10px 12px', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '0.875rem', outline: 'none' }}>
+                  {branches.map(b => (
+                    <option key={b.id} value={b.id}>{b.name}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '20px' }}>
+              <button type="button" onClick={() => setShowAddModal(false)} style={{ padding: '10px 16px', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '6px', color: '#475569', cursor: 'pointer', fontSize: '0.875rem' }}>Batal</button>
+              <button type="submit" style={{ padding: '10px 16px', background: '#4f46e5', border: 'none', borderRadius: '6px', color: '#ffffff', fontWeight: 500, cursor: 'pointer', fontSize: '0.875rem' }}>Simpan Siswa</button>
             </div>
           </form>
         </div>

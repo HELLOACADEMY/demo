@@ -28,11 +28,11 @@ async function main() {
   const br1 = await prisma.branch.create({
     data: {
       id: 'br-1',
-      name: 'Cabang Serdam Pontianak (Pusat)',
-      code: 'PTK-01',
-      address: 'Jl. Sungai Raya Dalam (Serdam) No. 88, Pontianak',
+      name: 'Cabang Sungai Raya Dalam (Pusat)',
+      code: 'SRD-01',
+      address: 'Jl. Sui Raya Dlm No.15, Pontianak',
       phone: '0561-734567',
-      email: 'serdam@hello-academy.sch.id',
+      email: 'sungairaya@bsmart.sch.id',
       pic: 'Drs. H. Mulyadi',
       status: 'Active',
       totalStudents: 520,
@@ -42,28 +42,28 @@ async function main() {
   const br2 = await prisma.branch.create({
     data: {
       id: 'br-2',
-      name: 'Cabang Karya Baru Pontianak',
-      code: 'PTK-02',
-      address: 'Jl. Karya Baru No. 45, Pontianak',
-      phone: '0561-765432',
-      email: 'karyabaru@hello-academy.sch.id',
-      pic: 'Siti Rahma, M.Pd.',
+      name: 'Cabang Danau Sentarum',
+      code: 'DSR-02',
+      address: 'Jl. Danau Sentarum No.17-18, Pontianak',
+      phone: '0561-789012',
+      email: 'danausentarum@bsmart.sch.id',
+      pic: 'Budi Santoso, S.T.',
       status: 'Active',
-      totalStudents: 340,
+      totalStudents: 290,
     },
   });
 
   const br3 = await prisma.branch.create({
     data: {
       id: 'br-3',
-      name: 'Cabang Danau Sentarum Pontianak',
-      code: 'PTK-03',
-      address: 'Jl. Danau Sentarum No. 102, Pontianak',
-      phone: '0561-789012',
-      email: 'danausentarum@hello-academy.sch.id',
-      pic: 'Budi Santoso, S.T.',
+      name: 'Cabang Karya Baru',
+      code: 'KRB-03',
+      address: 'Jl. Karya Baru No.77, Pontianak',
+      phone: '0561-765432',
+      email: 'karyabaru@bsmart.sch.id',
+      pic: 'Siti Rahma, M.Pd.',
       status: 'Active',
-      totalStudents: 290,
+      totalStudents: 340,
     },
   });
 
@@ -72,12 +72,12 @@ async function main() {
   // 2. Seed Users
   await prisma.user.createMany({
     data: [
-      { id: 'u-1', name: 'Ahmad Faisal (Super Admin)', email: 'admin@hello-academy.sch.id', role: 'super_admin', branchId: br1.id, avatar: '⚡', status: 'Active' },
-      { id: 'u-2', name: 'Dewi Kartika (Admin Karya Baru)', email: 'karyabaru.admin@hello-academy.sch.id', role: 'admin_cabang', branchId: br2.id, avatar: '👩‍💼', status: 'Active' },
-      { id: 'u-3', name: 'Bambang S. (Guru Matematika)', email: 'bambang@hello-academy.sch.id', role: 'guru', branchId: br1.id, avatar: '👨‍🏫', status: 'Active' },
-      { id: 'u-4', name: 'Hendra Saputra (Staff Keuangan)', email: 'keuangan@hello-academy.sch.id', role: 'staff_keuangan', branchId: br1.id, avatar: '📊', status: 'Active' },
+      { id: 'u-1', name: 'Ahmad Faisal (Super Admin)', email: 'admin@bsmart.sch.id', role: 'super_admin', branchId: br1.id, avatar: '⚡', status: 'Active' },
+      { id: 'u-2', name: 'Dewi Kartika (Admin Karya Baru)', email: 'karyabaru.admin@bsmart.sch.id', role: 'admin_cabang', branchId: br2.id, avatar: '👩‍💼', status: 'Active' },
+      { id: 'u-3', name: 'Bambang S. (Guru Matematika)', email: 'bambang@bsmart.sch.id', role: 'guru', branchId: br1.id, avatar: '👨‍🏫', status: 'Active' },
+      { id: 'u-4', name: 'Hendra Saputra (Staff Keuangan)', email: 'keuangan@bsmart.sch.id', role: 'staff_keuangan', branchId: br1.id, avatar: '📊', status: 'Active' },
       { id: 'u-5', name: 'Ibu Susanti (Wali Murid)', email: 'susanti@gmail.com', role: 'wali_murid', branchId: br1.id, avatar: '👵', status: 'Active' },
-      { id: 'u-6', name: 'Rizky Pratama (Siswa)', email: 'rizky@siswa.hello-academy.sch.id', role: 'siswa', branchId: br1.id, avatar: '🎓', status: 'Active' },
+      { id: 'u-6', name: 'Rizky Pratama (Siswa)', email: 'rizky@siswa.bsmart.sch.id', role: 'siswa', branchId: br1.id, avatar: '🎓', status: 'Active' },
     ],
   });
 

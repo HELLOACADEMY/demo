@@ -5,7 +5,7 @@ import { useERP } from '@/context/ERPContext';
 import { Building2, Plus, Phone, Mail, MapPin, User, Power, Users } from 'lucide-react';
 
 export default function BranchesPage() {
-  const { branches, setBranches, addAuditLog, isSuperAdmin } = useERP();
+  const { branches, setBranches, addAuditLog, isSuperAdmin, currentBranchId } = useERP();
   const [showAddModal, setShowAddModal] = useState(false);
   const [name, setName] = useState('');
   const [code, setCode] = useState('');
@@ -13,6 +13,10 @@ export default function BranchesPage() {
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [pic, setPic] = useState('');
+
+  const visibleBranches = (isSuperAdmin && currentBranchId === 'ALL')
+    ? branches
+    : branches.filter(b => b.id === (currentBranchId === 'ALL' ? 'br-1' : currentBranchId));
 
   const toggleStatus = (id: string) => {
     setBranches(prev => prev.map(b => b.id === id ? { ...b, status: b.status === 'Active' ? 'Inactive' : 'Active' } : b));
@@ -28,7 +32,7 @@ export default function BranchesPage() {
       code: code.toUpperCase(),
       address: address || 'Jl. Utama Pontianak',
       phone: phone || '0561-700000',
-      email: email || 'cabang@hello-academy.sch.id',
+      email: email || 'cabang@bsmart.sch.id',
       pic: pic || 'Admin Cabang Pontianak',
       status: 'Active' as const,
       totalStudents: 0
@@ -48,7 +52,7 @@ export default function BranchesPage() {
             <Building2 style={{ color: '#2575b9' }} /> Manajemen Multi-Cabang Pontianak
           </h1>
           <p style={{ fontSize: '0.875rem', color: '#64748b', marginTop: '4px' }}>
-            Kelola 3 cabang utama di Kota Pontianak (Serdam Pusat, Karya Baru, & Danau Sentarum) dalam satu sistem terpusat.
+            Kelola 3 cabang resmi Bsmart Education di Kota Pontianak (Sungai Raya Dalam, Danau Sentarum, & Karya Baru) dalam satu sistem terpusat.
           </p>
         </div>
         {isSuperAdmin && (
@@ -76,7 +80,7 @@ export default function BranchesPage() {
 
       {/* Grid Cards Multi-Cabang */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
-        {branches.map(b => (
+        {visibleBranches.map(b => (
           <div
             key={b.id}
             style={{
@@ -251,7 +255,7 @@ export default function BranchesPage() {
                 <label style={{ fontSize: '0.8rem', color: '#2575b9', display: 'block', marginBottom: '4px', fontWeight: 500 }}>Email Cabang</label>
                 <input
                   type="email"
-                  placeholder="cabang@hello-academy.sch.id"
+                  placeholder="cabang@bsmart.sch.id"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                   style={{ width: '100%', padding: '10px 12px', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '0.875rem', outline: 'none' }}

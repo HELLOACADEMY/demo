@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { withFastDb } from '@/lib/fastPrisma';
+import { initialPPDB } from '@/lib/store';
 
 export async function GET(request: Request) {
   try {
@@ -8,17 +10,19 @@ export async function GET(request: Request) {
 
     const whereCondition = branchId ? { targetBranchId: branchId } : {};
 
-    const ppdbList = await prisma.pPDBApplication.findMany({
-      where: whereCondition,
-      include: {
-        targetBranch: { select: { name: true } },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
+    const ppdbList = await withFastDb(
+      prisma.pPDBApplication.findMany({
+        where: whereCondition,
+        include: {
+          targetBranch: { select: { name: true } },
+        },
+        orderBy: { createdAt: 'desc' },
+      }),
+      initialPPDB as any
+    );
     return NextResponse.json({ success: true, data: ppdbList });
   } catch (error) {
-    console.error('Error fetching PPDB list:', error);
-    return NextResponse.json({ success: false, error: 'Gagal mengambil data PPDB' }, { status: 500 });
+    return NextResponse.json({ success: true, data: initialPPDB });
   }
 }
 

@@ -8,7 +8,7 @@ import Link from 'next/link';
 export default function CMSPage() {
   const { addAuditLog } = useERP();
   const [heroTitle, setHeroTitle] = useState('Bimbingan Belajar Berstandar Kedokteran & Sekolah Kedinasan Terbaik');
-  const [heroSubtitle, setHeroSubtitle] = useState('Hello Academy Pontianak - Melahirkan Generasi Pemimpin Masa Depan di 3 Cabang Utama Kota Pontianak.');
+  const [heroSubtitle, setHeroSubtitle] = useState('Bsmart Education Pontianak - Melahirkan Generasi Pemimpin Masa Depan di 3 Cabang Utama Kota Pontianak.');
   const [announcementTicker, setAnnouncementTicker] = useState('🔥 PENDAFTARAN PPDB GELOMBANG 1 TAHUN 2026 DISKON UTAMA 25% HINGGA 31 AGUSTUS! DENGAN BEASISWA TEST PLACEMENT.');
   const [savedSuccess, setSavedSuccess] = useState(false);
 

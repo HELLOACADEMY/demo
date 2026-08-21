@@ -57,10 +57,16 @@ export interface Teacher {
 export interface PPDBApplication {
   id: string;
   regNumber: string;
+  nisn?: string;
   applicantName: string;
-  targetBranchId: string;
+  gender?: 'L' | 'P';
+  birthInfo?: string;
+  previousSchool?: string;
   grade: string;
+  parentName?: string;
   parentPhone: string;
+  homeAddress?: string;
+  targetBranchId: string;
   status: 'Pending' | 'Interview' | 'Approved' | 'Rejected';
   testScore?: number;
   downpaymentStatus: 'Unpaid' | 'Paid';
@@ -135,18 +141,18 @@ export interface CRMLead {
 
 // Initial Seed Data: 3 Pontianak Branches
 export const initialBranches: Branch[] = [
-  { id: 'br-1', name: 'Cabang Serdam Pontianak (Pusat)', code: 'PTK-01', address: 'Jl. Sungai Raya Dalam (Serdam) No. 88, Pontianak', phone: '0561-734567', email: 'serdam@hello-academy.sch.id', pic: 'Drs. H. Mulyadi', status: 'Active', totalStudents: 520 },
-  { id: 'br-2', name: 'Cabang Karya Baru Pontianak', code: 'PTK-02', address: 'Jl. Karya Baru No. 45, Pontianak', phone: '0561-765432', email: 'karyabaru@hello-academy.sch.id', pic: 'Siti Rahma, M.Pd.', status: 'Active', totalStudents: 340 },
-  { id: 'br-3', name: 'Cabang Danau Sentarum Pontianak', code: 'PTK-03', address: 'Jl. Danau Sentarum No. 102, Pontianak', phone: '0561-789012', email: 'danausentarum@hello-academy.sch.id', pic: 'Budi Santoso, S.T.', status: 'Active', totalStudents: 290 },
+  { id: 'br-1', name: 'Cabang Sungai Raya Dalam (Pusat)', code: 'SRD-01', address: 'Jl. Sui Raya Dlm No.15, Pontianak', phone: '0561-734567', email: 'sungairaya@bsmart.sch.id', pic: 'Drs. H. Mulyadi', status: 'Active', totalStudents: 520 },
+  { id: 'br-2', name: 'Cabang Danau Sentarum', code: 'DSR-02', address: 'Jl. Danau Sentarum No.17-18, Pontianak', phone: '0561-789012', email: 'danausentarum@bsmart.sch.id', pic: 'Budi Santoso, S.T.', status: 'Active', totalStudents: 290 },
+  { id: 'br-3', name: 'Cabang Karya Baru', code: 'KRB-03', address: 'Jl. Karya Baru No.77, Pontianak', phone: '0561-765432', email: 'karyabaru@bsmart.sch.id', pic: 'Siti Rahma, M.Pd.', status: 'Active', totalStudents: 340 },
 ];
 
 export const initialUsers: User[] = [
-  { id: 'u-1', name: 'Ahmad Faisal (Super Admin)', email: 'admin@hello-academy.sch.id', role: 'super_admin', branchId: 'br-1', avatar: '⚡', status: 'Active' },
-  { id: 'u-2', name: 'Dewi Kartika (Admin Karya Baru)', email: 'karyabaru.admin@hello-academy.sch.id', role: 'admin_cabang', branchId: 'br-2', avatar: '👩‍💼', status: 'Active' },
-  { id: 'u-3', name: 'Bambang S. (Guru Matematika)', email: 'bambang@hello-academy.sch.id', role: 'guru', branchId: 'br-1', avatar: '👨‍🏫', status: 'Active' },
-  { id: 'u-4', name: 'Hendra Saputra (Staff Keuangan)', email: 'keuangan@hello-academy.sch.id', role: 'staff_keuangan', branchId: 'br-1', avatar: '📊', status: 'Active' },
+  { id: 'u-1', name: 'Ahmad Faisal (Super Admin)', email: 'admin@bsmart.sch.id', role: 'super_admin', branchId: 'br-1', avatar: '⚡', status: 'Active' },
+  { id: 'u-2', name: 'Dewi Kartika (Admin Karya Baru)', email: 'karyabaru.admin@bsmart.sch.id', role: 'admin_cabang', branchId: 'br-2', avatar: '👩‍💼', status: 'Active' },
+  { id: 'u-3', name: 'Bambang S. (Guru Matematika)', email: 'bambang@bsmart.sch.id', role: 'guru', branchId: 'br-1', avatar: '👨‍🏫', status: 'Active' },
+  { id: 'u-4', name: 'Hendra Saputra (Staff Keuangan)', email: 'keuangan@bsmart.sch.id', role: 'staff_keuangan', branchId: 'br-1', avatar: '📊', status: 'Active' },
   { id: 'u-5', name: 'Ibu Susanti (Wali Murid)', email: 'susanti@gmail.com', role: 'wali_murid', branchId: 'br-1', avatar: '👵', status: 'Active' },
-  { id: 'u-6', name: 'Rizky Pratama (Siswa)', email: 'rizky@siswa.hello-academy.sch.id', role: 'siswa', branchId: 'br-1', avatar: '🎓', status: 'Active' },
+  { id: 'u-6', name: 'Rizky Pratama (Siswa)', email: 'rizky@siswa.bsmart.sch.id', role: 'siswa', branchId: 'br-1', avatar: '🎓', status: 'Active' },
 ];
 
 // Rich Seed Data: 12 Students across 3 Pontianak Branches
@@ -165,20 +171,20 @@ export const initialStudents: Student[] = [
 
 export const initialTeachers: Teacher[] = [
   { id: 'tch-1', nip: '19850112001', name: 'Bambang S., M.Pd.', subject: 'Matematika Terapan', branchId: 'br-1', hourlyRate: 150000, teachingHoursThisMonth: 42, phone: '081299887766' },
-  { id: 'tch-2', nip: '19880315002', name: 'Dra. Endang Lestari', subject: 'Fisika Kuantum', branchId: 'br-1', hourlyRate: 160000, teachingHoursThisMonth: 38, phone: '081311223344' },
-  { id: 'tch-3', nip: '19920720003', name: 'Kevin Sanjaya, S.Si.', subject: 'Kimia & Biologi', branchId: 'br-2', hourlyRate: 140000, teachingHoursThisMonth: 50, phone: '085644556677' },
+  { id: 'tch-2', nip: '19880315002', name: 'Dra. Endang Lestari', subject: 'Fisika Kuantum', branchId: 'br-2', hourlyRate: 160000, teachingHoursThisMonth: 38, phone: '081311223344' },
+  { id: 'tch-3', nip: '19920720003', name: 'Kevin Sanjaya, S.Si.', subject: 'Kimia & Biologi', branchId: 'br-3', hourlyRate: 140000, teachingHoursThisMonth: 50, phone: '085644556677' },
 ];
 
 export const initialPPDB: PPDBApplication[] = [
-  { id: 'ppdb-1', regNumber: 'PPDB-2026-001', applicantName: 'Dimas Setiawan', targetBranchId: 'br-1', grade: 'X SMA', parentPhone: '08123456789', status: 'Approved', testScore: 88, downpaymentStatus: 'Paid' },
-  { id: 'ppdb-2', regNumber: 'PPDB-2026-002', applicantName: 'Nadia Safira', targetBranchId: 'br-2', grade: 'X SMA', parentPhone: '08198765432', status: 'Interview', testScore: 79, downpaymentStatus: 'Unpaid' },
-  { id: 'ppdb-3', regNumber: 'PPDB-2026-003', applicantName: 'Fathan Azka', targetBranchId: 'br-3', grade: 'X SMA', parentPhone: '08571122334', status: 'Pending', testScore: undefined, downpaymentStatus: 'Unpaid' },
+  { id: 'ppdb-1', regNumber: 'PPDB-2026-001', nisn: '0089123451', applicantName: 'Dimas Setiawan', gender: 'L', birthInfo: 'Pontianak, 14 Mei 2008', previousSchool: 'SMA Negeri 1 Pontianak', grade: 'XII SMA (Kedokteran)', parentName: 'Ibu Susanti', parentPhone: '08129876543', homeAddress: 'Jl. Sui Raya Dalam No. 15, Pontianak Tenggara', targetBranchId: 'br-1', status: 'Approved', testScore: 88, downpaymentStatus: 'Paid' },
+  { id: 'ppdb-2', regNumber: 'PPDB-2026-002', nisn: '0089123452', applicantName: 'Nadia Safira', gender: 'P', birthInfo: 'Pontianak, 20 Agustus 2009', previousSchool: 'SMA Negeri 3 Pontianak', grade: 'XI SMA (Intensif)', parentName: 'Bapak Hendra', parentPhone: '08198765432', homeAddress: 'Jl. Danau Sentarum No. 44, Pontianak Kota', targetBranchId: 'br-2', status: 'Interview', testScore: 79, downpaymentStatus: 'Unpaid' },
+  { id: 'ppdb-3', regNumber: 'PPDB-2026-003', nisn: '0089123453', applicantName: 'Fathan Azka', gender: 'L', birthInfo: 'Pontianak, 10 November 2010', previousSchool: 'SMP Negeri 1 Pontianak', grade: 'IX SMP (Unggulan)', parentName: 'Dr. Hendri S.', parentPhone: '08571122334', homeAddress: 'Jl. Karya Baru No. 88, Pontianak Selatan', targetBranchId: 'br-3', status: 'Pending', testScore: undefined, downpaymentStatus: 'Unpaid' },
 ];
 
 export const initialInvoices: Invoice[] = [
-  { id: 'inv-101', invoiceNumber: 'INV/2026/08/001', studentName: 'Rizky Pratama', branchId: 'br-1', feeType: 'SPP', amount: 1250000, dueDate: '2026-08-10', status: 'Belum Bayar' },
-  { id: 'inv-102', invoiceNumber: 'INV/2026/08/002', studentName: 'Anisa Rahmawati', branchId: 'br-1', feeType: 'SPP', amount: 1250000, dueDate: '2026-08-10', status: 'Lunas', paymentMethod: 'QRIS Instant', paidAt: '2026-08-02' },
-  { id: 'inv-103', invoiceNumber: 'INV/2026/08/003', studentName: 'Bagas Aditya', branchId: 'br-2', feeType: 'Uang Pangkal', amount: 7500000, dueDate: '2026-08-15', status: 'Jatuh Tempo' },
+  { id: 'inv-101', invoiceNumber: 'INV/2026/08/001', studentName: 'Rizky Pratama', branchId: 'br-1', feeType: 'SPP', amount: 1250000, dueDate: '2026-08-05', status: 'Belum Bayar' },
+  { id: 'inv-102', invoiceNumber: 'INV/2026/08/002', studentName: 'Anisa Rahmawati', branchId: 'br-1', feeType: 'SPP', amount: 1250000, dueDate: '2026-08-05', status: 'Lunas', paymentMethod: 'QRIS Instant', paidAt: '2026-08-02' },
+  { id: 'inv-103', invoiceNumber: 'INV/2026/08/003', studentName: 'Bagas Aditya', branchId: 'br-2', feeType: 'Uang Pangkal', amount: 7500000, dueDate: '2026-08-05', status: 'Jatuh Tempo' },
 ];
 
 export const initialAttendance: AttendanceRecord[] = [

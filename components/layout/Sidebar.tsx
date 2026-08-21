@@ -86,11 +86,10 @@ export default function Sidebar({ currentRole }: SidebarProps) {
     <aside className="sidebar" style={{ background: '#ffffff', borderRight: '1px solid #e2e8f0' }}>
       {/* Brand Header */}
       <div style={{ padding: '20px 24px', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#2575b9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff', fontWeight: 800, fontSize: '1.2rem' }}>
-          H
-        </div>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/images/logo.png" alt="Bsmart Logo" style={{ height: '36px', width: 'auto', objectFit: 'contain' }} />
         <div>
-          <h3 style={{ fontSize: '1rem', color: '#0f172a', lineHeight: 1.1, fontWeight: 700 }}>Hello Academy</h3>
+          <h3 style={{ fontSize: '1rem', color: '#0f172a', lineHeight: 1.1, fontWeight: 700 }}>Bsmart Education</h3>
           <span style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 500 }}>Multi-Branch Pontianak</span>
         </div>
       </div>

@@ -12,14 +12,18 @@ interface ERPContextType {
   logout: () => void;
   currentRole: Role;
   setCurrentRole: (r: Role) => void;
+  currentTeacherId: string;
+  setCurrentTeacherId: (id: string) => void;
+  activeTeacher: Teacher;
   isSuperAdmin: boolean;
   currentBranchId: string;
-  setCurrentBranchId: (b: string) => void;
+  setCurrentBranchId: React.Dispatch<React.SetStateAction<string>>;
   branches: Branch[];
   setBranches: React.Dispatch<React.SetStateAction<Branch[]>>;
   students: Student[];
   setStudents: React.Dispatch<React.SetStateAction<Student[]>>;
   teachers: Teacher[];
+  setTeachers: React.Dispatch<React.SetStateAction<Teacher[]>>;
   invoices: Invoice[];
   setInvoices: React.Dispatch<React.SetStateAction<Invoice[]>>;
   ppdbList: PPDBApplication[];
@@ -38,6 +42,7 @@ interface ERPContextType {
   addAuditLog: (action: string, module: string, details: string) => Promise<void>;
   payInvoice: (id: string, method: string) => Promise<void>;
   addStudent: (s: Omit<Student, 'id' | 'qrCode'>) => Promise<void>;
+  addTeacher: (t: Omit<Teacher, 'id'>) => Promise<void>;
   addAttendance: (record: Omit<AttendanceRecord, 'id'>) => Promise<void>;
   refreshAllData: () => Promise<void>;
 }
@@ -45,38 +50,63 @@ interface ERPContextType {
 const ERPContext = createContext<ERPContextType | undefined>(undefined);
 
 export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticatedState] = useState<boolean>(false);
-
-  useEffect(() => {
+  const [isAuthenticated, setIsAuthenticatedState] = useState<boolean>(() => {
     if (typeof window !== 'undefined') {
-      const savedAuth = localStorage.getItem('hello_erp_logged_in');
-      if (savedAuth === 'true') {
-        setIsAuthenticatedState(true);
-      }
+      return localStorage.getItem('bsmart_erp_logged_in') === 'true' || localStorage.getItem('hello_erp_logged_in') === 'true';
     }
-  }, []);
+    return false;
+  });
+
+  const [currentRole, setCurrentRoleState] = useState<Role>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = (localStorage.getItem('bsmart_erp_role') || localStorage.getItem('hello_erp_role')) as Role;
+      if (saved) return saved;
+    }
+    return 'super_admin';
+  });
+
+  const [currentTeacherId, setCurrentTeacherIdState] = useState<string>('tch-1');
+  const [currentBranchId, setCurrentBranchId] = useState<string>('ALL');
+
+  const [branches, setBranches] = useState<Branch[]>(initialBranches);
+  const [students, setStudents] = useState<Student[]>(initialStudents);
+  const [teachers, setTeachers] = useState<Teacher[]>(initialTeachers);
+
+  const activeTeacher = teachers.find(t => t.id === currentTeacherId) || teachers[0] || initialTeachers[0];
+
+  const setCurrentTeacherId = (id: string) => {
+    setCurrentTeacherIdState(id);
+    const tch = teachers.find(t => t.id === id);
+    if (tch) {
+      setCurrentBranchId(tch.branchId);
+    }
+  };
 
   const setIsAuthenticated = (auth: boolean) => {
     setIsAuthenticatedState(auth);
     if (typeof window !== 'undefined') {
       if (auth) {
-        localStorage.setItem('hello_erp_logged_in', 'true');
+        localStorage.setItem('bsmart_erp_logged_in', 'true');
       } else {
+        localStorage.removeItem('bsmart_erp_logged_in');
         localStorage.removeItem('hello_erp_logged_in');
       }
+    }
+  };
+
+  const setCurrentRole = (role: Role) => {
+    setCurrentRoleState(role);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('bsmart_erp_role', role);
+    }
+    if (role !== 'super_admin' && currentBranchId === 'ALL') {
+      setCurrentBranchId('br-1');
     }
   };
 
   const logout = () => {
     setIsAuthenticated(false);
   };
-
-  const [currentRole, setCurrentRole] = useState<Role>('super_admin');
-  const [currentBranchId, setCurrentBranchId] = useState<string>('ALL');
-
-  const [branches, setBranches] = useState<Branch[]>(initialBranches);
-  const [students, setStudents] = useState<Student[]>(initialStudents);
-  const [teachers, setTeachers] = useState<Teacher[]>(initialTeachers);
   const [invoices, setInvoices] = useState<Invoice[]>(initialInvoices);
   const [ppdbList, setPpdbList] = useState<PPDBApplication[]>(initialPPDB);
   const [attendanceLogs, setAttendanceLogs] = useState<AttendanceRecord[]>(initialAttendance);
@@ -86,6 +116,11 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const refreshAllData = useCallback(async () => {
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 2000);
+
+      const fetchOptions = { signal: controller.signal };
+
       const [
         resBranches,
         resStudents,
@@ -97,16 +132,18 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         resAuditLogs,
         resLeads,
       ] = await Promise.allSettled([
-        fetch('/api/branches').then(res => res.json()),
-        fetch('/api/students').then(res => res.json()),
-        fetch('/api/teachers').then(res => res.json()),
-        fetch('/api/finance/invoices').then(res => res.json()),
-        fetch('/api/ppdb').then(res => res.json()),
-        fetch('/api/attendance').then(res => res.json()),
-        fetch('/api/exams').then(res => res.json()),
-        fetch('/api/audit-log').then(res => res.json()),
-        fetch('/api/crm/leads').then(res => res.json()),
+        fetch('/api/branches', fetchOptions).then(res => res.json()),
+        fetch('/api/students', fetchOptions).then(res => res.json()),
+        fetch('/api/teachers', fetchOptions).then(res => res.json()),
+        fetch('/api/finance/invoices', fetchOptions).then(res => res.json()),
+        fetch('/api/ppdb', fetchOptions).then(res => res.json()),
+        fetch('/api/attendance', fetchOptions).then(res => res.json()),
+        fetch('/api/exams', fetchOptions).then(res => res.json()),
+        fetch('/api/audit-log', fetchOptions).then(res => res.json()),
+        fetch('/api/crm/leads', fetchOptions).then(res => res.json()),
       ]);
+
+      clearTimeout(timeoutId);
 
       if (resBranches.status === 'fulfilled' && resBranches.value?.success && resBranches.value?.data?.length > 0) {
         setBranches(resBranches.value.data);
@@ -158,18 +195,12 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         );
       }
     } catch (error) {
-      console.error('Error fetching live data from MySQL:', error);
+      // Fast fallback to local state store
     }
   }, []);
 
   useEffect(() => {
     refreshAllData();
-
-    const interval = setInterval(() => {
-      refreshAllData();
-    }, 4000);
-
-    return () => clearInterval(interval);
   }, [refreshAllData]);
 
   // Branch-Filtered Computed Lists
@@ -217,14 +248,18 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     setAuditLogs(prev => [newLog, ...prev]);
 
+    // Non-blocking background fetch with 500ms timeout
     try {
-      await fetch('/api/audit-log', {
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), 500);
+      fetch('/api/audit-log', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newLog),
-      });
+        signal: controller.signal,
+      }).then(() => clearTimeout(id)).catch(() => {});
     } catch (e) {
-      console.error('Failed to post audit log:', e);
+      // Ignore background log errors
     }
   };
 
@@ -277,6 +312,36 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     await addAuditLog('Add Student', 'Students', `Siswa baru ${s.name} berhasil ditambahkan`);
   };
 
+  const addTeacher = async (t: Omit<Teacher, 'id'>) => {
+    const tempId = `tch-${Date.now()}`;
+    const newTch: Teacher = { ...t, id: tempId };
+    setTeachers(prev => [newTch, ...prev]);
+
+    try {
+      const res = await fetch('/api/teachers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nip: t.nip,
+          name: t.name,
+          subject: t.subject,
+          branchId: t.branchId,
+          hourlyRate: t.hourlyRate,
+          teachingHoursThisMonth: t.teachingHoursThisMonth,
+          phone: t.phone,
+        }),
+      });
+      const data = await res.json();
+      if (data.success && data.data) {
+        setTeachers(prev => prev.map(item => item.id === tempId ? data.data : item));
+      }
+    } catch (e) {
+      console.error('Failed to add teacher to MySQL:', e);
+    }
+
+    await addAuditLog('Add Teacher', 'Tutors', `Guru baru ${t.name} (${t.subject}) berhasil ditambahkan`);
+  };
+
   const addAttendance = async (record: Omit<AttendanceRecord, 'id'>) => {
     const tempId = `att-${Date.now()}`;
     const newAtt: AttendanceRecord = { ...record, id: tempId };
@@ -314,6 +379,9 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         logout,
         currentRole,
         setCurrentRole,
+        currentTeacherId,
+        setCurrentTeacherId,
+        activeTeacher,
         isSuperAdmin: currentRole === 'super_admin',
         currentBranchId,
         setCurrentBranchId,
@@ -322,6 +390,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         students,
         setStudents,
         teachers,
+        setTeachers,
         invoices,
         setInvoices,
         ppdbList,
@@ -340,6 +409,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         addAuditLog,
         payInvoice,
         addStudent,
+        addTeacher,
         addAttendance,
         refreshAllData,
       }}

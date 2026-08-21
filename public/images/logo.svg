@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" fill="none">
+  <defs>
+    <linearGradient id="bsmart-gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fde047" />
+      <stop offset="50%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+    <filter id="glow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#b45309" flood-opacity="0.25" />
+    </filter>
+  </defs>
+  
+  <!-- Transparent background, golden monogram 'bE' -->
+  <g filter="url(#glow)">
+    <!-- Vertical stem of 'b' -->
+    <rect x="42" y="20" width="16" height="116" rx="8" fill="url(#bsmart-gold)" />
+    
+    <!-- Outer loop ring of 'b' -->
+    <path d="M 50 62 A 38 38 0 1 1 50 136 A 38 38 0 0 1 50 62 Z" fill="none" stroke="url(#bsmart-gold)" stroke-width="16" stroke-linecap="round" />
+    
+    <!-- Three horizontal lines forming inner 'e' -->
+    <rect x="88" y="80" width="24" height="6" rx="3" fill="url(#bsmart-gold)" />
+    <rect x="94" y="96" width="24" height="6" rx="3" fill="url(#bsmart-gold)" />
+    <rect x="88" y="112" width="24" height="6" rx="3" fill="url(#bsmart-gold)" />
+  </g>
+</svg>

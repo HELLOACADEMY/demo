@@ -9,6 +9,7 @@ export default function BillingPage() {
   const { filteredInvoices: branchInvoices, setInvoices, students, branches, addAuditLog, isSuperAdmin, currentRole } = useERP();
   const [feeTypeFilter, setFeeTypeFilter] = useState<string>('ALL');
   const [showGenerateModal, setShowGenerateModal] = useState(false);
+  const [reminderSent, setReminderSent] = useState<string | null>(null);
 
   const filteredInvoices = feeTypeFilter === 'ALL' ? branchInvoices : branchInvoices.filter(i => i.feeType === feeTypeFilter);
 
@@ -28,8 +29,19 @@ export default function BillingPage() {
     setShowGenerateModal(false);
   };
 
+  const handleSendReminder = (inv: any) => {
+    addAuditLog('Send Payment Reminder', 'Finance', `Reminder WhatsApp pembayaran tagihan ${inv.invoiceNumber} dikirim ke wali murid ${inv.studentName}`);
+    setReminderSent(inv.invoiceNumber);
+    setTimeout(() => setReminderSent(null), 3500);
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      {reminderSent && (
+        <div style={{ padding: '14px 20px', background: '#dcfce7', border: '1px solid #bbf7d0', borderRadius: '10px', color: '#166534', fontWeight: 700, fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <AlertCircle size={18} /> Reminder WhatsApp Pembayaran Tagihan {reminderSent} Berhasil Dikirimkan ke Wali Murid!
+        </div>
+      )}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
         <div>
           <h1 style={{ fontSize: '1.5rem', color: '#0f172a', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -88,9 +100,18 @@ export default function BillingPage() {
                     </td>
                     <td style={{ padding: '12px 14px' }}>
                       {inv.status !== 'Lunas' ? (
-                        <Link href="/finance/payment" style={{ padding: '6px 12px', background: '#2575b9', color: '#fff', borderRadius: '6px', fontSize: '0.75rem', textDecoration: 'none', fontWeight: 500 }}>
-                          Bayar di Gateway
-                        </Link>
+                        (currentRole === 'wali_murid' || currentRole === 'siswa') ? (
+                          <Link href="/finance/payment" style={{ padding: '6px 12px', background: '#2575b9', color: '#fff', borderRadius: '6px', fontSize: '0.75rem', textDecoration: 'none', fontWeight: 600 }}>
+                            Bayar
+                          </Link>
+                        ) : (
+                          <button
+                            onClick={() => handleSendReminder(inv)}
+                            style={{ padding: '6px 14px', background: '#2575b9', color: '#ffffff', border: 'none', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer', boxShadow: '0 2px 6px rgba(37, 117, 185, 0.2)' }}
+                          >
+                            Kirim Reminder Pembayaran
+                          </button>
+                        )
                       ) : (
                         <span style={{ fontSize: '0.75rem', color: '#16a34a', fontWeight: 600 }}>Lunas via {inv.paymentMethod}</span>
                       )}

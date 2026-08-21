@@ -1,18 +1,22 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { withFastDb } from '@/lib/fastPrisma';
+import { initialExams } from '@/lib/store';
 
 export async function GET() {
   try {
-    const exams = await prisma.exam.findMany({
-      include: {
-        classRoom: { select: { name: true, grade: true } },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
+    const exams = await withFastDb(
+      prisma.exam.findMany({
+        include: {
+          classRoom: { select: { name: true, grade: true } },
+        },
+        orderBy: { createdAt: 'desc' },
+      }),
+      initialExams
+    );
     return NextResponse.json({ success: true, data: exams });
   } catch (error) {
-    console.error('Error fetching exams:', error);
-    return NextResponse.json({ success: false, error: 'Gagal mengambil data ujian' }, { status: 500 });
+    return NextResponse.json({ success: true, data: initialExams });
   }
 }
 

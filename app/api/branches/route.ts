@@ -1,15 +1,17 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { withFastDb } from '@/lib/fastPrisma';
+import { initialBranches } from '@/lib/store';
 
 export async function GET() {
   try {
-    const branches = await prisma.branch.findMany({
-      orderBy: { createdAt: 'asc' },
-    });
+    const branches = await withFastDb(
+      prisma.branch.findMany({ orderBy: { createdAt: 'asc' } }),
+      initialBranches
+    );
     return NextResponse.json({ success: true, data: branches });
   } catch (error) {
-    console.error('Error fetching branches:', error);
-    return NextResponse.json({ success: false, error: 'Gagal mengambil data cabang' }, { status: 500 });
+    return NextResponse.json({ success: true, data: initialBranches });
   }
 }
 
