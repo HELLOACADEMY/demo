@@ -104,9 +104,14 @@ export interface Invoice {
   feeType: 'SPP' | 'Uang Pangkal' | 'Buku' | 'Ujian';
   amount: number;
   dueDate: string;
-  status: 'Lunas' | 'Belum Bayar' | 'Jatuh Tempo';
+  status: 'Lunas' | 'Belum Bayar' | 'Jatuh Tempo' | 'Menunggu ACC Admin';
   paymentMethod?: string;
   paidAt?: string;
+  paymentProofUrl?: string;
+  senderBank?: string;
+  senderName?: string;
+  transferDate?: string;
+  transferNotes?: string;
 }
 
 export interface Exam {
