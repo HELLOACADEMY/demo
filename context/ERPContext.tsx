@@ -41,6 +41,9 @@ interface ERPContextType {
   filteredLeads: CRMLead[];
   addAuditLog: (action: string, module: string, details: string) => Promise<void>;
   payInvoice: (id: string, method: string) => Promise<void>;
+  submitPaymentProof: (id: string, proofData: { proofUrl: string; senderBank: string; senderName: string; transferDate: string; notes?: string }) => Promise<void>;
+  approvePaymentProof: (id: string) => Promise<void>;
+  rejectPaymentProof: (id: string, reason?: string) => Promise<void>;
   addStudent: (s: Omit<Student, 'id' | 'qrCode'>) => Promise<void>;
   addTeacher: (t: Omit<Teacher, 'id'>) => Promise<void>;
   addAttendance: (record: Omit<AttendanceRecord, 'id'>) => Promise<void>;
@@ -280,6 +283,48 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     await addAuditLog('Payment Processed', 'Finance', `Invoice ${id} dibayar via ${method}`);
   };
 
+  const submitPaymentProof = async (id: string, proofData: { proofUrl: string; senderBank: string; senderName: string; transferDate: string; notes?: string }) => {
+    setInvoices(prev => prev.map(inv => inv.id === id ? {
+      ...inv,
+      status: 'Menunggu ACC Admin',
+      paymentMethod: `Transfer ${proofData.senderBank}`,
+      paymentProofUrl: proofData.proofUrl,
+      senderBank: proofData.senderBank,
+      senderName: proofData.senderName,
+      transferDate: proofData.transferDate,
+      transferNotes: proofData.notes || ''
+    } : inv));
+
+    await addAuditLog('Submit Payment Proof', 'Finance', `Wali siswa mengunggah bukti transfer manual untuk invoice ${id} via ${proofData.senderBank} a.n ${proofData.senderName}`);
+  };
+
+  const approvePaymentProof = async (id: string) => {
+    const paidAt = new Date().toISOString().split('T')[0];
+    setInvoices(prev => prev.map(inv => inv.id === id ? { ...inv, status: 'Lunas', paidAt } : inv));
+
+    try {
+      await fetch(`/api/finance/invoices/${id}/pay`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ paymentMethod: 'Transfer Manual (Approved)' }),
+      });
+    } catch (e) {
+      console.error('Failed to pay invoice on MySQL:', e);
+    }
+
+    await addAuditLog('ACC Payment Proof Approved', 'Finance', `Admin menyetujui (ACC) bukti transfer pembayaran invoice ${id}`);
+  };
+
+  const rejectPaymentProof = async (id: string, reason?: string) => {
+    setInvoices(prev => prev.map(inv => inv.id === id ? {
+      ...inv,
+      status: 'Belum Bayar',
+      paymentProofUrl: undefined
+    } : inv));
+
+    await addAuditLog('Reject Payment Proof', 'Finance', `Admin menolak bukti transfer invoice ${id}. Alasan: ${reason || 'Bukti transfer tidak valid'}`);
+  };
+
   const addStudent = async (s: Omit<Student, 'id' | 'qrCode'>) => {
     const tempId = `std-${Date.now()}`;
     const qrCode = `QR-${tempId}-${s.name.toUpperCase()}`;
@@ -408,6 +453,9 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         filteredLeads,
         addAuditLog,
         payInvoice,
+        submitPaymentProof,
+        approvePaymentProof,
+        rejectPaymentProof,
         addStudent,
         addTeacher,
         addAttendance,
