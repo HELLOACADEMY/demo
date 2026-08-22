@@ -12,6 +12,11 @@ export default function AttendancePage() {
   const [isScanning, setIsScanning] = useState(false);
   const [scanResult, setScanResult] = useState<{ message: string; type: 'CHECK_IN' | 'CHECK_OUT' } | null>(null);
   const [accessDeniedModal, setAccessDeniedModal] = useState<{ message: string; details: string } | null>(null);
+  const [barcodeInput, setBarcodeInput] = useState('');
+  const [selectedStudentForScan, setSelectedStudentForScan] = useState<string>('std-101');
+  const [scannerMode, setScannerMode] = useState<'qr' | 'face'>('qr');
+  const [isFaceScanning, setIsFaceScanning] = useState(false);
+  const [faceProgress, setFaceProgress] = useState(0);
 
   // Admin filter for teacher profile
   const [selectedTeacherIdForAdmin, setSelectedTeacherIdForAdmin] = useState<string>(activeTeacher?.id || 'tch-1');
@@ -35,7 +40,7 @@ export default function AttendancePage() {
       setIsCameraActive(true);
     } catch (err: any) {
       console.error('Camera access error:', err);
-      setCameraError('Izin kamera ditolak atau perangkat kamera tidak ditemukan pada browser ini.');
+      setCameraError('Izin akses kamera diblokir browser atau perangkat WebCam belum terhubung. Klik "Izinkan Kamera" pada bar alamat browser atau gunakan tombol Presensi Instant di bawah.');
       setIsCameraActive(false);
     }
   };
@@ -54,6 +59,17 @@ export default function AttendancePage() {
       stopCamera();
     };
   }, []);
+
+  // Auto Face Scan Effect when Camera is Active in Face Mode
+  useEffect(() => {
+    let timer: any;
+    if (isCameraActive && scannerMode === 'face' && !isFaceScanning) {
+      timer = setTimeout(() => {
+        handleStartFaceScan();
+      }, 2000);
+    }
+    return () => clearTimeout(timer);
+  }, [isCameraActive, scannerMode]);
 
   // Live Digital Clock State with Seconds
   const [liveTime, setLiveTime] = useState('');
@@ -182,6 +198,62 @@ export default function AttendancePage() {
     }, 800);
   };
 
+  const handleBarcodeSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const input = barcodeInput.trim();
+    if (!input) return;
+
+    const term = input.toUpperCase();
+    const foundStd = students.find(s =>
+      s.qrCode.toUpperCase() === term ||
+      s.nisn.toUpperCase() === term ||
+      s.name.toUpperCase().includes(term) ||
+      s.id.toUpperCase() === term
+    );
+
+    if (foundStd) {
+      handleQRScan(foundStd.name, 'Siswa', foundStd.branchId);
+      setBarcodeInput('');
+      return;
+    }
+
+    const foundTch = teachers.find(t =>
+      t.nip.toUpperCase() === term ||
+      t.name.toUpperCase().includes(term) ||
+      t.id.toUpperCase() === term
+    );
+
+    if (foundTch) {
+      handleQRScan(foundTch.name, 'Guru', foundTch.branchId);
+      setBarcodeInput('');
+      return;
+    }
+
+    handleQRScan(input, selectedEntityType, currentTeacherBranch?.id || 'br-1');
+    setBarcodeInput('');
+  };
+
+  const handleStartFaceScan = () => {
+    startCamera();
+    setIsFaceScanning(true);
+    setFaceProgress(20);
+    const interval = setInterval(() => {
+      setFaceProgress(prev => {
+        if (prev >= 90) {
+          clearInterval(interval);
+          setTimeout(() => {
+            const std = students.find(s => s.id === selectedStudentForScan) || students[0];
+            handleQRScan(std.name, 'Siswa', std.branchId);
+            setIsFaceScanning(false);
+            setFaceProgress(0);
+          }, 300);
+          return 100;
+        }
+        return prev + 25;
+      });
+    }, 350);
+  };
+
   // Process Teacher Daily Attendance (Absen Masuk Guru & Absen Pulang Guru)
   const handleGuruDailyAttendance = (teacherId: string, teacherName: string, branchId: string, type: 'IN' | 'OUT') => {
     const now = new Date();
@@ -276,7 +348,7 @@ export default function AttendancePage() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/images/logo.png" alt="Bsmart Education Logo" style={{ height: '38px', width: 'auto', objectFit: 'contain' }} />
           <div>
-            <div style={{ fontSize: '1rem', fontWeight: 800, color: '#0f172a' }}>MODUL PRESENSI GURU & QR CODE</div>
+            <div style={{ fontSize: '1rem', fontWeight: 800, color: '#0f172a' }}>ABSENSI</div>
             <div style={{ fontSize: '0.75rem', color: '#64748b' }}>BSMART EDUCATION PONTIANAK</div>
           </div>
         </div>
@@ -371,7 +443,7 @@ export default function AttendancePage() {
               padding: '12px',
               borderRadius: '10px',
               border: 'none',
-              background: activeTab === 'guru_daily' ? '#7c3aed' : 'transparent',
+              background: activeTab === 'guru_daily' ? '#2563eb' : 'transparent',
               color: activeTab === 'guru_daily' ? '#ffffff' : '#64748b',
               fontWeight: 700,
               fontSize: '0.875rem',
@@ -380,7 +452,7 @@ export default function AttendancePage() {
               alignItems: 'center',
               justifyContent: 'center',
               gap: '8px',
-              boxShadow: activeTab === 'guru_daily' ? '0 4px 12px rgba(124, 58, 237, 0.25)' : 'none'
+              boxShadow: activeTab === 'guru_daily' ? '0 4px 12px rgba(37, 99, 235, 0.25)' : 'none'
             }}
           >
             <CalendarCheck size={18} /> 👨‍🏫 Absen Masuk Guru (Harian)
@@ -423,60 +495,142 @@ export default function AttendancePage() {
                 </div>
               </div>
 
-              {(currentRole === 'super_admin' || currentRole === 'admin_cabang') ? (
-                <div style={{ marginTop: '20px', padding: '20px', background: '#f8fafc', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
-                  <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#0369a1', marginBottom: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                    <ShieldAlert size={18} /> MODE ADMIN: MONITORING STREAM ABSENSI SISWA & GURU (READ-ONLY)
-                  </div>
-                  <div style={{ overflowX: 'auto' }}>
-                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.825rem', textAlign: 'left' }}>
-                      <thead>
-                        <tr style={{ background: '#e0f2fe', color: '#0369a1' }}>
-                          <th style={{ padding: '10px 12px', fontWeight: 800 }}>Waktu Scan</th>
-                          <th style={{ padding: '10px 12px', fontWeight: 800 }}>Nama Pengguna</th>
-                          <th style={{ padding: '10px 12px', fontWeight: 800 }}>Kategori</th>
-                          <th style={{ padding: '10px 12px', fontWeight: 800 }}>Pos Cabang</th>
-                          <th style={{ padding: '10px 12px', fontWeight: 800, textAlign: 'center' }}>Status Log</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {attendanceLogs.slice(0, 5).map((log, i) => (
-                          <tr key={i} style={{ borderBottom: '1px solid #e2e8f0' }}>
-                            <td style={{ padding: '10px 12px', fontWeight: 700, color: '#0f172a' }}>{log.time || log.date}</td>
-                            <td style={{ padding: '10px 12px', fontWeight: 800, color: '#2575b9' }}>{log.entityName}</td>
-                            <td style={{ padding: '10px 12px' }}>
-                              <span style={{ padding: '2px 8px', borderRadius: '6px', background: log.entityType === 'Guru' ? '#f3e8ff' : '#e0f2fe', color: log.entityType === 'Guru' ? '#7e22ce' : '#0369a1', fontWeight: 800, fontSize: '0.75rem' }}>
-                                {log.entityType}
-                              </span>
-                            </td>
-                            <td style={{ padding: '10px 12px', color: '#475569' }}>
-                              {branches.find(b => b.id === log.branchId)?.name || 'Cabang Sungai Raya Dalam (Pusat)'}
-                            </td>
-                            <td style={{ padding: '10px 12px', textAlign: 'center' }}>
-                              <span style={{ padding: '4px 10px', background: '#dcfce7', color: '#166534', borderRadius: '12px', fontWeight: 800, fontSize: '0.75rem' }}>
-                                HADIR TERVERIFIKASI ✅
-                              </span>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
+              {/* Scanner Mode Switcher: QR/Barcode vs Face Recognition AI */}
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '20px' }}>
+                <button
+                  type="button"
+                  onClick={() => { setScannerMode('qr'); stopCamera(); }}
+                  style={{
+                    padding: '8px 18px',
+                    borderRadius: '20px',
+                    border: '1px solid #cbd5e1',
+                    background: scannerMode === 'qr' ? '#2563eb' : '#f8fafc',
+                    color: scannerMode === 'qr' ? '#ffffff' : '#475569',
+                    fontWeight: 800,
+                    fontSize: '0.825rem',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}
+                >
+                  <QrCode size={16} /> Mode QR & Barcode Gun
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setScannerMode('face'); startCamera(); }}
+                  style={{
+                    padding: '8px 18px',
+                    borderRadius: '20px',
+                    border: '1px solid #cbd5e1',
+                    background: scannerMode === 'face' ? '#0284c7' : '#f8fafc',
+                    color: scannerMode === 'face' ? '#ffffff' : '#475569',
+                    fontWeight: 800,
+                    fontSize: '0.825rem',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}
+                >
+                  <User size={16} /> Mode Face Recognition AI (Scan Wajah)
+                </button>
+              </div>
+
+              {scannerMode === 'qr' ? (
+                <form onSubmit={handleBarcodeSubmit} style={{ maxWidth: '520px', margin: '0 auto 24px', display: 'flex', gap: '8px' }}>
+                  <input
+                    type="text"
+                    value={barcodeInput}
+                    onChange={e => setBarcodeInput(e.target.value)}
+                    placeholder="Tembak Barcode Gun / Ketik QR Code / NISN Siswa..."
+                    autoFocus
+                    style={{
+                      flex: 1,
+                      padding: '12px 16px',
+                      borderRadius: '10px',
+                      border: '2px solid #2563eb',
+                      fontSize: '0.9rem',
+                      fontWeight: 700,
+                      outline: 'none',
+                      background: '#f0f7ff',
+                      color: '#0f172a'
+                    }}
+                  />
+                  <button
+                    type="submit"
+                    style={{
+                      padding: '12px 20px',
+                      background: '#2563eb',
+                      color: '#ffffff',
+                      border: 'none',
+                      borderRadius: '10px',
+                      fontWeight: 800,
+                      fontSize: '0.875rem',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      boxShadow: '0 4px 12px rgba(37, 99, 235, 0.25)'
+                    }}
+                  >
+                    <QrCode size={18} /> Scan Barcode
+                  </button>
+                </form>
               ) : (
-                <>
-                  {/* WebCam View Box */}
-                  <div style={{ width: '100%', maxWidth: '440px', height: '260px', margin: '0 auto 20px', border: isCameraActive ? '3px solid #10b981' : '3px dashed #cbd5e1', borderRadius: '16px', overflow: 'hidden', background: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <video ref={videoRef} autoPlay playsInline muted style={{ width: '100%', height: '100%', objectFit: 'cover', display: isCameraActive ? 'block' : 'none' }} />
-                    {!isCameraActive && (
-                      <div style={{ color: '#94a3b8', textAlign: 'center', padding: '20px' }}>
-                        <Camera size={48} style={{ margin: '0 auto 8px', color: '#64748b' }} />
-                        <div style={{ fontSize: '0.875rem', fontWeight: 600 }}>Kamera Scanner Siap Digunakan</div>
+                <div style={{ margin: '0 auto 20px', maxWidth: '480px', padding: '12px', background: '#e0f2fe', borderRadius: '12px', border: '1px solid #7dd3fc', color: '#0369a1', fontWeight: 800, fontSize: '0.85rem' }}>
+                  👤 AI Face Detection Active: Arahkan Wajah Siswa / Guru Ke Tengah Lingkaran Kamera
+                </div>
+              )}
+
+              {/* WebCam View Box */}
+              <div style={{ width: '100%', maxWidth: '440px', height: '270px', margin: '0 auto 20px', border: isCameraActive ? (scannerMode === 'face' ? '3px solid #0284c7' : '3px solid #10b981') : '3px dashed #cbd5e1', borderRadius: '16px', overflow: 'hidden', background: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+                <video ref={videoRef} autoPlay playsInline muted style={{ width: '100%', height: '100%', objectFit: 'cover', display: isCameraActive ? 'block' : 'none' }} />
+                
+                {!isCameraActive && (
+                  <div style={{ color: '#94a3b8', textAlign: 'center', padding: '20px' }}>
+                    <Camera size={48} style={{ margin: '0 auto 8px', color: cameraError ? '#f87171' : '#64748b' }} />
+                    <div style={{ fontSize: '0.875rem', fontWeight: 700, color: cameraError ? '#f87171' : '#ffffff' }}>
+                      {cameraError ? '⚠️ Perhatian Akses Kamera' : 'Kamera WebCam Siap Digunakan'}
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: cameraError ? '#fca5a5' : '#94a3b8', marginTop: '4px', maxWidth: '340px' }}>
+                      {cameraError || (scannerMode === 'face' ? 'Posisikan Wajah Di Depan Kamera' : 'Arahkan Kartu QR Siswa / Guru ke Kamera')}
+                    </div>
+                  </div>
+                )}
+
+                {isCameraActive && scannerMode === 'qr' && (
+                  <div style={{ position: 'absolute', inset: 0, border: '2px dashed #10b981', margin: '30px', borderRadius: '12px', pointerEvents: 'none' }} />
+                )}
+
+                {/* Face Recognition Oval Mesh Circle Frame */}
+                {isCameraActive && scannerMode === 'face' && (
+                  <div style={{ position: 'absolute', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{
+                      width: '170px',
+                      height: '210px',
+                      borderRadius: '50%',
+                      border: isFaceScanning ? '4px solid #10b981' : '3px dashed #38bdf8',
+                      boxShadow: isFaceScanning ? '0 0 20px rgba(16, 185, 129, 0.6)' : '0 0 15px rgba(56, 189, 248, 0.4)',
+                      transition: 'all 0.3s ease'
+                    }} />
+                    {isFaceScanning && (
+                      <div style={{ marginTop: '10px', padding: '4px 12px', background: '#10b981', color: '#ffffff', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 800 }}>
+                        Mengenali Wajah... {faceProgress}% Match ✅
                       </div>
                     )}
                   </div>
+                )}
+              </div>
 
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: '12px' }}>
+              {/* Action Buttons & Quick Selectors */}
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'wrap', marginBottom: '24px' }}>
+                {scannerMode === 'face' ? (
+                  <button onClick={handleStartFaceScan} style={{ padding: '12px 24px', background: '#0284c7', color: '#ffffff', border: 'none', borderRadius: '10px', fontWeight: 800, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 14px rgba(2, 132, 199, 0.3)' }}>
+                    <User size={20} /> 👤 Scan Wajah Biometrik AI
+                  </button>
+                ) : (
+                  <>
                     {!isCameraActive ? (
                       <button onClick={startCamera} style={{ padding: '10px 20px', background: '#10b981', color: '#ffffff', border: 'none', borderRadius: '8px', fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
                         <Camera size={18} /> Aktifkan Kamera WebCam
@@ -486,15 +640,75 @@ export default function AttendancePage() {
                         <CameraOff size={18} /> Matikan Kamera
                       </button>
                     )}
+                  </>
+                )}
 
-                    <button onClick={() => {
-                      handleQRScan(currentTeacher.name, 'Guru', currentTeacher.branchId);
-                    }} style={{ padding: '10px 20px', background: '#2575b9', color: '#ffffff', border: 'none', borderRadius: '8px', fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-                      <QrCode size={18} /> Simulasi Scan QR {currentTeacher.name}
-                    </button>
-                  </div>
-                </>
-              )}
+                <div style={{ display: 'inline-flex', gap: '8px', alignItems: 'center', background: '#f8fafc', padding: '4px 8px', borderRadius: '10px', border: '1px solid #cbd5e1' }}>
+                  <select
+                    value={selectedStudentForScan}
+                    onChange={e => setSelectedStudentForScan(e.target.value)}
+                    style={{ padding: '8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.825rem', fontWeight: 700, outline: 'none' }}
+                  >
+                    {students.map(s => (
+                      <option key={s.id} value={s.id}>🎓 {s.name} ({s.nisn})</option>
+                    ))}
+                  </select>
+
+                  <button onClick={() => {
+                    const std = students.find(s => s.id === selectedStudentForScan) || students[0];
+                    if (std) handleQRScan(std.name, 'Siswa', std.branchId);
+                  }} style={{ padding: '8px 14px', background: '#2563eb', color: '#ffffff', border: 'none', borderRadius: '6px', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <QrCode size={16} /> Scan Siswa
+                  </button>
+                </div>
+
+                <button onClick={() => {
+                  handleQRScan(currentTeacher.name, 'Guru', currentTeacher.branchId);
+                }} style={{ padding: '10px 20px', background: '#0284c7', color: '#ffffff', border: 'none', borderRadius: '8px', fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                  <QrCode size={18} /> Scan QR Guru ({currentTeacher.name})
+                </button>
+              </div>
+
+              {/* Stream Log Monitor Table */}
+              <div style={{ marginTop: '20px', padding: '20px', background: '#f8fafc', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
+                <div style={{ fontSize: '0.875rem', fontWeight: 800, color: '#0369a1', marginBottom: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                  <ShieldAlert size={18} /> STREAM PRESENSI TERBARU (HARI INI)
+                </div>
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.825rem', textAlign: 'left' }}>
+                    <thead>
+                      <tr style={{ background: '#e0f2fe', color: '#0369a1' }}>
+                        <th style={{ padding: '10px 12px', fontWeight: 800 }}>Waktu Scan</th>
+                        <th style={{ padding: '10px 12px', fontWeight: 800 }}>Nama Pengguna</th>
+                        <th style={{ padding: '10px 12px', fontWeight: 800 }}>Kategori</th>
+                        <th style={{ padding: '10px 12px', fontWeight: 800 }}>Pos Cabang</th>
+                        <th style={{ padding: '10px 12px', fontWeight: 800, textAlign: 'center' }}>Status Log</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {attendanceLogs.slice(0, 5).map((log, i) => (
+                        <tr key={i} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                          <td style={{ padding: '10px 12px', fontWeight: 700, color: '#0f172a' }}>{log.time || log.date}</td>
+                          <td style={{ padding: '10px 12px', fontWeight: 800, color: '#2575b9' }}>{log.entityName}</td>
+                          <td style={{ padding: '10px 12px' }}>
+                            <span style={{ padding: '2px 8px', borderRadius: '6px', background: log.entityType === 'Guru' ? '#dbeafe' : '#e0f2fe', color: log.entityType === 'Guru' ? '#1d4ed8' : '#0369a1', fontWeight: 800, fontSize: '0.75rem' }}>
+                              {log.entityType}
+                            </span>
+                          </td>
+                          <td style={{ padding: '10px 12px', color: '#475569' }}>
+                            {branches.find(b => b.id === log.branchId)?.name || 'Cabang Sungai Raya Dalam (Pusat)'}
+                          </td>
+                          <td style={{ padding: '10px 12px', textAlign: 'center' }}>
+                            <span style={{ padding: '4px 10px', background: '#dcfce7', color: '#166534', borderRadius: '12px', fontWeight: 800, fontSize: '0.75rem' }}>
+                              HADIR TERVERIFIKASI ✅
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
           </div>
         )}
@@ -505,7 +719,7 @@ export default function AttendancePage() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
               <div>
                 <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <CalendarCheck style={{ color: '#7c3aed' }} /> Riwayat Presensi Kehadiran Harian Guru (1 Bulan)
+                  <CalendarCheck style={{ color: '#2563eb' }} /> Riwayat Presensi Kehadiran Harian Guru (1 Bulan)
                 </h2>
                 <p style={{ fontSize: '0.85rem', color: '#64748b', margin: '4px 0 0' }}>
                   Log lengkap presensi kedatangan dan kepulangan harian untuk <strong>{currentTeacher.name}</strong> ({currentTeacher.subject}).
@@ -517,7 +731,7 @@ export default function AttendancePage() {
                   <select
                     value={selectedTeacherIdForAdmin}
                     onChange={e => setSelectedTeacherIdForAdmin(e.target.value)}
-                    style={{ padding: '8px 12px', borderRadius: '8px', border: '1.5px solid #7c3aed', fontSize: '0.825rem', fontWeight: 700, color: '#0f172a', background: '#ffffff', outline: 'none' }}
+                    style={{ padding: '8px 12px', borderRadius: '8px', border: '1.5px solid #2563eb', fontSize: '0.825rem', fontWeight: 700, color: '#0f172a', background: '#ffffff', outline: 'none' }}
                   >
                     {teachers.map(t => (
                       <option key={t.id} value={t.id}>👨‍🏫 {t.name} ({branches.find(b => b.id === t.branchId)?.code})</option>
@@ -525,7 +739,7 @@ export default function AttendancePage() {
                   </select>
                 )}
 
-                <div style={{ background: '#f5f3ff', padding: '8px 16px', borderRadius: '10px', border: '1px solid #ddd6fe', fontSize: '0.825rem', fontWeight: 700, color: '#6d28d9' }}>
+                <div style={{ background: '#eff6ff', padding: '8px 16px', borderRadius: '10px', border: '1px solid #bfdbfe', fontSize: '0.825rem', fontWeight: 700, color: '#1d4ed8' }}>
                   📍 {currentTeacherBranch.name}
                 </div>
               </div>
@@ -578,7 +792,7 @@ export default function AttendancePage() {
                         <td style={{ padding: '14px', fontWeight: 700, color: (isTodayRow ? log.checkOut : item.out) ? '#166534' : '#94a3b8' }}>
                           {(isTodayRow ? log.checkOut : item.out) ? `✅ ${isTodayRow ? log.checkOut : item.out}` : 'Belum Absen Pulang'}
                         </td>
-                        <td style={{ padding: '14px', fontWeight: 700, color: '#7c3aed' }}>
+                        <td style={{ padding: '14px', fontWeight: 700, color: '#2563eb' }}>
                           {isTodayRow ? (log.checkIn && log.checkOut ? '8 Jam 30 Menit' : 'Sesi Aktif') : item.duration}
                         </td>
                         <td style={{ padding: '14px', textAlign: 'center' }}>
@@ -679,7 +893,7 @@ export default function AttendancePage() {
                           <div>{ses.title}</div>
                           <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 500 }}>{ses.room} • {ses.students} Murid</div>
                         </td>
-                        <td style={{ padding: '14px', textAlign: 'center', fontWeight: 800, color: '#7c3aed' }}>
+                        <td style={{ padding: '14px', textAlign: 'center', fontWeight: 800, color: '#2563eb' }}>
                           {ses.duration} Jam
                         </td>
                         <td style={{ padding: '14px', fontWeight: 700 }}>

@@ -82,7 +82,7 @@ export default function ProfitLossPage() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
           <div>
             <h1 style={{ fontSize: '1.6rem', color: '#0f172a', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <Scale style={{ color: '#7c3aed' }} size={28} /> Laporan Laba Rugi & Neraca Keuangan
+              <Scale style={{ color: '#2563eb' }} size={28} /> Laporan Laba Rugi & Neraca Keuangan
             </h1>
             <p style={{ fontSize: '0.875rem', color: '#64748b', margin: '4px 0 0' }}>
               Statistik & Laporan Resmi Keuangan Kelembagaan {activeBranch.name}.
@@ -91,7 +91,7 @@ export default function ProfitLossPage() {
 
           <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#ffffff', padding: '6px 14px', borderRadius: '12px', border: '1.5px solid #e2e8f0' }}>
-              <Calendar size={16} style={{ color: '#7c3aed' }} />
+              <Calendar size={16} style={{ color: '#2563eb' }} />
               <select 
                 value={period} 
                 onChange={e => setPeriod(e.target.value)} 
@@ -130,7 +130,7 @@ export default function ProfitLossPage() {
               alignItems: 'center',
               gap: '8px',
               background: activeTab === 'profit_loss' ? '#ffffff' : 'transparent',
-              color: activeTab === 'profit_loss' ? '#7c3aed' : '#64748b',
+              color: activeTab === 'profit_loss' ? '#2563eb' : '#64748b',
               boxShadow: activeTab === 'profit_loss' ? '0 2px 8px rgba(0,0,0,0.06)' : 'none',
               transition: 'all 0.2s ease'
             }}
@@ -150,7 +150,7 @@ export default function ProfitLossPage() {
               alignItems: 'center',
               gap: '8px',
               background: activeTab === 'balance_sheet' ? '#ffffff' : 'transparent',
-              color: activeTab === 'balance_sheet' ? '#7c3aed' : '#64748b',
+              color: activeTab === 'balance_sheet' ? '#2563eb' : '#64748b',
               boxShadow: activeTab === 'balance_sheet' ? '0 2px 8px rgba(0,0,0,0.06)' : 'none',
               transition: 'all 0.2s ease'
             }}
@@ -170,7 +170,7 @@ export default function ProfitLossPage() {
               alignItems: 'center',
               gap: '8px',
               background: activeTab === 'combined' ? '#ffffff' : 'transparent',
-              color: activeTab === 'combined' ? '#7c3aed' : '#64748b',
+              color: activeTab === 'combined' ? '#2563eb' : '#64748b',
               boxShadow: activeTab === 'combined' ? '0 2px 8px rgba(0,0,0,0.06)' : 'none',
               transition: 'all 0.2s ease'
             }}
@@ -203,10 +203,10 @@ export default function ProfitLossPage() {
 
           <div style={{ background: '#ffffff', padding: '20px', borderRadius: '16px', border: '1.5px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.02)' }}>
             <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase' }}>Laba Bersih (Net Profit)</div>
-            <div style={{ fontSize: '1.4rem', fontWeight: 900, color: '#7c3aed', marginTop: '6px' }}>
+            <div style={{ fontSize: '1.4rem', fontWeight: 900, color: '#2563eb', marginTop: '6px' }}>
               Rp {netProfit.toLocaleString('id-ID')}
             </div>
-            <div style={{ fontSize: '0.75rem', color: '#7c3aed', fontWeight: 800, marginTop: '4px' }}>
+            <div style={{ fontSize: '0.75rem', color: '#2563eb', fontWeight: 800, marginTop: '4px' }}>
               Profit Margin: {profitMargin}%
             </div>
           </div>
@@ -249,7 +249,7 @@ export default function ProfitLossPage() {
               <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0f172a', letterSpacing: '0.02em', lineHeight: 1.1 }}>
                 BSMART EDUCATION PONTIANAK
               </div>
-              <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#7c3aed', marginTop: '2px' }}>
+              <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#2563eb', marginTop: '2px' }}>
                 Lembaga Bimbingan Belajar & Pelatihan Intensif UTBK/SNBT Terpadu
               </div>
               <div style={{ fontSize: '0.725rem', color: '#64748b', marginTop: '3px' }}>
@@ -373,12 +373,12 @@ export default function ProfitLossPage() {
             </div>
 
             {/* HASIL LABA BERSIH BOX */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 20px', background: '#f3e8ff', border: '2px solid #7c3aed', borderRadius: '12px', color: '#5b21b6' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 20px', background: '#dbeafe', border: '2px solid #2563eb', borderRadius: '12px', color: '#172554' }}>
               <div>
                 <div style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>LABA BERSIH OPERASIONAL (NET PROFIT = A - B)</div>
-                <div style={{ fontSize: '0.75rem', color: '#6b21a8', marginTop: '2px' }}>Margin Laba Bersih Kelembagaan: <strong>{profitMargin}%</strong></div>
+                <div style={{ fontSize: '0.75rem', color: '#1e40af', marginTop: '2px' }}>Margin Laba Bersih Kelembagaan: <strong>{profitMargin}%</strong></div>
               </div>
-              <div style={{ fontSize: '1.3rem', fontWeight: 900, color: '#6d28d9' }}>
+              <div style={{ fontSize: '1.3rem', fontWeight: 900, color: '#1d4ed8' }}>
                 Rp {netProfit.toLocaleString('id-ID')}
               </div>
             </div>
@@ -447,9 +447,9 @@ export default function ProfitLossPage() {
 
               {/* KOLOM KANAN: PASIVA (LIABILITIES & EQUITY) */}
               <div style={{ border: '1px solid #cbd5e1', borderRadius: '10px', padding: '16px', background: '#fafafa' }}>
-                <div style={{ fontSize: '0.9rem', fontWeight: 900, color: '#0f172a', borderBottom: '2px solid #7c3aed', paddingBottom: '6px', marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ fontSize: '0.9rem', fontWeight: 900, color: '#0f172a', borderBottom: '2px solid #2563eb', paddingBottom: '6px', marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span>PASIVA (KEWAJIBAN & EKUITAS)</span>
-                  <span style={{ fontSize: '0.75rem', color: '#7c3aed', fontWeight: 800 }}>LIABILITIES & EQUITY</span>
+                  <span style={{ fontSize: '0.75rem', color: '#2563eb', fontWeight: 800 }}>LIABILITIES & EQUITY</span>
                 </div>
 
                 {/* Kewajiban / Hutang */}
@@ -462,7 +462,7 @@ export default function ProfitLossPage() {
                     <span style={{ fontWeight: 700, color: '#0f172a' }}>Rp {item.amount.toLocaleString('id-ID')}</span>
                   </div>
                 ))}
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', fontWeight: 800, color: '#6b21a8', borderTop: '1px solid #cbd5e1', marginTop: '6px', marginBottom: '14px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', fontWeight: 800, color: '#1d4ed8', borderTop: '1px solid #cbd5e1', marginTop: '6px', marginBottom: '14px' }}>
                   <span>Subtotal Kewajiban:</span>
                   <span>Rp {totalLiabilities.toLocaleString('id-ID')}</span>
                 </div>
@@ -477,13 +477,13 @@ export default function ProfitLossPage() {
                     <span style={{ fontWeight: 700, color: '#0f172a' }}>Rp {item.amount.toLocaleString('id-ID')}</span>
                   </div>
                 ))}
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', fontWeight: 800, color: '#6b21a8', borderTop: '1px solid #cbd5e1', marginTop: '6px', marginBottom: '16px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', fontWeight: 800, color: '#1d4ed8', borderTop: '1px solid #cbd5e1', marginTop: '6px', marginBottom: '16px' }}>
                   <span>Subtotal Ekuitas:</span>
                   <span>Rp {totalEquity.toLocaleString('id-ID')}</span>
                 </div>
 
                 {/* TOTAL PASIVA */}
-                <div style={{ background: '#f3e8ff', border: '1.5px solid #7c3aed', padding: '10px 12px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', fontWeight: 900, color: '#5b21b6', fontSize: '0.9rem' }}>
+                <div style={{ background: '#dbeafe', border: '1.5px solid #2563eb', padding: '10px 12px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', fontWeight: 900, color: '#172554', fontSize: '0.9rem' }}>
                   <span>TOTAL PASIVA:</span>
                   <span>Rp {totalLiabilitiesAndEquity.toLocaleString('id-ID')}</span>
                 </div>
@@ -528,7 +528,7 @@ export default function ProfitLossPage() {
             <div style={{ color: '#64748b', fontWeight: 700 }}>Disetujui Oleh,</div>
             <div style={{ color: '#0f172a', fontWeight: 800, marginTop: '2px' }}>Kepala Cabang / Direktur</div>
             <div style={{ height: '54px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ fontSize: '0.65rem', color: '#7c3aed', fontWeight: 900, border: '1.5px solid #7c3aed', padding: '3px 8px', borderRadius: '4px' }}>STEMPEL DOKUMEN RESMI</span>
+              <span style={{ fontSize: '0.65rem', color: '#2563eb', fontWeight: 900, border: '1.5px solid #2563eb', padding: '3px 8px', borderRadius: '4px' }}>STEMPEL DOKUMEN RESMI</span>
             </div>
             <div style={{ fontWeight: 800, color: '#0f172a', textDecoration: 'underline' }}>Dr. Hendra Saputra, M.Pd.</div>
             <div style={{ fontSize: '0.7rem', color: '#64748b' }}>Direktur Utama Bsmart Education</div>

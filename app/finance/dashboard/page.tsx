@@ -101,12 +101,12 @@ export default function FinanceDashboardPage() {
         <div style={{ padding: '20px', background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '16px', boxShadow: '0 4px 14px rgba(0,0,0,0.03)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
             <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#64748b' }}>Laba Bersih (Net Profit)</span>
-            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#f3e8ff', color: '#7e22ce', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#dbeafe', color: '#1d4ed8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <DollarSign size={20} />
             </div>
           </div>
-          <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#7e22ce' }}>Rp 136.300.000</div>
-          <div style={{ fontSize: '0.75rem', color: '#6b21a8', fontWeight: 700, marginTop: '4px' }}>Pendapatan - Beban</div>
+          <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#1d4ed8' }}>Rp 136.300.000</div>
+          <div style={{ fontSize: '0.75rem', color: '#1e40af', fontWeight: 700, marginTop: '4px' }}>Pendapatan - Beban</div>
         </div>
       </div>
 

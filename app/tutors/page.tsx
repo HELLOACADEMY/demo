@@ -169,7 +169,7 @@ export default function TutorsPage() {
                     <DollarSign size={16} style={{ color: '#16a34a' }} /> Honor per Jam: <strong style={{ color: '#16a34a' }}>Rp {t.hourlyRate.toLocaleString('id-ID')} / jam</strong>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Mail size={16} style={{ color: '#8b5cf6' }} /> Email Login: <strong style={{ color: '#6d28d9' }}>{defaultEmail}</strong>
+                    <Mail size={16} style={{ color: '#2563eb' }} /> Email Login: <strong style={{ color: '#1d4ed8' }}>{defaultEmail}</strong>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <Phone size={16} style={{ color: '#d97706' }} /> WhatsApp: {t.phone}

@@ -2,16 +2,25 @@
 
 import React, { useState } from 'react';
 import { useERP } from '@/context/ERPContext';
-import { GraduationCap, QrCode, ArrowRightLeft, Download, Share2, CheckCircle2, Plus } from 'lucide-react';
+import { GraduationCap, QrCode, ArrowRightLeft, Download, Share2, CheckCircle2, Plus, UserX, UserCheck, ShieldAlert, AlertTriangle, Search, Filter } from 'lucide-react';
 import { Student } from '@/lib/store';
 
 export default function StudentsPage() {
   const { filteredStudents, branches, setStudents, addStudent, addAuditLog, isSuperAdmin, currentRole } = useERP();
   const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'ALL' | 'Aktif' | 'Non-Aktif' | 'Alumni' | 'Mutasi'>('ALL');
+  
   const [selectedStudentQR, setSelectedStudentQR] = useState<Student | null>(null);
   const [selectedStudentMutate, setSelectedStudentMutate] = useState<Student | null>(null);
+  const [selectedStudentDeactivate, setSelectedStudentDeactivate] = useState<Student | null>(null);
+
+  const [deactivationReason, setDeactivationReason] = useState('Sudah Tidak Ikut Bimbel Lagi');
+  const [deactivateParentAccount, setDeactivateParentAccount] = useState(true);
+  const [deactivationNotes, setDeactivationNotes] = useState('');
+
   const [newBranchId, setNewBranchId] = useState(branches[0]?.id || 'br-1');
   const [downloadSuccess, setDownloadSuccess] = useState(false);
+  const [actionNotice, setActionNotice] = useState<string | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
 
   // New Student Form state
@@ -35,9 +44,64 @@ export default function StudentsPage() {
     });
     setShowAddModal(false);
     setNewNisn(''); setNewName('');
+    setActionNotice(`Siswa baru ${newName} berhasil ditambahkan.`);
+    setTimeout(() => setActionNotice(null), 3500);
   };
 
-  const filtered = filteredStudents.filter(s => s.name.toLowerCase().includes(search.toLowerCase()) || s.nisn.includes(search));
+  const filtered = filteredStudents.filter(s => {
+    const matchesSearch = s.name.toLowerCase().includes(search.toLowerCase()) || s.nisn.includes(search);
+    const matchesStatus = statusFilter === 'ALL' || (statusFilter === 'Non-Aktif' ? (s.status === 'Non-Aktif' || s.status === 'Inactive' as any) : s.status === statusFilter);
+    return matchesSearch && matchesStatus;
+  });
+
+  // Handle Deactivating Student & Parent Account (For Super Admin)
+  const handleConfirmDeactivation = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedStudentDeactivate) return;
+
+    const studentName = selectedStudentDeactivate.name;
+    const finalReason = deactivationNotes ? `${deactivationReason}: ${deactivationNotes}` : deactivationReason;
+
+    setStudents(prev => prev.map(s => {
+      if (s.id === selectedStudentDeactivate.id) {
+        return {
+          ...s,
+          status: 'Non-Aktif',
+          deactivationReason: finalReason
+        } as Student & { deactivationReason?: string };
+      }
+      return s;
+    }));
+
+    const auditDetail = deactivateParentAccount
+      ? `Super Admin mematikan akun Siswa ${studentName} & Wali Murid (Alasan: ${finalReason})`
+      : `Super Admin mematikan akun Siswa ${studentName} (Alasan: ${finalReason})`;
+
+    addAuditLog('Deactivate Student & Parent Account', 'Students', auditDetail);
+
+    setActionNotice(`Akun Siswa ${studentName} ${deactivateParentAccount ? '& Wali Murid ' : ''}berhasil DIMATIKAN/NONAKTIFKAN (Alasan: ${deactivationReason}).`);
+    setSelectedStudentDeactivate(null);
+    setDeactivationNotes('');
+    setTimeout(() => setActionNotice(null), 4500);
+  };
+
+  // Reactivate Student Account
+  const handleReactivateStudent = (student: Student) => {
+    setStudents(prev => prev.map(s => {
+      if (s.id === student.id) {
+        return {
+          ...s,
+          status: 'Aktif',
+          deactivationReason: undefined
+        };
+      }
+      return s;
+    }));
+
+    addAuditLog('Reactivate Student Account', 'Students', `Super Admin mengaktifkan kembali akun Siswa ${student.name}`);
+    setActionNotice(`Akun Siswa ${student.name} berhasil DIAKTIFKAN KEMBALI ✅`);
+    setTimeout(() => setActionNotice(null), 3500);
+  };
 
   const handleMutateBranch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,6 +109,8 @@ export default function StudentsPage() {
     setStudents(prev => prev.map(s => s.id === selectedStudentMutate.id ? { ...s, branchId: newBranchId, status: 'Mutasi' } : s));
     addAuditLog('Student Branch Transfer', 'Students', `Siswa ${selectedStudentMutate.name} dipindahkan ke cabang ${newBranchId}`);
     setSelectedStudentMutate(null);
+    setActionNotice(`Siswa ${selectedStudentMutate.name} berhasil dimutasi.`);
+    setTimeout(() => setActionNotice(null), 3500);
   };
 
   // Download Full Official Student Card Image (PNG) with Name & Details below Barcode
@@ -62,8 +128,8 @@ export default function StudentsPage() {
 
     // Header Gradient Banner
     const gradient = ctx.createLinearGradient(0, 0, 600, 0);
-    gradient.addColorStop(0, '#2575b9');
-    gradient.addColorStop(1, '#1d5f9a');
+    gradient.addColorStop(0, '#2563eb');
+    gradient.addColorStop(1, '#1d4ed8');
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, 600, 140);
 
@@ -85,7 +151,7 @@ export default function StudentsPage() {
       ctx.drawImage(img, 175, 170, 250, 250);
 
       // Border around QR Code
-      ctx.strokeStyle = '#2575b9';
+      ctx.strokeStyle = '#2563eb';
       ctx.lineWidth = 3;
       ctx.strokeRect(170, 165, 260, 260);
 
@@ -96,7 +162,7 @@ export default function StudentsPage() {
       ctx.fillText(student.name, 300, 475);
 
       // NISN directly below Name
-      ctx.fillStyle = '#2575b9';
+      ctx.fillStyle = '#2563eb';
       ctx.font = '500 20px Inter, system-ui, sans-serif';
       ctx.fillText(`NISN: ${student.nisn}`, 300, 515);
 
@@ -137,41 +203,59 @@ export default function StudentsPage() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+      {/* Page Header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
         <div>
-          <h1 style={{ fontSize: '1.5rem', color: '#0f172a', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <GraduationCap style={{ color: '#4f46e5' }} /> Data & Direktori Siswa
+          <h1 style={{ fontSize: '1.5rem', color: '#0f172a', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <GraduationCap style={{ color: '#2563eb' }} /> Data & Direktori Siswa
           </h1>
-          <p style={{ fontSize: '0.875rem', color: '#64748b' }}>
-            Manajemen direktori siswa, kartu Barcode QR digital scannable, dan mutasi antar cabang.
+          <p style={{ fontSize: '0.875rem', color: '#64748b', margin: '4px 0 0' }}>
+            Manajemen direktori siswa, kartu Barcode QR digital scannable, mutasi cabang, dan penonaktifan akun (Sudah Tidak Ikut Bimbel).
           </p>
         </div>
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-          <div style={{ width: '260px' }}>
+
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+          <div style={{ position: 'relative', width: '240px' }}>
             <input
               type="text"
-              placeholder="Cari Nama / NISN Siswa..."
+              placeholder="Cari Nama / NISN..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              style={{ width: '100%', padding: '10px 14px', border: '1px solid #cbd5e1', borderRadius: '8px', fontSize: '0.875rem', outline: 'none' }}
+              style={{ width: '100%', padding: '10px 14px 10px 36px', border: '1px solid #cbd5e1', borderRadius: '10px', fontSize: '0.875rem', outline: 'none', fontWeight: 600 }}
             />
+            <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
           </div>
+
+          <select
+            value={statusFilter}
+            onChange={e => setStatusFilter(e.target.value as any)}
+            className="select-field"
+            style={{ padding: '10px 14px', borderRadius: '10px', fontWeight: 700, fontSize: '0.85rem' }}
+          >
+            <option value="ALL">🌐 Semua Status Siswa</option>
+            <option value="Aktif">✅ Siswa Aktif Bimbel</option>
+            <option value="Non-Aktif">⛔ Non-Aktif / Sudah Tidak Ikut</option>
+            <option value="Alumni">🎓 Alumni / Lulus</option>
+            <option value="Mutasi">🔄 Siswa Mutasi</option>
+          </select>
+
           {(isSuperAdmin || currentRole === 'admin_cabang') && (
             <button
               onClick={() => setShowAddModal(true)}
               style={{
                 padding: '10px 18px',
-                background: '#4f46e5',
+                background: '#2563eb',
                 border: 'none',
-                borderRadius: '8px',
+                borderRadius: '10px',
                 color: '#ffffff',
-                fontWeight: 500,
+                fontWeight: 800,
                 fontSize: '0.875rem',
                 cursor: 'pointer',
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
+                boxShadow: '0 4px 12px rgba(37, 99, 235, 0.25)',
                 whiteSpace: 'nowrap',
               }}
             >
@@ -181,41 +265,58 @@ export default function StudentsPage() {
         </div>
       </div>
 
-      <div style={{ background: '#ffffff', padding: '24px', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+      {actionNotice && (
+        <div style={{ padding: '14px 20px', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '12px', color: '#1e40af', fontWeight: 800, fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: '10px', boxShadow: '0 4px 12px rgba(37, 99, 235, 0.1)' }}>
+          <CheckCircle2 size={20} style={{ color: '#2563eb' }} /> {actionNotice}
+        </div>
+      )}
+
+      {/* Main Table Directory */}
+      <div style={{ background: '#ffffff', padding: '24px', borderRadius: '16px', border: '1px solid #e2e8f0', boxShadow: '0 4px 14px rgba(0,0,0,0.03)' }}>
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem' }}>
             <thead>
               <tr style={{ background: '#f8fafc', borderBottom: '2px solid #e2e8f0', textAlign: 'left', color: '#475569' }}>
-                <th style={{ padding: '12px 14px', fontWeight: 600 }}>NISN</th>
-                <th style={{ padding: '12px 14px', fontWeight: 600 }}>Nama Siswa</th>
-                <th style={{ padding: '12px 14px', fontWeight: 600 }}>Gender</th>
-                <th style={{ padding: '12px 14px', fontWeight: 600 }}>Kelas / Tingkat</th>
-                <th style={{ padding: '12px 14px', fontWeight: 600 }}>Cabang</th>
-                <th style={{ padding: '12px 14px', fontWeight: 600 }}>Kartu Barcode QR</th>
-                <th style={{ padding: '12px 14px', fontWeight: 600 }}>Status Siswa</th>
-                <th style={{ padding: '12px 14px', fontWeight: 600 }}>Tindakan</th>
+                <th style={{ padding: '14px', fontWeight: 700 }}>NISN</th>
+                <th style={{ padding: '14px', fontWeight: 700 }}>Nama Siswa</th>
+                <th style={{ padding: '14px', fontWeight: 700 }}>Gender</th>
+                <th style={{ padding: '14px', fontWeight: 700 }}>Kelas / Program</th>
+                <th style={{ padding: '14px', fontWeight: 700 }}>Cabang</th>
+                <th style={{ padding: '14px', fontWeight: 700 }}>Kartu Barcode QR</th>
+                <th style={{ padding: '14px', fontWeight: 700 }}>Status Akun Portal</th>
+                <th style={{ padding: '14px', fontWeight: 700, textAlign: 'right' }}>Tindakan Super Admin</th>
               </tr>
             </thead>
             <tbody>
               {filtered.map(s => {
                 const br = branches.find(b => b.id === s.branchId)?.name || 'Cabang Serdam Pontianak';
+                const isInactive = s.status === 'Non-Aktif' || s.status === ('Inactive' as any);
+                const reason = (s as any).deactivationReason;
+
                 return (
-                  <tr key={s.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                    <td style={{ padding: '12px 14px', fontWeight: 600, color: '#4f46e5' }}>{s.nisn}</td>
-                    <td style={{ padding: '12px 14px', fontWeight: 600, color: '#0f172a' }}>{s.name}</td>
-                    <td style={{ padding: '12px 14px', color: '#475569' }}>{s.gender === 'L' ? 'Laki-Laki' : 'Perempuan'}</td>
-                    <td style={{ padding: '12px 14px', color: '#475569' }}>{s.grade}</td>
-                    <td style={{ padding: '12px 14px', color: '#475569' }}>{br}</td>
-                    <td style={{ padding: '12px 14px' }}>
+                  <tr key={s.id} style={{ borderBottom: '1px solid #f1f5f9', background: isInactive ? '#fff1f2' : 'transparent' }}>
+                    <td style={{ padding: '14px', fontWeight: 800, color: '#2563eb' }}>{s.nisn}</td>
+                    <td style={{ padding: '14px', fontWeight: 800, color: isInactive ? '#991b1b' : '#0f172a' }}>
+                      {s.name}
+                      {isInactive && (
+                        <div style={{ fontSize: '0.725rem', color: '#dc2626', fontWeight: 700, marginTop: '2px' }}>
+                          ⛔ Akun Dimatikan ({reason || 'Sudah Tidak Ikut Bimbel'})
+                        </div>
+                      )}
+                    </td>
+                    <td style={{ padding: '14px', color: '#475569', fontWeight: 600 }}>{s.gender === 'L' ? 'Laki-Laki' : 'Perempuan'}</td>
+                    <td style={{ padding: '14px', color: '#475569', fontWeight: 600 }}>{s.grade}</td>
+                    <td style={{ padding: '14px', color: '#475569', fontWeight: 600 }}>{br}</td>
+                    <td style={{ padding: '14px' }}>
                       <button
                         onClick={() => setSelectedStudentQR(s)}
                         style={{
                           padding: '6px 12px',
-                          background: '#eef2ff',
-                          border: '1px solid #c7d2fe',
-                          borderRadius: '6px',
-                          color: '#4f46e5',
-                          fontWeight: 500,
+                          background: '#eff6ff',
+                          border: '1px solid #bfdbfe',
+                          borderRadius: '8px',
+                          color: '#2563eb',
+                          fontWeight: 700,
                           fontSize: '0.775rem',
                           cursor: 'pointer',
                           display: 'inline-flex',
@@ -226,43 +327,104 @@ export default function StudentsPage() {
                         <QrCode size={14} /> Lihat Barcode QR
                       </button>
                     </td>
-                    <td style={{ padding: '12px 14px' }}>
-                      <span style={{
-                        padding: '4px 10px',
-                        borderRadius: '20px',
-                        fontSize: '0.75rem',
-                        fontWeight: 600,
-                        background: s.status === 'Aktif' ? '#dcfce7' : '#fef3c7',
-                        color: s.status === 'Aktif' ? '#166534' : '#92400e',
-                      }}>
-                        {s.status}
-                      </span>
-                    </td>
-                    <td style={{ padding: '12px 14px' }}>
-                      {(isSuperAdmin || currentRole === 'admin_cabang') ? (
-                        <button
-                          onClick={() => { setSelectedStudentMutate(s); setNewBranchId(s.branchId); }}
-                          style={{
-                            padding: '6px 12px',
-                            background: '#f1f5f9',
-                            border: '1px solid #cbd5e1',
-                            borderRadius: '6px',
-                            color: '#475569',
-                            fontWeight: 500,
-                            fontSize: '0.775rem',
-                            cursor: 'pointer',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '6px',
-                          }}
-                        >
-                          <ArrowRightLeft size={14} /> Mutasi
-                        </button>
+                    <td style={{ padding: '14px' }}>
+                      {!isInactive ? (
+                        <span style={{
+                          padding: '4px 12px',
+                          borderRadius: '20px',
+                          fontSize: '0.75rem',
+                          fontWeight: 800,
+                          background: '#dcfce7',
+                          color: '#166534',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px'
+                        }}>
+                          <CheckCircle2 size={12} /> AKTIF (Bimbel)
+                        </span>
                       ) : (
-                        <span style={{ fontSize: '0.75rem', color: '#94a3b8', fontStyle: 'italic' }}>
-                          Read-Only (Hanya Admin)
+                        <span style={{
+                          padding: '4px 12px',
+                          borderRadius: '20px',
+                          fontSize: '0.75rem',
+                          fontWeight: 800,
+                          background: '#fee2e2',
+                          color: '#991b1b',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px'
+                        }}>
+                          <UserX size={12} /> NON-AKTIF (Berhenti)
                         </span>
                       )}
+                    </td>
+                    <td style={{ padding: '14px', textAlign: 'right' }}>
+                      <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                        {(isSuperAdmin || currentRole === 'admin_cabang') && (
+                          <>
+                            <button
+                              onClick={() => { setSelectedStudentMutate(s); setNewBranchId(s.branchId); }}
+                              style={{
+                                padding: '6px 10px',
+                                background: '#f1f5f9',
+                                border: '1px solid #cbd5e1',
+                                borderRadius: '8px',
+                                color: '#475569',
+                                fontWeight: 700,
+                                fontSize: '0.775rem',
+                                cursor: 'pointer',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                              }}
+                              title="Mutasi Cabang"
+                            >
+                              <ArrowRightLeft size={14} /> Mutasi
+                            </button>
+
+                            {!isInactive ? (
+                              <button
+                                onClick={() => setSelectedStudentDeactivate(s)}
+                                style={{
+                                  padding: '6px 12px',
+                                  background: '#fee2e2',
+                                  border: '1px solid #fca5a5',
+                                  borderRadius: '8px',
+                                  color: '#dc2626',
+                                  fontWeight: 800,
+                                  fontSize: '0.775rem',
+                                  cursor: 'pointer',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '4px',
+                                  boxShadow: '0 2px 6px rgba(220, 38, 38, 0.15)'
+                                }}
+                              >
+                                <UserX size={14} /> Mematikan Akun
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => handleReactivateStudent(s)}
+                                style={{
+                                  padding: '6px 12px',
+                                  background: '#dcfce7',
+                                  border: '1px solid #86efac',
+                                  borderRadius: '8px',
+                                  color: '#166534',
+                                  fontWeight: 800,
+                                  fontSize: '0.775rem',
+                                  cursor: 'pointer',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '4px',
+                                }}
+                              >
+                                <UserCheck size={14} /> Aktifkan Kembali
+                              </button>
+                            )}
+                          </>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 );
@@ -271,6 +433,112 @@ export default function StudentsPage() {
           </table>
         </div>
       </div>
+
+      {/* MODAL MEMATIKAN AKUN SISWA & WALI MURID (Khusus Super Admin) */}
+      {selectedStudentDeactivate && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(15, 23, 42, 0.65)',
+          backdropFilter: 'blur(5px)',
+          zIndex: 100,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '20px'
+        }}>
+          <form
+            onSubmit={handleConfirmDeactivation}
+            style={{
+              width: '100%',
+              maxWidth: '480px',
+              padding: '28px',
+              background: '#ffffff',
+              borderRadius: '16px',
+              border: '1px solid #e2e8f0',
+              boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px', paddingBottom: '12px', borderBottom: '1px solid #fee2e2' }}>
+              <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: '#fee2e2', color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <UserX size={24} />
+              </div>
+              <div>
+                <h3 style={{ fontSize: '1.2rem', color: '#991b1b', fontWeight: 800, margin: 0 }}>
+                  Mematikan Akun Siswa & Wali Murid
+                </h3>
+                <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                  Konfirmasi penonaktifan akses portal bimbel
+                </div>
+              </div>
+            </div>
+
+            <div style={{ background: '#fef2f2', border: '1px solid #fecaca', padding: '14px', borderRadius: '12px', color: '#991b1b', fontSize: '0.85rem', marginBottom: '16px', lineHeight: 1.5 }}>
+              Siswa <strong>{selectedStudentDeactivate.name}</strong> (NISN: {selectedStudentDeactivate.nisn}) tidak dapat lagi login ke Portal Siswa atau melakukan presensi.
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '20px' }}>
+              <div>
+                <label style={{ fontSize: '0.825rem', color: '#0f172a', fontWeight: 700, display: 'block', marginBottom: '6px' }}>
+                  Alasan Penonaktifan Akun:
+                </label>
+                <select
+                  value={deactivationReason}
+                  onChange={e => setDeactivationReason(e.target.value)}
+                  className="select-field"
+                  style={{ width: '100%', padding: '10px 12px', fontWeight: 700 }}
+                >
+                  <option value="Sudah Tidak Ikut Bimbel Lagi">🚫 Sudah Tidak Ikut Bimbel Lagi (Berhenti)</option>
+                  <option value="Lulus / Alumni">🎓 Lulus / Alumni Program</option>
+                  <option value="Mengundurkan Diri">📝 Mengundurkan Diri Atas Permintaan Sendiri</option>
+                  <option value="Tunggakan Administrasi">⚠️ Tunggakan Administrasi / SPP</option>
+                </select>
+              </div>
+
+              <div>
+                <label style={{ fontSize: '0.825rem', color: '#0f172a', fontWeight: 700, display: 'block', marginBottom: '6px' }}>
+                  Catatan Tambahan (Opsional):
+                </label>
+                <textarea
+                  placeholder="Contoh: Pindah sekolah ke luar kota per 22 Agustus 2026..."
+                  value={deactivationNotes}
+                  onChange={e => setDeactivationNotes(e.target.value)}
+                  className="input-field"
+                  style={{ width: '100%', minHeight: '70px' }}
+                />
+              </div>
+
+              <div style={{ padding: '12px 14px', background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '10px' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.825rem', fontWeight: 700, color: '#334155', cursor: 'pointer' }}>
+                  <input
+                    type="checkbox"
+                    checked={deactivateParentAccount}
+                    onChange={e => setDeactivateParentAccount(e.target.checked)}
+                    style={{ width: '16px', height: '16px', accentColor: '#dc2626' }}
+                  />
+                  <span>Otomatis matikan juga akses Login Portal Wali Murid</span>
+                </label>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+              <button
+                type="button"
+                onClick={() => setSelectedStudentDeactivate(null)}
+                style={{ padding: '10px 16px', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '8px', color: '#475569', cursor: 'pointer', fontSize: '0.875rem', fontWeight: 700 }}
+              >
+                Batal
+              </button>
+              <button
+                type="submit"
+                style={{ padding: '10px 18px', background: '#dc2626', border: 'none', borderRadius: '8px', color: '#ffffff', fontWeight: 800, cursor: 'pointer', fontSize: '0.875rem', boxShadow: '0 4px 14px rgba(220, 38, 38, 0.3)' }}
+              >
+                🔴 Konfirmasi Mematikan Akun
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
 
       {/* Modal Official Student Barcode Card */}
       {selectedStudentQR && (
@@ -295,19 +563,17 @@ export default function StudentsPage() {
             textAlign: 'center',
             boxShadow: '0 25px 50px -12px rgba(15, 23, 42, 0.25)',
           }}>
-            {/* Header Title inside Card */}
-            <div style={{ fontSize: '0.75rem', fontWeight: 600, color: '#2575b9', letterSpacing: '0.05em' }}>
+            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#2563eb', letterSpacing: '0.05em' }}>
               KARTU PRESENSI DIGITAL SISWA
             </div>
-            <div style={{ fontSize: '1rem', fontWeight: 600, color: '#0f172a', margin: '2px 0 16px' }}>
+            <div style={{ fontSize: '1rem', fontWeight: 800, color: '#0f172a', margin: '2px 0 16px' }}>
               BSMART EDUCATION PONTIANAK
             </div>
 
-            {/* Scannable Barcode QR Code Image */}
             <div style={{
               padding: '12px',
               background: '#ffffff',
-              border: '2px solid #2575b9',
+              border: '2px solid #2563eb',
               borderRadius: '12px',
               display: 'inline-block',
               marginBottom: '16px',
@@ -321,17 +587,15 @@ export default function StudentsPage() {
               />
             </div>
 
-            {/* Information directly BELOW Barcode */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '16px' }}>
-              <h3 style={{ fontSize: '1.25rem', color: '#0f172a', fontWeight: 600, margin: 0 }}>
+              <h3 style={{ fontSize: '1.25rem', color: '#0f172a', fontWeight: 800, margin: 0 }}>
                 {selectedStudentQR.name}
               </h3>
-              <div style={{ fontSize: '0.9rem', color: '#2575b9', fontWeight: 600 }}>
+              <div style={{ fontSize: '0.9rem', color: '#2563eb', fontWeight: 700 }}>
                 NISN: {selectedStudentQR.nisn}
               </div>
             </div>
 
-            {/* Details Box below Name & NISN */}
             <div style={{
               margin: '0 0 18px',
               fontSize: '0.85rem',
@@ -351,30 +615,29 @@ export default function StudentsPage() {
             </div>
 
             {downloadSuccess && (
-              <div style={{ padding: '8px 12px', background: '#dcfce7', color: '#166534', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 500, marginBottom: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+              <div style={{ padding: '8px 12px', background: '#dcfce7', color: '#166534', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 700, marginBottom: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
                 <CheckCircle2 size={16} /> Kartu Presensi Siswa Berhasil Diunduh!
               </div>
             )}
 
-            {/* Action Buttons: Download Full Card & Bagikan */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <button
                 onClick={() => handleDownloadFullCard(selectedStudentQR)}
                 style={{
                   width: '100%',
                   padding: '11px',
-                  background: '#2575b9',
+                  background: '#2563eb',
                   border: 'none',
                   borderRadius: '8px',
                   color: '#ffffff',
-                  fontWeight: 500,
+                  fontWeight: 800,
                   fontSize: '0.875rem',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '8px',
-                  boxShadow: '0 4px 12px rgba(37, 117, 185, 0.3)',
+                  boxShadow: '0 4px 12px rgba(37, 99, 235, 0.25)',
                 }}
               >
                 <Download size={16} /> Download Kartu Presensi Lengkap (PNG)
@@ -392,7 +655,7 @@ export default function StudentsPage() {
                   border: 'none',
                   borderRadius: '8px',
                   color: '#ffffff',
-                  fontWeight: 500,
+                  fontWeight: 800,
                   fontSize: '0.875rem',
                   cursor: 'pointer',
                   display: 'flex',
@@ -413,7 +676,7 @@ export default function StudentsPage() {
                   border: '1px solid #cbd5e1',
                   borderRadius: '8px',
                   color: '#475569',
-                  fontWeight: 500,
+                  fontWeight: 700,
                   fontSize: '0.875rem',
                   cursor: 'pointer',
                   marginTop: '2px',
@@ -451,20 +714,20 @@ export default function StudentsPage() {
               boxShadow: '0 20px 45px rgba(0,0,0,0.15)',
             }}
           >
-            <h2 style={{ fontSize: '1.25rem', color: '#0f172a', fontWeight: 600, margin: '0 0 8px' }}>
+            <h2 style={{ fontSize: '1.25rem', color: '#0f172a', fontWeight: 800, margin: '0 0 8px' }}>
               Mutasi Cabang Siswa
             </h2>
             <p style={{ fontSize: '0.825rem', color: '#64748b', marginBottom: '16px' }}>
               Memindahkan data siswa <strong>{selectedStudentMutate.name}</strong> ke lokasi cabang tujuan.
             </p>
             <div style={{ marginBottom: '20px' }}>
-              <label style={{ fontSize: '0.8rem', color: '#334155', marginBottom: '6px', display: 'block', fontWeight: 500 }}>
+              <label style={{ fontSize: '0.8rem', color: '#334155', marginBottom: '6px', display: 'block', fontWeight: 700 }}>
                 Pilih Cabang Tujuan:
               </label>
               <select
                 value={newBranchId}
                 onChange={e => setNewBranchId(e.target.value)}
-                style={{ width: '100%', padding: '10px 12px', border: '1px solid #cbd5e1', borderRadius: '6px', outline: 'none', background: '#fff', fontSize: '0.875rem' }}
+                style={{ width: '100%', padding: '10px 12px', border: '1px solid #cbd5e1', borderRadius: '8px', outline: 'none', background: '#fff', fontSize: '0.875rem', fontWeight: 700 }}
               >
                 {branches.map(b => (
                   <option key={b.id} value={b.id}>{b.name} ({b.code})</option>
@@ -475,13 +738,13 @@ export default function StudentsPage() {
               <button
                 type="button"
                 onClick={() => setSelectedStudentMutate(null)}
-                style={{ padding: '10px 16px', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '6px', color: '#475569', cursor: 'pointer', fontSize: '0.875rem' }}
+                style={{ padding: '10px 16px', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '8px', color: '#475569', cursor: 'pointer', fontSize: '0.875rem', fontWeight: 700 }}
               >
                 Batal
               </button>
               <button
                 type="submit"
-                style={{ padding: '10px 16px', background: '#2575b9', border: 'none', borderRadius: '6px', color: '#ffffff', fontWeight: 500, cursor: 'pointer', fontSize: '0.875rem' }}
+                style={{ padding: '10px 16px', background: '#2563eb', border: 'none', borderRadius: '8px', color: '#ffffff', fontWeight: 800, cursor: 'pointer', fontSize: '0.875rem' }}
               >
                 Konfirmasi Mutasi
               </button>
@@ -492,29 +755,29 @@ export default function StudentsPage() {
 
       {/* Modal Tambah Siswa Baru */}
       {showAddModal && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.5)', backdropFilter: 'blur(5px)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-          <form onSubmit={handleCreateStudent} style={{ width: '100%', maxWidth: '460px', padding: '28px', background: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 20px 45px rgba(0,0,0,0.15)' }}>
-            <h2 style={{ fontSize: '1.25rem', color: '#0f172a', fontWeight: 600, marginBottom: '16px' }}>Tambah Siswa Baru</h2>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.55)', backdropFilter: 'blur(5px)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+          <form onSubmit={handleCreateStudent} style={{ width: '100%', maxWidth: '460px', padding: '28px', background: '#ffffff', borderRadius: '16px', border: '1px solid #e2e8f0', boxShadow: '0 20px 45px rgba(0,0,0,0.15)' }}>
+            <h2 style={{ fontSize: '1.25rem', color: '#0f172a', fontWeight: 800, marginBottom: '16px' }}>Tambah Siswa Baru</h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               <div>
-                <label style={{ fontSize: '0.8rem', color: '#4f46e5', display: 'block', marginBottom: '4px', fontWeight: 500 }}>NISN (10 Digit)*</label>
-                <input type="text" placeholder="00xxxxxxxx" value={newNisn} onChange={e => setNewNisn(e.target.value)} required style={{ width: '100%', padding: '10px 12px', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '0.875rem', outline: 'none' }} />
+                <label style={{ fontSize: '0.825rem', color: '#2563eb', display: 'block', marginBottom: '4px', fontWeight: 700 }}>NISN (10 Digit)*</label>
+                <input type="text" placeholder="00xxxxxxxx" value={newNisn} onChange={e => setNewNisn(e.target.value)} required style={{ width: '100%', padding: '10px 12px', border: '1px solid #cbd5e1', borderRadius: '8px', fontSize: '0.875rem', outline: 'none', fontWeight: 700 }} />
               </div>
               <div>
-                <label style={{ fontSize: '0.8rem', color: '#4f46e5', display: 'block', marginBottom: '4px', fontWeight: 500 }}>Nama Lengkap Siswa *</label>
-                <input type="text" placeholder="Nama Siswa" value={newName} onChange={e => setNewName(e.target.value)} required style={{ width: '100%', padding: '10px 12px', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '0.875rem', outline: 'none' }} />
+                <label style={{ fontSize: '0.825rem', color: '#2563eb', display: 'block', marginBottom: '4px', fontWeight: 700 }}>Nama Lengkap Siswa *</label>
+                <input type="text" placeholder="Nama Siswa" value={newName} onChange={e => setNewName(e.target.value)} required style={{ width: '100%', padding: '10px 12px', border: '1px solid #cbd5e1', borderRadius: '8px', fontSize: '0.875rem', outline: 'none', fontWeight: 700 }} />
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div>
-                  <label style={{ fontSize: '0.8rem', color: '#4f46e5', display: 'block', marginBottom: '4px', fontWeight: 500 }}>Jenis Kelamin</label>
-                  <select value={newGender} onChange={e => setNewGender(e.target.value as 'L' | 'P')} style={{ width: '100%', padding: '10px 12px', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '0.875rem', outline: 'none' }}>
+                  <label style={{ fontSize: '0.825rem', color: '#2563eb', display: 'block', marginBottom: '4px', fontWeight: 700 }}>Jenis Kelamin</label>
+                  <select value={newGender} onChange={e => setNewGender(e.target.value as 'L' | 'P')} style={{ width: '100%', padding: '10px 12px', border: '1px solid #cbd5e1', borderRadius: '8px', fontSize: '0.875rem', outline: 'none', fontWeight: 700 }}>
                     <option value="L">Laki-Laki</option>
                     <option value="P">Perempuan</option>
                   </select>
                 </div>
                 <div>
-                  <label style={{ fontSize: '0.8rem', color: '#4f46e5', display: 'block', marginBottom: '4px', fontWeight: 500 }}>Kelas / Program</label>
-                  <select value={newGrade} onChange={e => setNewGrade(e.target.value)} style={{ width: '100%', padding: '10px 12px', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '0.875rem', outline: 'none' }}>
+                  <label style={{ fontSize: '0.825rem', color: '#2563eb', display: 'block', marginBottom: '4px', fontWeight: 700 }}>Kelas / Program</label>
+                  <select value={newGrade} onChange={e => setNewGrade(e.target.value)} style={{ width: '100%', padding: '10px 12px', border: '1px solid #cbd5e1', borderRadius: '8px', fontSize: '0.875rem', outline: 'none', fontWeight: 700 }}>
                     <option value="XII SMA (Kedokteran)">XII SMA (Kedokteran)</option>
                     <option value="XI SMA (Intensif)">XI SMA (Intensif)</option>
                     <option value="IX SMP (Kedinasan)">IX SMP (Kedinasan)</option>
@@ -523,8 +786,8 @@ export default function StudentsPage() {
                 </div>
               </div>
               <div>
-                <label style={{ fontSize: '0.8rem', color: '#4f46e5', display: 'block', marginBottom: '4px', fontWeight: 500 }}>Cabang Pendaftaran</label>
-                <select value={newStudentBranch} onChange={e => setNewStudentBranch(e.target.value)} style={{ width: '100%', padding: '10px 12px', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '0.875rem', outline: 'none' }}>
+                <label style={{ fontSize: '0.825rem', color: '#2563eb', display: 'block', marginBottom: '4px', fontWeight: 700 }}>Cabang Pendaftaran</label>
+                <select value={newStudentBranch} onChange={e => setNewStudentBranch(e.target.value)} style={{ width: '100%', padding: '10px 12px', border: '1px solid #cbd5e1', borderRadius: '8px', fontSize: '0.875rem', outline: 'none', fontWeight: 700 }}>
                   {branches.map(b => (
                     <option key={b.id} value={b.id}>{b.name}</option>
                   ))}
@@ -532,8 +795,8 @@ export default function StudentsPage() {
               </div>
             </div>
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '20px' }}>
-              <button type="button" onClick={() => setShowAddModal(false)} style={{ padding: '10px 16px', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '6px', color: '#475569', cursor: 'pointer', fontSize: '0.875rem' }}>Batal</button>
-              <button type="submit" style={{ padding: '10px 16px', background: '#4f46e5', border: 'none', borderRadius: '6px', color: '#ffffff', fontWeight: 500, cursor: 'pointer', fontSize: '0.875rem' }}>Simpan Siswa</button>
+              <button type="button" onClick={() => setShowAddModal(false)} style={{ padding: '10px 16px', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '8px', color: '#475569', cursor: 'pointer', fontSize: '0.875rem', fontWeight: 700 }}>Batal</button>
+              <button type="submit" style={{ padding: '10px 16px', background: '#2563eb', border: 'none', borderRadius: '8px', color: '#ffffff', fontWeight: 800, cursor: 'pointer', fontSize: '0.875rem' }}>Simpan Siswa</button>
             </div>
           </form>
         </div>

@@ -19,7 +19,7 @@ export default function UsersPage() {
         <Shield size={48} style={{ margin: '0 auto 12px' }} />
         <h2 style={{ fontSize: '1.25rem', fontWeight: 800 }}>Akses Ditolak</h2>
         <p style={{ fontSize: '0.875rem', marginTop: '6px' }}>
-          Modul User Management khusus diakses oleh peran <strong>Super Admin (Akses Penuh)</strong>.
+          Modul User Management khusus diakses oleh peran <strong>Super Admin</strong>.
         </p>
       </div>
     );

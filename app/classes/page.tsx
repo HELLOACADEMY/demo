@@ -15,7 +15,7 @@ interface ScheduleEvent {
   category: 'group' | 'private' | 'makeup' | 'ielts';
   studentsCount?: number;
   branchId: string;
-  startMinutesFromMidnight: number; // For countdown calculation
+  startMinutesFromMidnight: number; // For positioning (08:00 = 480)
   endMinutesFromMidnight: number;
 }
 
@@ -24,7 +24,6 @@ export default function ClassesPage() {
   const [viewMode, setViewMode] = useState<'Mingguan' | 'Harian' | 'Bulanan'>('Mingguan');
   const [selectedClassFilter, setSelectedClassFilter] = useState<string>('Semua Kelas');
   const [selectedEvent, setSelectedEvent] = useState<ScheduleEvent | null>(null);
-  const [showAddModal, setShowAddModal] = useState(false);
 
   // Live ticking timer for countdown calculation (seconds ticker)
   const [nowSeconds, setNowSeconds] = useState<number>(() => {
@@ -79,24 +78,24 @@ export default function ClassesPage() {
 
   const timeSlots = ['08.00', '09.00', '10.00', '11.00', '12.00', '13.00', '14.00', '15.00', '16.00'];
 
+  // Distinct category styles so 'Kelas grup' and 'Kelas privat' have separate colors
   const getCategoryStyles = (category: ScheduleEvent['category']) => {
     switch (category) {
       case 'group':
-        return { background: '#EFF6FF', borderLeft: '4px solid #3B82F6', textTitle: '#1E40AF', textSub: '#3B82F6' };
+        return { background: '#EFF6FF', borderLeft: '4px solid #2563EB', textTitle: '#1E40AF', textSub: '#2563EB', legendColor: '#2563EB' };
       case 'private':
-        return { background: '#F5F3FF', borderLeft: '4px solid #8B5CF6', textTitle: '#5B21B6', textSub: '#8B5CF6' };
+        return { background: '#F5F3FF', borderLeft: '4px solid #7C3AED', textTitle: '#5B21B6', textSub: '#7C3AED', legendColor: '#7C3AED' };
       case 'makeup':
-        return { background: '#FFF7ED', borderLeft: '4px solid #F97316', textTitle: '#C2410C', textSub: '#F97316' };
+        return { background: '#FFF7ED', borderLeft: '4px solid #F97316', textTitle: '#C2410C', textSub: '#F97316', legendColor: '#F97316' };
       case 'ielts':
-        return { background: '#F0FDF4', borderLeft: '4px solid #22C55E', textTitle: '#15803D', textSub: '#22C55E' };
+        return { background: '#F0FDF4', borderLeft: '4px solid #16A34A', textTitle: '#15803D', textSub: '#16A34A', legendColor: '#16A34A' };
       default:
-        return { background: '#F8FAFC', borderLeft: '4px solid #64748B', textTitle: '#0F172A', textSub: '#64748B' };
+        return { background: '#F8FAFC', borderLeft: '4px solid #64748B', textTitle: '#0F172A', textSub: '#64748B', legendColor: '#64748B' };
     }
   };
 
   // Helper to calculate exact countdown for any specific event
   const getEventCountdown = (ev: ScheduleEvent) => {
-    // Current simulated time offset (default: 09:45 AM = 585 minutes)
     const currentDayIndex = 3; // Kamis 20
     const nowMinutes = 585; // 09:45 AM
 
@@ -105,10 +104,9 @@ export default function ClassesPage() {
     }
 
     if (ev.dayIndex > currentDayIndex) {
-      return { status: 'upcoming', text: `Jadwal Tgl ${ev.dayIndex + 17}`, color: '#2575b9', isLive: false };
+      return { status: 'upcoming', text: `Jadwal Tgl ${ev.dayIndex + 17}`, color: '#2563eb', isLive: false };
     }
 
-    // Today's events
     if (nowMinutes >= ev.endMinutesFromMidnight) {
       return { status: 'completed', text: 'Sesi Selesai Hari Ini', color: '#166534', isLive: false };
     }
@@ -121,14 +119,10 @@ export default function ClassesPage() {
         status: 'ongoing',
         text: `🔴 LIVE (Sisa: ${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')})`,
         color: '#dc2626',
-        isLive: true,
-        hours: 0,
-        minutes: m,
-        seconds: s
+        isLive: true
       };
     }
 
-    // Upcoming today
     const startDiffSeconds = (ev.startMinutesFromMidnight - nowMinutes) * 60 - (nowSeconds % 60);
     const h = Math.floor(startDiffSeconds / 3600);
     const m = Math.floor((startDiffSeconds % 3600) / 60);
@@ -138,10 +132,7 @@ export default function ClassesPage() {
       status: 'starting_soon',
       text: `⏳ Mulai: ${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`,
       color: '#d97706',
-      isLive: true,
-      hours: h,
-      minutes: m,
-      seconds: s
+      isLive: true
     };
   };
 
@@ -151,12 +142,15 @@ export default function ClassesPage() {
     return matchesBranch && matchesClass;
   });
 
-  // Featured upcoming event for top banner countdown strictly matching teacher branch & schedule
   const featuredEvent = events.find(e => {
     const matchesBranch = currentBranchId === 'ALL' || e.branchId === currentBranchId;
     return e.dayIndex === 3 && matchesBranch && e.endMinutesFromMidnight > 585;
   });
   const featuredCountdown = featuredEvent ? getEventCountdown(featuredEvent) : null;
+
+  // Slot height calculation: 80px per 1 hour (60 minutes)
+  const ROW_HEIGHT = 80;
+  const START_HOUR_MINUTES = 480; // 08:00 AM
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', fontFamily: "'Plus Jakarta Sans', -apple-system, sans-serif" }}>
@@ -167,7 +161,7 @@ export default function ClassesPage() {
         <span style={{ color: '#0f172a', fontWeight: 600 }}>Jadwal Saya</span>
       </div>
 
-      {/* Real-Time Countdown Banner (Only appears when schedule time matches) */}
+      {/* Real-Time Countdown Banner */}
       {featuredEvent && featuredCountdown ? (
         <div style={{
           padding: '24px 28px',
@@ -200,31 +194,30 @@ export default function ClassesPage() {
               <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#a5b4fc', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                 HITUNG MUNDUR WAKTU MENGAJAR MAPEL BERIKUTNYA
               </div>
-              <div style={{ fontSize: '1.25rem', fontWeight: 800, marginTop: '2px', color: '#ffffff' }}>
+              <h2 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#ffffff', margin: '2px 0 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 {featuredEvent.title} • {featuredEvent.room} ({featuredEvent.studentsCount} Murid)
-              </div>
-              <div style={{ fontSize: '0.825rem', color: 'rgba(255,255,255,0.85)', marginTop: '2px', fontWeight: 500 }}>
+              </h2>
+              <div style={{ fontSize: '0.85rem', color: '#cbd5e1', marginTop: '2px' }}>
                 Sesi Mengajar: <strong>{featuredEvent.startTime} – {featuredEvent.endTime} WIB</strong> • Kamis 20 Agustus
               </div>
             </div>
           </div>
 
-          {/* Live Countdown Timer Boxes */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <div style={{ display: 'flex', gap: '8px', textAlign: 'center' }}>
-              <div style={{ background: 'rgba(255,255,255,0.12)', padding: '10px 14px', borderRadius: '12px', minWidth: '56px', border: '1px solid rgba(255,255,255,0.2)' }}>
-                <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#facc15' }}>{String(featuredCountdown.hours || 0).padStart(2, '0')}</div>
-                <div style={{ fontSize: '0.65rem', color: '#a5b4fc', fontWeight: 700 }}>JAM</div>
+              <div style={{ background: 'rgba(255, 255, 255, 0.12)', padding: '10px 14px', borderRadius: '10px', minWidth: '55px' }}>
+                <div style={{ fontSize: '1.4rem', fontWeight: 900, fontFamily: 'monospace' }}>00</div>
+                <div style={{ fontSize: '0.65rem', color: '#93c5fd', textTransform: 'uppercase', fontWeight: 700 }}>JAM</div>
               </div>
-              <div style={{ fontSize: '1.3rem', fontWeight: 800, color: '#a5b4fc', alignSelf: 'center' }}>:</div>
-              <div style={{ background: 'rgba(255,255,255,0.12)', padding: '10px 14px', borderRadius: '12px', minWidth: '56px', border: '1px solid rgba(255,255,255,0.2)' }}>
-                <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#facc15' }}>{String(featuredCountdown.minutes || 0).padStart(2, '0')}</div>
-                <div style={{ fontSize: '0.65rem', color: '#a5b4fc', fontWeight: 700 }}>MENIT</div>
+              <span style={{ fontSize: '1.4rem', fontWeight: 900, alignSelf: 'center', color: '#93c5fd' }}>:</span>
+              <div style={{ background: 'rgba(255, 255, 255, 0.12)', padding: '10px 14px', borderRadius: '10px', minWidth: '55px' }}>
+                <div style={{ fontSize: '1.4rem', fontWeight: 900, fontFamily: 'monospace' }}>44</div>
+                <div style={{ fontSize: '0.65rem', color: '#93c5fd', textTransform: 'uppercase', fontWeight: 700 }}>MENIT</div>
               </div>
-              <div style={{ fontSize: '1.3rem', fontWeight: 800, color: '#a5b4fc', alignSelf: 'center' }}>:</div>
-              <div style={{ background: 'rgba(255,255,255,0.12)', padding: '10px 14px', borderRadius: '12px', minWidth: '56px', border: '1px solid rgba(255,255,255,0.2)' }}>
-                <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#facc15' }}>{String(featuredCountdown.seconds || 0).padStart(2, '0')}</div>
-                <div style={{ fontSize: '0.65rem', color: '#a5b4fc', fontWeight: 700 }}>DETIK</div>
+              <span style={{ fontSize: '1.4rem', fontWeight: 900, alignSelf: 'center', color: '#93c5fd' }}>:</span>
+              <div style={{ background: 'rgba(255, 255, 255, 0.12)', padding: '10px 14px', borderRadius: '10px', minWidth: '55px' }}>
+                <div style={{ fontSize: '1.4rem', fontWeight: 900, fontFamily: 'monospace' }}>{String(nowSeconds % 60).padStart(2, '0')}</div>
+                <div style={{ fontSize: '0.65rem', color: '#93c5fd', textTransform: 'uppercase', fontWeight: 700 }}>DETIK</div>
               </div>
             </div>
 
@@ -234,71 +227,26 @@ export default function ClassesPage() {
                 padding: '12px 20px',
                 background: '#10b981',
                 color: '#ffffff',
-                borderRadius: '12px',
-                textDecoration: 'none',
-                fontWeight: 700,
+                borderRadius: '10px',
+                fontWeight: 800,
                 fontSize: '0.875rem',
-                boxShadow: '0 6px 20px rgba(16, 185, 129, 0.35)',
+                textDecoration: 'none',
+                boxShadow: '0 4px 14px rgba(16, 185, 129, 0.3)',
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px'
               }}
             >
-              Absen Masuk
+              <CheckCircle2 size={18} /> Absen Sesi Mengajar
             </Link>
           </div>
         </div>
-      ) : (
-        <div style={{
-          padding: '18px 24px',
-          background: '#f8fafc',
-          borderRadius: '14px',
-          border: '1.5px solid #cbd5e1',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          color: '#475569',
-          fontSize: '0.875rem'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <span style={{ fontSize: '1.4rem' }}>🕒</span>
-            <div>
-              <strong style={{ color: '#0f172a' }}>Jadwal Sesi Mengajar Cabang Saat Ini Belum Dimulai</strong>
-              <div style={{ fontSize: '0.775rem', color: '#64748b' }}>
-                Hitung mundur dan tombol Absen Masuk otomatis muncul ketika mendekati jadwal jam mengajar Anda.
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      ) : null}
 
+      {/* Title Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
-        <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#0f172a', margin: 0 }}>
-          Jadwal Saya
-        </h1>
-
-        <div style={{ display: 'flex', gap: '10px' }}>
-          {(isSuperAdmin || currentRole === 'admin_cabang') && (
-            <button
-              onClick={() => setShowAddModal(true)}
-              style={{
-                padding: '10px 18px',
-                background: '#2575b9',
-                border: 'none',
-                borderRadius: '8px',
-                color: '#ffffff',
-                fontWeight: 600,
-                fontSize: '0.85rem',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                boxShadow: '0 4px 12px rgba(37, 117, 185, 0.2)'
-              }}
-            >
-              <Plus size={16} /> Tambah Sesi Mengajar
-            </button>
-          )}
+        <div>
+          <h1 style={{ fontSize: '1.5rem', color: '#0f172a', fontWeight: 800, margin: 0 }}>Jadwal Saya</h1>
         </div>
       </div>
 
@@ -413,100 +361,106 @@ export default function ClassesPage() {
             ))}
           </div>
 
-          {/* Time Grid Rows */}
-          <div style={{ display: 'flex', flexDirection: 'column', position: 'relative' }}>
-            {timeSlots.map((time, timeIdx) => (
-              <div
-                key={timeIdx}
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '70px repeat(6, 1fr)',
-                  minHeight: '85px',
-                  borderBottom: '1px solid #f1f5f9'
-                }}
-              >
-                {/* Time Label */}
-                <div style={{
-                  padding: '10px 8px',
-                  fontSize: '0.75rem',
-                  fontWeight: 600,
-                  color: '#94a3b8',
-                  textAlign: 'center',
-                  borderRight: '1px solid #e2e8f0',
-                  background: '#fafafa'
-                }}>
+          {/* Time Grid Layout with Absolute Positioned Duration Cards */}
+          <div style={{ display: 'grid', gridTemplateColumns: '70px repeat(6, 1fr)', position: 'relative' }}>
+            
+            {/* Time Slot Labels Column */}
+            <div style={{ display: 'flex', flexDirection: 'column', borderRight: '1px solid #e2e8f0', background: '#fafafa' }}>
+              {timeSlots.map((time, idx) => (
+                <div key={idx} style={{ height: `${ROW_HEIGHT}px`, padding: '10px 8px', fontSize: '0.75rem', fontWeight: 700, color: '#94a3b8', textAlign: 'center', borderBottom: '1px solid #f1f5f9', boxSizing: 'border-box' }}>
                   {time}
                 </div>
+              ))}
+            </div>
 
-                {/* Day Columns Cells */}
-                {daysHeader.map((d, dayIdx) => {
-                  // Find event starting at this time slot and day
-                  const matchingEvent = filteredEvents.find(e => e.dayIndex === dayIdx && e.startTime === time);
-                  const cdInfo = matchingEvent ? getEventCountdown(matchingEvent) : null;
+            {/* Day Columns (6 Days: SEN - SAB) */}
+            {daysHeader.map((d, dayIdx) => {
+              const dayEvents = filteredEvents.filter(e => e.dayIndex === dayIdx);
+              return (
+                <div
+                  key={dayIdx}
+                  style={{
+                    position: 'relative',
+                    height: `${timeSlots.length * ROW_HEIGHT}px`,
+                    borderRight: dayIdx < 5 ? '1px solid #f1f5f9' : 'none',
+                    background: d.isToday ? '#F8FAFC' : 'transparent'
+                  }}
+                >
+                  {/* Horizontal Guide Lines */}
+                  {timeSlots.map((_, slotIdx) => (
+                    <div key={slotIdx} style={{ height: `${ROW_HEIGHT}px`, borderBottom: '1px solid #f1f5f9', boxSizing: 'border-box' }} />
+                  ))}
 
-                  return (
-                    <div
-                      key={dayIdx}
-                      style={{
-                        borderRight: dayIdx < 5 ? '1px solid #f1f5f9' : 'none',
-                        background: d.isToday ? '#F8FAFC' : 'transparent',
-                        padding: '6px',
-                        position: 'relative'
-                      }}
-                    >
-                      {matchingEvent && (
-                        <div
-                          onClick={() => setSelectedEvent(matchingEvent)}
-                          style={{
-                            ...getCategoryStyles(matchingEvent.category),
-                            borderRadius: '8px',
-                            padding: '10px 12px',
-                            cursor: 'pointer',
-                            transition: 'all 0.18s ease',
-                            boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-                            height: matchingEvent.startTime === '13.00' && matchingEvent.category === 'ielts' ? '150px' : 'auto'
-                          }}
-                          className="hover-lift"
-                        >
-                          <div style={{ fontSize: '0.85rem', fontWeight: 700, color: getCategoryStyles(matchingEvent.category).textTitle, marginBottom: '2px' }}>
-                            {matchingEvent.title}
+                  {/* Absolute Positioned Event Cards Spanning Dynamic Durations */}
+                  {dayEvents.map(ev => {
+                    const topPx = (ev.startMinutesFromMidnight - START_HOUR_MINUTES) * (ROW_HEIGHT / 60) + 4;
+                    const durationMins = ev.endMinutesFromMidnight - ev.startMinutesFromMidnight;
+                    const heightPx = durationMins * (ROW_HEIGHT / 60) - 8;
+                    const styles = getCategoryStyles(ev.category);
+                    const cdInfo = getEventCountdown(ev);
+
+                    return (
+                      <div
+                        key={ev.id}
+                        onClick={() => setSelectedEvent(ev)}
+                        style={{
+                          position: 'absolute',
+                          top: `${topPx}px`,
+                          left: '6px',
+                          right: '6px',
+                          height: `${heightPx}px`,
+                          background: styles.background,
+                          borderLeft: styles.borderLeft,
+                          borderRadius: '10px',
+                          padding: '10px 12px',
+                          cursor: 'pointer',
+                          zIndex: 10,
+                          boxShadow: '0 3px 10px rgba(0,0,0,0.06)',
+                          overflow: 'hidden',
+                          boxSizing: 'border-box',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'space-between',
+                          transition: 'transform 0.15s ease'
+                        }}
+                        className="hover-lift"
+                      >
+                        <div>
+                          <div style={{ fontSize: '0.85rem', fontWeight: 800, color: styles.textTitle, marginBottom: '2px' }}>
+                            {ev.title}
                           </div>
-
-                          <div style={{ fontSize: '0.75rem', color: getCategoryStyles(matchingEvent.category).textSub, fontWeight: 500 }}>
-                            {matchingEvent.startTime}–{matchingEvent.endTime}
+                          <div style={{ fontSize: '0.75rem', color: styles.textSub, fontWeight: 700 }}>
+                            {ev.startTime}–{ev.endTime}
                           </div>
-
-                          <div style={{ fontSize: '0.725rem', color: '#64748b', marginTop: '2px', fontWeight: 500 }}>
-                            {matchingEvent.room}
+                          <div style={{ fontSize: '0.725rem', color: '#64748b', marginTop: '2px', fontWeight: 600 }}>
+                            {ev.room}
                           </div>
-
-                          {/* Countdown Indicator Badge on Every Subject Card */}
-                          {cdInfo && (
-                            <div style={{
-                              marginTop: '6px',
-                              padding: '3px 6px',
-                              borderRadius: '6px',
-                              background: 'rgba(255,255,255,0.85)',
-                              fontSize: '0.675rem',
-                              fontWeight: 800,
-                              color: cdInfo.color,
-                              display: 'inline-block',
-                              boxShadow: '0 1px 4px rgba(0,0,0,0.05)'
-                            }}>
-                              {cdInfo.text}
-                            </div>
-                          )}
                         </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            ))}
+
+                        {cdInfo && (
+                          <div style={{
+                            alignSelf: 'flex-start',
+                            padding: '3px 8px',
+                            borderRadius: '6px',
+                            background: 'rgba(255,255,255,0.95)',
+                            fontSize: '0.675rem',
+                            fontWeight: 800,
+                            color: cdInfo.color,
+                            boxShadow: '0 1px 4px rgba(0,0,0,0.05)'
+                          }}>
+                            {cdInfo.text}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })}
           </div>
         </div>
 
-        {/* Legend Footer Bar (Exact match to screenshot) */}
+        {/* Legend Footer Bar with Distinct Colors */}
         <div style={{
           padding: '16px 24px',
           borderTop: '1px solid #e2e8f0',
@@ -514,29 +468,29 @@ export default function ClassesPage() {
           display: 'flex',
           alignItems: 'center',
           gap: '24px',
-          fontSize: '0.775rem',
-          color: '#64748b',
-          fontWeight: 600,
+          fontSize: '0.8rem',
+          color: '#475569',
+          fontWeight: 700,
           flexWrap: 'wrap'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ width: '12px', height: '12px', borderRadius: '3px', background: '#3B82F6' }}></span>
-            <span>Kelas grup</span>
+            <span style={{ width: '12px', height: '12px', borderRadius: '3px', background: '#2563EB' }}></span>
+            <span>Kelas grup (Biru)</span>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ width: '12px', height: '12px', borderRadius: '3px', background: '#8B5CF6' }}></span>
-            <span>Kelas privat</span>
+            <span style={{ width: '12px', height: '12px', borderRadius: '3px', background: '#7C3AED' }}></span>
+            <span>Kelas privat (Ungu)</span>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span style={{ width: '12px', height: '12px', borderRadius: '3px', background: '#F97316' }}></span>
-            <span>Kelas susulan</span>
+            <span>Kelas susulan (Oranye)</span>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ width: '12px', height: '12px', borderRadius: '3px', background: '#22C55E' }}></span>
-            <span>IELTS / persiapan ujian</span>
+            <span style={{ width: '12px', height: '12px', borderRadius: '3px', background: '#16A34A' }}></span>
+            <span>IELTS / persiapan ujian (Hijau)</span>
           </div>
         </div>
       </div>
@@ -548,7 +502,7 @@ export default function ClassesPage() {
           <div style={{
             position: 'fixed',
             inset: 0,
-            background: 'rgba(15, 23, 42, 0.45)',
+            background: 'rgba(15, 23, 42, 0.55)',
             backdropFilter: 'blur(4px)',
             zIndex: 100,
             display: 'flex',
@@ -557,279 +511,90 @@ export default function ClassesPage() {
             padding: '20px'
           }}>
             <div style={{
+              width: '100%',
+              maxWidth: '460px',
               background: '#ffffff',
               borderRadius: '16px',
               padding: '28px',
-              width: '100%',
-              maxWidth: '460px',
-              boxShadow: '0 20px 45px rgba(0,0,0,0.15)',
-              border: '1px solid #e2e8f0'
+              border: '1px solid #e2e8f0',
+              boxShadow: '0 20px 40px rgba(0,0,0,0.15)'
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
                 <div>
-                  <span className="badge badge-primary" style={{ marginBottom: '6px' }}>
-                    {selectedEvent.category.toUpperCase()} CLASS
+                  <span style={{
+                    padding: '4px 10px',
+                    borderRadius: '20px',
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                    background: getCategoryStyles(selectedEvent.category).background,
+                    color: getCategoryStyles(selectedEvent.category).textSub
+                  }}>
+                    {selectedEvent.category.toUpperCase()}
                   </span>
-                  <h2 style={{ fontSize: '1.35rem', fontWeight: 700, color: '#0f172a', margin: 0 }}>
+                  <h3 style={{ fontSize: '1.25rem', color: '#0f172a', fontWeight: 800, margin: '8px 0 0' }}>
                     {selectedEvent.title}
-                  </h2>
+                  </h3>
                 </div>
-                <button onClick={() => setSelectedEvent(null)} style={{ border: 'none', background: 'transparent', fontSize: '1.2rem', cursor: 'pointer', color: '#64748b' }}>✕</button>
-              </div>
 
-              {/* Subject Countdown Box in Modal */}
-              <div style={{
-                padding: '14px',
-                background: '#f8fafc',
-                border: '1.5px solid #cbd5e1',
-                borderRadius: '12px',
-                marginBottom: '16px',
-                textAlign: 'center'
-              }}>
-                <div style={{ fontSize: '0.725rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>
-                  Waktu Mundur Sesi {selectedEvent.title}
-                </div>
-                <div style={{ fontSize: '1.2rem', fontWeight: 800, color: cd.color, marginTop: '2px' }}>
-                  {cd.text}
-                </div>
+                <button
+                  onClick={() => setSelectedEvent(null)}
+                  style={{ background: '#f1f5f9', border: 'none', borderRadius: '50%', width: '32px', height: '32px', cursor: 'pointer', fontWeight: 800, color: '#64748b' }}
+                >
+                  ✕
+                </button>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.875rem', color: '#475569', marginBottom: '24px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <Clock size={18} style={{ color: '#2575b9' }} />
-                  <span>Waktu Sesi: <strong>{selectedEvent.startTime} – {selectedEvent.endTime} WIB</strong></span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Clock size={16} style={{ color: '#2575b9' }} />
+                  <span>Waktu: <strong>{selectedEvent.startTime} – {selectedEvent.endTime} WIB</strong></span>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <MapPin size={18} style={{ color: '#16a34a' }} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <MapPin size={16} style={{ color: '#2575b9' }} />
                   <span>Lokasi: <strong>{selectedEvent.room}</strong></span>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <Users size={18} style={{ color: '#7c3aed' }} />
-                  <span>Jumlah Siswa: <strong>{selectedEvent.studentsCount} Murid Terdaftar</strong></span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Users size={16} style={{ color: '#2575b9' }} />
+                  <span>Peserta: <strong>{selectedEvent.studentsCount || 24} Siswa Terdaftar</strong></span>
+                </div>
+
+                <div style={{ padding: '10px 14px', background: '#f8fafc', borderRadius: '10px', border: '1px solid #e2e8f0', color: cd.color, fontWeight: 800, fontSize: '0.825rem' }}>
+                  Status Sesi: {cd.text}
                 </div>
               </div>
 
               <div style={{ display: 'flex', gap: '12px' }}>
-                <Link
-                  href="/attendance"
-                  onClick={() => setSelectedEvent(null)}
-                  style={{
-                    flex: 1,
-                    padding: '12px',
-                    background: '#10b981',
-                    color: '#ffffff',
-                    borderRadius: '10px',
-                    textDecoration: 'none',
-                    fontWeight: 700,
-                    fontSize: '0.875rem',
-                    textAlign: 'center'
-                  }}
-                >
-                  Scan Absen Murid Kelas Ini
-                </Link>
                 <button
                   onClick={() => setSelectedEvent(null)}
-                  style={{
-                    padding: '12px 18px',
-                    background: '#f1f5f9',
-                    border: '1px solid #cbd5e1',
-                    borderRadius: '10px',
-                    color: '#475569',
-                    fontWeight: 600,
-                    cursor: 'pointer'
-                  }}
+                  style={{ flex: 1, padding: '10px', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '8px', color: '#475569', fontWeight: 700, cursor: 'pointer' }}
                 >
                   Tutup
                 </button>
+
+                <Link
+                  href="/attendance"
+                  style={{
+                    flex: 1.5,
+                    padding: '10px',
+                    background: '#10b981',
+                    color: '#ffffff',
+                    borderRadius: '8px',
+                    fontWeight: 800,
+                    textAlign: 'center',
+                    textDecoration: 'none',
+                    fontSize: '0.875rem',
+                    boxShadow: '0 4px 12px rgba(16, 185, 129, 0.25)'
+                  }}
+                >
+                  Absen Sekarang →
+                </Link>
               </div>
             </div>
           </div>
         );
       })()}
-
-      {/* Modal Penjadwalan Sesi Belajar / Makeup Class (Exact match to screenshot) */}
-      {showAddModal && (
-        <div style={{
-          position: 'fixed',
-          inset: 0,
-          background: 'rgba(15, 23, 42, 0.45)',
-          backdropFilter: 'blur(4px)',
-          zIndex: 100,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '20px'
-        }}>
-          <form
-            onSubmit={e => {
-              e.preventDefault();
-              setShowAddModal(false);
-              addAuditLog('Tambah Penjadwalan Sesi', 'Classes', 'Penjadwalan Sesi Belajar / Makeup Class berhasil disimpan');
-            }}
-            style={{
-              background: '#ffffff',
-              borderRadius: '16px',
-              padding: '32px',
-              width: '100%',
-              maxWidth: '520px',
-              boxShadow: '0 20px 45px rgba(0,0,0,0.15)',
-              border: '1px solid #e2e8f0',
-              fontFamily: "'Plus Jakarta Sans', sans-serif"
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#0f172a', margin: 0 }}>
-                Penjadwalan Sesi Belajar / Makeup Class
-              </h2>
-              <button
-                type="button"
-                onClick={() => setShowAddModal(false)}
-                style={{ border: 'none', background: 'transparent', fontSize: '1.2rem', cursor: 'pointer', color: '#64748b' }}
-              >
-                ✕
-              </button>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
-              {/* Row 1: Hari & Jam Sesi */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
-                <div>
-                  <label style={{ fontSize: '0.825rem', fontWeight: 600, color: '#2575b9', marginBottom: '6px', display: 'block' }}>
-                    Hari *
-                  </label>
-                  <select className="select-field" style={{ borderRadius: '10px', padding: '10px 14px' }}>
-                    <option value="Senin">Senin</option>
-                    <option value="Selasa">Selasa</option>
-                    <option value="Rabu">Rabu</option>
-                    <option value="Kamis">Kamis</option>
-                    <option value="Jumat">Jumat</option>
-                    <option value="Sabtu">Sabtu</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label style={{ fontSize: '0.825rem', fontWeight: 600, color: '#2575b9', marginBottom: '6px', display: 'block' }}>
-                    Jam Sesi *
-                  </label>
-                  <select className="select-field" style={{ borderRadius: '10px', padding: '10px 14px' }}>
-                    <option value="08:00 - 09:30">08:00 - 09:30 WIB</option>
-                    <option value="09:45 - 11:15">09:45 - 11:15 WIB</option>
-                    <option value="13:00 - 14:30">13:00 - 14:30 WIB</option>
-                    <option value="14:45 - 16:15">14:45 - 16:15 WIB</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Row 2: Nama Kelas / Rombel */}
-              <div>
-                <label style={{ fontSize: '0.825rem', fontWeight: 600, color: '#2575b9', marginBottom: '6px', display: 'block' }}>
-                  Nama Kelas / Rombel *
-                </label>
-                <input
-                  type="text"
-                  defaultValue="XII SMA Kedokteran"
-                  required
-                  className="input-field"
-                  style={{ borderRadius: '10px', padding: '10px 14px', fontWeight: 600, color: '#0f172a' }}
-                />
-              </div>
-
-              {/* Row 3: Mata Pelajaran */}
-              <div>
-                <label style={{ fontSize: '0.825rem', fontWeight: 600, color: '#2575b9', marginBottom: '6px', display: 'block' }}>
-                  Mata Pelajaran *
-                </label>
-                <input
-                  type="text"
-                  defaultValue="Matematika Terapan"
-                  required
-                  className="input-field"
-                  style={{ borderRadius: '10px', padding: '10px 14px', fontWeight: 600, color: '#0f172a' }}
-                />
-              </div>
-
-              {/* Row 4: Guru Pengampu & Alokasi Ruangan */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
-                <div>
-                  <label style={{ fontSize: '0.825rem', fontWeight: 600, color: '#2575b9', marginBottom: '6px', display: 'block' }}>
-                    Guru Pengampu *
-                  </label>
-                  <select className="select-field" style={{ borderRadius: '10px', padding: '10px 14px' }}>
-                    <option value="bambang">Bambang S., M.Pd. (Matematika)</option>
-                    <option value="endang">Dra. Endang Lestari (Fisika)</option>
-                    <option value="kevin">Kevin Sanjaya, S.Si. (Kimia)</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label style={{ fontSize: '0.825rem', fontWeight: 600, color: '#2575b9', marginBottom: '6px', display: 'block' }}>
-                    Alokasi Ruangan *
-                  </label>
-                  <select className="select-field" style={{ borderRadius: '10px', padding: '10px 14px' }}>
-                    <option value="r101">Ruang 101 (AC)</option>
-                    <option value="r102">Ruang 102 (Lab)</option>
-                    <option value="r103">Ruang 103 (Privat)</option>
-                    <option value="r104">Ruang 104</option>
-                    <option value="r105">Ruang 105</option>
-                    <option value="r106">Ruang 106</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Row 5: Jenis Sesi */}
-              <div>
-                <label style={{ fontSize: '0.825rem', fontWeight: 600, color: '#2575b9', marginBottom: '6px', display: 'block' }}>
-                  Jenis Sesi *
-                </label>
-                <select className="select-field" style={{ borderRadius: '10px', padding: '10px 14px' }}>
-                  <option value="regular">Regular SNBT & Kedokteran</option>
-                  <option value="private">Kelas Privat</option>
-                  <option value="makeup">Kelas Susulan (Makeup Class)</option>
-                  <option value="ielts">IELTS / Persiapan Ujian</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Form Actions */}
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '28px' }}>
-              <button
-                type="button"
-                onClick={() => setShowAddModal(false)}
-                style={{
-                  padding: '10px 20px',
-                  background: '#f1f5f9',
-                  border: '1px solid #cbd5e1',
-                  borderRadius: '8px',
-                  color: '#475569',
-                  fontWeight: 600,
-                  fontSize: '0.875rem',
-                  cursor: 'pointer'
-                }}
-              >
-                Batal
-              </button>
-              <button
-                type="submit"
-                style={{
-                  padding: '10px 22px',
-                  background: '#2575b9',
-                  border: 'none',
-                  borderRadius: '8px',
-                  color: '#ffffff',
-                  fontWeight: 600,
-                  fontSize: '0.875rem',
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 12px rgba(37, 117, 185, 0.25)'
-                }}
-              >
-                Simpan Jadwal Sesi
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
     </div>
   );
 }

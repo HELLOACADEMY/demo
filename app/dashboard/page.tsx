@@ -195,7 +195,7 @@ export default function DashboardPage() {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
         {/* Banner Header Portal Pengajar & Guru */}
-        <div style={{ padding: '28px 32px', background: 'linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%)', borderRadius: '16px', color: '#ffffff', boxShadow: '0 10px 25px rgba(124, 58, 237, 0.25)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+        <div style={{ padding: '28px 32px', background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)', borderRadius: '16px', color: '#ffffff', boxShadow: '0 10px 25px rgba(37, 99, 235, 0.25)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
           <div>
             <div style={{ fontSize: '0.8rem', fontWeight: 700, background: 'rgba(255,255,255,0.2)', padding: '4px 12px', borderRadius: '20px', display: 'inline-block', marginBottom: '8px' }}>
               👨‍🏫 PORTAL RESMI PENGAJAR & GURU LOKASI
@@ -218,7 +218,7 @@ export default function DashboardPage() {
         {/* Dynamic Metric Cards for Guru */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px' }}>
           <div style={{ padding: '22px', background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '16px', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#7c3aed', marginBottom: '10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#2563eb', marginBottom: '10px' }}>
               <Clock size={22} />
               <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#64748b' }}>Jam Ajar Bulan Ini</span>
             </div>
@@ -228,20 +228,36 @@ export default function DashboardPage() {
               <span>80%</span>
             </div>
             <div style={{ width: '100%', height: '6px', background: '#e2e8f0', borderRadius: '4px', marginTop: '4px', overflow: 'hidden' }}>
-              <div style={{ width: '80%', height: '100%', background: '#7c3aed', borderRadius: '4px' }}></div>
+              <div style={{ width: '80%', height: '100%', background: '#2563eb', borderRadius: '4px' }}></div>
             </div>
           </div>
 
-          <div style={{ padding: '22px', background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '16px', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#2575b9', marginBottom: '10px' }}>
-              <BookOpen size={22} />
-              <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#64748b' }}>Kelas Diampu Hari Ini</span>
+          <Link
+            href="/classes"
+            className="hover-lift"
+            style={{
+              padding: '22px',
+              background: '#ffffff',
+              border: '1px solid #e2e8f0',
+              borderRadius: '16px',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
+              textDecoration: 'none',
+              display: 'block',
+              cursor: 'pointer'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#2563eb' }}>
+                <BookOpen size={22} />
+                <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#64748b' }}>Kelas Diampu Hari Ini</span>
+              </div>
+              <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#2563eb', background: '#eff6ff', padding: '3px 8px', borderRadius: '6px' }}>Buka Jadwal →</span>
             </div>
             <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#0f172a' }}>2 Sesi Kelas</div>
-            <div style={{ fontSize: '0.75rem', color: '#2575b9', marginTop: '4px', fontWeight: 600 }}>
-              XII Kedokteran & XI Intensif
+            <div style={{ fontSize: '0.75rem', color: '#2563eb', marginTop: '4px', fontWeight: 700 }}>
+              XII Kedokteran & XI Intensif (Klik untuk Buka Jadwal)
             </div>
-          </div>
+          </Link>
 
           <div style={{ padding: '22px', background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '16px', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#16a34a', marginBottom: '10px' }}>
@@ -269,13 +285,13 @@ export default function DashboardPage() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
             <div>
               <h3 style={{ fontSize: '1.1rem', color: '#0f172a', fontWeight: 700, margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Clock style={{ color: '#7c3aed' }} size={20} /> Rincian Waktu Jam Mengajar Bulan Ini (Agustus 2026)
+                <Clock style={{ color: '#2563eb' }} size={20} /> Rincian Waktu Jam Mengajar Bulan Ini (Agustus 2026)
               </h3>
               <p style={{ fontSize: '0.8rem', color: '#64748b', margin: '2px 0 0' }}>
                 Total terakumulasi: <strong>32 Jam</strong> dari target 40 Jam (Tercapai 80%)
               </p>
             </div>
-            <Link href="/payroll" style={{ fontSize: '0.85rem', color: '#7c3aed', textDecoration: 'none', fontWeight: 700, background: '#f5f3ff', padding: '6px 14px', borderRadius: '8px', border: '1px solid #ddd6fe' }}>
+            <Link href="/payroll" style={{ fontSize: '0.85rem', color: '#2563eb', textDecoration: 'none', fontWeight: 700, background: '#eff6ff', padding: '6px 14px', borderRadius: '8px', border: '1px solid #bfdbfe' }}>
               Lihat Rincian Honor Sesi →
             </Link>
           </div>
@@ -298,7 +314,7 @@ export default function DashboardPage() {
                   <td style={{ padding: '12px 14px', fontWeight: 700, color: '#2575b9' }}>XII SMA Kedokteran</td>
                   <td style={{ padding: '12px 14px', color: '#0f172a' }}>Matematika Terapan</td>
                   <td style={{ padding: '12px 14px', fontWeight: 600, color: '#475569' }}>08:00 - 09:30 WIB</td>
-                  <td style={{ padding: '12px 14px', fontWeight: 700, color: '#7c3aed' }}>1.5 Jam</td>
+                  <td style={{ padding: '12px 14px', fontWeight: 700, color: '#2563eb' }}>1.5 Jam</td>
                   <td style={{ padding: '12px 14px' }}><span className="badge badge-success">Terverifikasi ✅</span></td>
                 </tr>
                 <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
@@ -306,7 +322,7 @@ export default function DashboardPage() {
                   <td style={{ padding: '12px 14px', fontWeight: 700, color: '#2575b9' }}>XI SMA Intensif</td>
                   <td style={{ padding: '12px 14px', color: '#0f172a' }}>Fisika Kuantum</td>
                   <td style={{ padding: '12px 14px', fontWeight: 600, color: '#475569' }}>10:30 - 12:00 WIB</td>
-                  <td style={{ padding: '12px 14px', fontWeight: 700, color: '#7c3aed' }}>1.5 Jam</td>
+                  <td style={{ padding: '12px 14px', fontWeight: 700, color: '#2563eb' }}>1.5 Jam</td>
                   <td style={{ padding: '12px 14px' }}><span className="badge badge-success">Terverifikasi ✅</span></td>
                 </tr>
                 <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
@@ -314,7 +330,7 @@ export default function DashboardPage() {
                   <td style={{ padding: '12px 14px', fontWeight: 700, color: '#2575b9' }}>IX SMP Favorit</td>
                   <td style={{ padding: '12px 14px', color: '#0f172a' }}>Matematika Dasar</td>
                   <td style={{ padding: '12px 14px', fontWeight: 600, color: '#475569' }}>13:00 - 15:00 WIB</td>
-                  <td style={{ padding: '12px 14px', fontWeight: 700, color: '#7c3aed' }}>2.0 Jam</td>
+                  <td style={{ padding: '12px 14px', fontWeight: 700, color: '#2563eb' }}>2.0 Jam</td>
                   <td style={{ padding: '12px 14px' }}><span className="badge badge-success">Terverifikasi ✅</span></td>
                 </tr>
                 <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
@@ -322,7 +338,7 @@ export default function DashboardPage() {
                   <td style={{ padding: '12px 14px', fontWeight: 700, color: '#2575b9' }}>XII SMA Kedokteran</td>
                   <td style={{ padding: '12px 14px', color: '#0f172a' }}>Matematika Terapan</td>
                   <td style={{ padding: '12px 14px', fontWeight: 600, color: '#475569' }}>08:00 - 10:00 WIB</td>
-                  <td style={{ padding: '12px 14px', fontWeight: 700, color: '#7c3aed' }}>2.0 Jam</td>
+                  <td style={{ padding: '12px 14px', fontWeight: 700, color: '#2563eb' }}>2.0 Jam</td>
                   <td style={{ padding: '12px 14px' }}><span className="badge badge-success">Terverifikasi ✅</span></td>
                 </tr>
               </tbody>

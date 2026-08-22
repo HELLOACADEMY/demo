@@ -266,15 +266,15 @@ export default function InventoryPage() {
 
         <div style={{ padding: '20px', background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '16px', boxShadow: '0 4px 14px rgba(0,0,0,0.03)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-            <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#f3e8ff', color: '#7e22ce', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#dbeafe', color: '#1d4ed8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Receipt size={22} />
             </div>
-            <span style={{ fontSize: '0.75rem', fontWeight: 800, padding: '4px 10px', background: '#f3e8ff', color: '#6b21a8', borderRadius: '20px' }}>
+            <span style={{ fontSize: '0.75rem', fontWeight: 800, padding: '4px 10px', background: '#dbeafe', color: '#1e40af', borderRadius: '20px' }}>
               Invoice Legal
             </span>
           </div>
           <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#64748b' }}>Aset Terverifikasi Invoice</div>
-          <div style={{ fontSize: '1.75rem', fontWeight: 800, color: '#7e22ce', margin: '4px 0 2px' }}>{filteredItems.length} Invoice</div>
+          <div style={{ fontSize: '1.75rem', fontWeight: 800, color: '#1d4ed8', margin: '4px 0 2px' }}>{filteredItems.length} Invoice</div>
           <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600 }}>Bukti Pembelian Sah</div>
         </div>
       </div>
@@ -332,7 +332,7 @@ export default function InventoryPage() {
                         <div style={{ fontSize: '0.75rem', color: '#2575b9', fontWeight: 700 }}>{item.assetCode}</div>
                       </td>
                       <td style={{ padding: '14px' }}>
-                        <div style={{ fontWeight: 800, color: '#6d28d9', background: '#f3e8ff', padding: '4px 10px', borderRadius: '8px', display: 'inline-block', fontSize: '0.8rem' }}>
+                        <div style={{ fontWeight: 800, color: '#1d4ed8', background: '#dbeafe', padding: '4px 10px', borderRadius: '8px', display: 'inline-block', fontSize: '0.8rem' }}>
                           🧾 {item.invoiceNumber}
                         </div>
                         <div style={{ fontSize: '0.725rem', color: '#64748b', marginTop: '2px' }}>Tgl: {item.purchaseDate}</div>
@@ -520,8 +520,8 @@ export default function InventoryPage() {
                   <input type="text" value={assetCode} onChange={e => setAssetCode(e.target.value)} required className="input-field" />
                 </div>
                 <div>
-                  <label style={{ fontSize: '0.825rem', color: '#6d28d9', fontWeight: 800, display: 'block', marginBottom: '6px' }}>Nomor Invoice Pembelian *</label>
-                  <input type="text" placeholder="INV-PURCHASE/2026/08/xxx" value={invoiceNumber} onChange={e => setInvoiceNumber(e.target.value)} required style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '2px solid #a855f7', background: '#faf5ff', fontWeight: 800, color: '#6d28d9', fontSize: '0.875rem', outline: 'none' }} />
+                  <label style={{ fontSize: '0.825rem', color: '#1d4ed8', fontWeight: 800, display: 'block', marginBottom: '6px' }}>Nomor Invoice Pembelian *</label>
+                  <input type="text" placeholder="INV-PURCHASE/2026/08/xxx" value={invoiceNumber} onChange={e => setInvoiceNumber(e.target.value)} required style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '2px solid #3b82f6', background: '#eff6ff', fontWeight: 800, color: '#1d4ed8', fontSize: '0.875rem', outline: 'none' }} />
                 </div>
               </div>
 

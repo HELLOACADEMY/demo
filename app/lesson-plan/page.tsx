@@ -152,7 +152,7 @@ export default function LessonPlanPage() {
       <div className="no-print" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
         <div>
           <h1 style={{ fontSize: '1.6rem', color: '#0f172a', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <BookOpen style={{ color: '#7c3aed' }} size={28} /> Lesson Plan & Lembar Evaluasi Sesi
+            <BookOpen style={{ color: '#2563eb' }} size={28} /> Lesson Plan & Lembar Evaluasi Sesi
           </h1>
           <p style={{ fontSize: '0.875rem', color: '#64748b', margin: '4px 0 0' }}>
             Perencanaan pembelajaran per sesi (diisi guru sebelum kelas) & evaluasi hasil belajar (diisi di akhir kelas).
@@ -210,14 +210,14 @@ export default function LessonPlanPage() {
                     style={{
                       padding: '14px',
                       borderRadius: '12px',
-                      border: isSelected ? '2px solid #7c3aed' : '1.5px solid #e2e8f0',
-                      background: isSelected ? '#f5f3ff' : '#ffffff',
+                      border: isSelected ? '2px solid #2563eb' : '1.5px solid #e2e8f0',
+                      background: isSelected ? '#eff6ff' : '#ffffff',
                       cursor: 'pointer',
                       transition: 'all 0.2s ease'
                     }}
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                      <span style={{ fontSize: '0.75rem', fontWeight: 900, color: '#7c3aed', background: '#ede9fe', padding: '2px 8px', borderRadius: '6px' }}>
+                      <span style={{ fontSize: '0.75rem', fontWeight: 900, color: '#2563eb', background: '#dbeafe', padding: '2px 8px', borderRadius: '6px' }}>
                         BAB / PERTEMUAN {plan.meetingNo}
                       </span>
                       <span style={{
@@ -265,7 +265,7 @@ export default function LessonPlanPage() {
                   fontWeight: 800,
                   fontSize: '0.825rem',
                   cursor: 'pointer',
-                  background: activeViewMode === 'official_print' ? '#7c3aed' : '#f1f5f9',
+                  background: activeViewMode === 'official_print' ? '#2563eb' : '#f1f5f9',
                   color: activeViewMode === 'official_print' ? '#ffffff' : '#64748b'
                 }}
               >
@@ -280,7 +280,7 @@ export default function LessonPlanPage() {
                   fontWeight: 800,
                   fontSize: '0.825rem',
                   cursor: 'pointer',
-                  background: activeViewMode === 'editor' ? '#7c3aed' : '#f1f5f9',
+                  background: activeViewMode === 'editor' ? '#2563eb' : '#f1f5f9',
                   color: activeViewMode === 'editor' ? '#ffffff' : '#64748b'
                 }}
               >
@@ -297,9 +297,9 @@ export default function LessonPlanPage() {
           {activeViewMode === 'official_print' && (
             <div style={{ background: '#ffffff', padding: '24px', borderRadius: '16px', border: '1.5px solid #e2e8f0' }}>
               {/* Note banner */}
-              <div style={{ marginBottom: '16px', padding: '10px 14px', background: '#f5f3ff', border: '1px solid #ddd6fe', borderRadius: '8px', fontSize: '0.8rem', color: '#6d28d9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ marginBottom: '16px', padding: '10px 14px', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '8px', fontSize: '0.8rem', color: '#1d4ed8', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span>💡 Tampilan di bawah ini identik 100% dengan lembar kerja fisik yang dapat dicetak.</span>
-                <button onClick={handlePrint} style={{ background: '#7c3aed', color: '#fff', border: 'none', padding: '4px 12px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer' }}>
+                <button onClick={handlePrint} style={{ background: '#2563eb', color: '#fff', border: 'none', padding: '4px 12px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer' }}>
                   Cetak PDF
                 </button>
               </div>
@@ -409,7 +409,7 @@ export default function LessonPlanPage() {
                     { id: 'rendah', label: 'rendah' },
                     { id: 'sangat_rendah', label: 'sangat rendah' },
                   ].map(item => (
-                    <label key={item.id} style={{ padding: '8px 14px', borderRadius: '8px', border: '1.5px solid #e2e8f0', background: selectedPlan.studentUnderstanding === item.id ? '#ede9fe' : '#ffffff', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <label key={item.id} style={{ padding: '8px 14px', borderRadius: '8px', border: '1.5px solid #e2e8f0', background: selectedPlan.studentUnderstanding === item.id ? '#dbeafe' : '#ffffff', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
                       <input
                         type="radio"
                         name="understanding"

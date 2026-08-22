@@ -186,10 +186,10 @@ export default function ParentsPage() {
               style={{ padding: '20px', background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '16px', boxShadow: '0 4px 14px rgba(0,0,0,0.03)', cursor: 'pointer', transition: 'all 0.2s ease' }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#f3e8ff', color: '#9333ea', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#dbeafe', color: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Award size={22} />
                 </div>
-                <span style={{ fontSize: '0.75rem', fontWeight: 800, padding: '4px 10px', background: '#f3e8ff', color: '#6b21a8', borderRadius: '20px' }}>
+                <span style={{ fontSize: '0.75rem', fontWeight: 800, padding: '4px 10px', background: '#dbeafe', color: '#1e40af', borderRadius: '20px' }}>
                   Level B2
                 </span>
               </div>
@@ -383,7 +383,7 @@ export default function ParentsPage() {
                     boxShadow: '0 2px 8px rgba(0,0,0,0.02)'
                   }}
                 >
-                  <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#f3e8ff', color: '#9333ea', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#dbeafe', color: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <FileText size={16} />
                   </div>
                   Catatan Pelajaran
@@ -507,7 +507,7 @@ export default function ParentsPage() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
             <div>
               <h3 style={{ fontSize: '1.2rem', color: '#0f172a', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Award size={20} style={{ color: '#7c3aed' }} /> Capaian Nilai Tryout & E-Rapor Ananda
+                <Award size={20} style={{ color: '#2563eb' }} /> Capaian Nilai Tryout & E-Rapor Ananda
               </h3>
               <p style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '4px' }}>
                 Rekapitulasi perkembangan akademik ananda <strong>{activeParent.childName}</strong> semester ini.
@@ -518,7 +518,7 @@ export default function ParentsPage() {
               href="/reports"
               style={{
                 padding: '10px 18px',
-                background: '#7c3aed',
+                background: '#2563eb',
                 color: '#ffffff',
                 borderRadius: '10px',
                 textDecoration: 'none',
@@ -527,7 +527,7 @@ export default function ParentsPage() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
-                boxShadow: '0 4px 12px rgba(124, 58, 237, 0.25)'
+                boxShadow: '0 4px 12px rgba(37, 99, 235, 0.25)'
               }}
             >
               <FileText size={16} /> Download E-Rapor PDF 1 Lembar Landscape
@@ -538,10 +538,10 @@ export default function ParentsPage() {
             {childGrades.map((g, idx) => (
               <div key={idx} style={{ padding: '20px', background: '#f8fafc', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
-                  <span style={{ fontSize: '0.75rem', fontWeight: 700, padding: '3px 10px', background: '#ede9fe', color: '#6d28d9', borderRadius: '6px' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 700, padding: '3px 10px', background: '#dbeafe', color: '#1d4ed8', borderRadius: '6px' }}>
                     {g.tryoutRank}
                   </span>
-                  <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#7c3aed' }}>{g.score}</div>
+                  <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#2563eb' }}>{g.score}</div>
                 </div>
                 <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#0f172a', marginBottom: '6px' }}>{g.subject}</div>
                 <p style={{ fontSize: '0.8rem', color: '#475569', margin: 0, fontStyle: 'italic', background: '#ffffff', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}>
@@ -613,19 +613,28 @@ export default function ParentsPage() {
                       <td style={{ padding: '14px', fontWeight: 800, color: '#0f172a' }}>Rp {inv.amount.toLocaleString('id-ID')}</td>
                       <td style={{ padding: '14px', color: '#64748b' }}>{inv.dueDate}</td>
                       <td style={{ padding: '14px' }}>
-                        <span className={`badge ${inv.status === 'Lunas' ? 'badge-success' : 'badge-danger'}`}>
-                          {inv.status === 'Lunas' ? 'LUNAS ✅' : 'BELUM BAYAR ⏳'}
+                        <span style={{
+                          padding: '4px 10px',
+                          borderRadius: '20px',
+                          fontSize: '0.75rem',
+                          fontWeight: 800,
+                          background: inv.status === 'Lunas' ? '#dcfce7' : inv.status === 'Menunggu ACC Admin' ? '#fef3c7' : '#fee2e2',
+                          color: inv.status === 'Lunas' ? '#166534' : inv.status === 'Menunggu ACC Admin' ? '#92400e' : '#991b1b'
+                        }}>
+                          {inv.status === 'Lunas' ? 'LUNAS ✅' : inv.status === 'Menunggu ACC Admin' ? '⏳ VERIFIKASI ADMIN' : 'BELUM BAYAR ⏳'}
                         </span>
                       </td>
                       <td style={{ padding: '14px', textAlign: 'center' }}>
                         {inv.status === 'Lunas' ? (
                           <span style={{ fontSize: '0.775rem', color: '#166534', fontWeight: 700 }}>Lunas via {inv.paymentMethod || 'QRIS'}</span>
+                        ) : inv.status === 'Menunggu ACC Admin' ? (
+                          <span style={{ fontSize: '0.75rem', color: '#92400e', fontWeight: 700 }}>📌 Bukti Terkirim</span>
                         ) : (
                           <Link
                             href="/finance/payment"
-                            style={{ padding: '6px 14px', background: '#10b981', color: '#ffffff', borderRadius: '6px', textDecoration: 'none', fontWeight: 700, fontSize: '0.775rem' }}
+                            style={{ padding: '6px 14px', background: '#2563eb', color: '#ffffff', borderRadius: '6px', textDecoration: 'none', fontWeight: 800, fontSize: '0.775rem', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
                           >
-                            Bayar
+                            💳 Bayar & Upload Bukti
                           </Link>
                         )}
                       </td>
