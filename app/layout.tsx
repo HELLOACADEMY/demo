@@ -15,7 +15,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id">
-      <body>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body>
         <ERPProvider>
           <AppShell>{children}</AppShell>
         </ERPProvider>
