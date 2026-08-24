@@ -28,10 +28,10 @@ const TESTIMONIALS = [
 ];
 
 const STATS = [
-  { value: '12+', label: 'Tahun Pengalaman', IconComp: Award, color: '#2563EB' },
-  { value: '50+', label: 'Tenaga Pengajar', IconComp: Users, color: '#10B981' },
-  { value: '2000+', label: 'Siswa Aktif', IconComp: GraduationCap, color: '#F59E0B' },
-  { value: '3', label: 'Cabang Pontianak', IconComp: Building2, color: '#EC4899' },
+  { value: '12+', label: 'Tahun Pengalaman', IconComp: Award, color: '#000000' },
+  { value: '50+', label: 'Tenaga Pengajar', IconComp: Users, color: '#000000' },
+  { value: '2000+', label: 'Siswa Aktif', IconComp: GraduationCap, color: '#000000' },
+  { value: '3', label: 'Cabang Pontianak', IconComp: Building2, color: '#000000' },
 ];
 
 const BRANCHES = [
@@ -221,14 +221,6 @@ export default function BsmartLandingPage() {
           {/* Left: Text */}
           <div className="animate-slide-left" style={{ display: 'flex', flexDirection: 'column', gap: '24px', position: 'relative' }}>
 
-            {/* Tagline Badge */}
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(255, 255, 255, 0.15)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255, 255, 255, 0.25)', padding: '8px 20px', borderRadius: '999px', width: 'fit-content' }}>
-              <Sparkles size={16} style={{ color: '#FCD34D' }} />
-              <span style={{ color: '#FCD34D', fontSize: '0.85rem', fontWeight: 700, letterSpacing: '0.05em' }}>
-                "QUALITY IS OUR PRIME CONCERN"
-              </span>
-            </div>
-
             <h1 style={{ fontSize: '3.2rem', fontWeight: 900, color: '#fff', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
               Investasi Terbaik Untuk<br />
               <span style={{ color: '#FBBF24', textShadow: '0 4px 20px rgba(251,191,36,0.4)' }}>Masa Depan & Prestasi</span><br />
@@ -244,16 +236,16 @@ export default function BsmartLandingPage() {
                 Daftar Pendaftaran Baru (PPDB) <ArrowRight size={20} />
               </Link>
               <a href="https://wa.me/6285750858821?text=Halo%20Bsmart%20Education,%20saya%20ingin%20konsultasi%20pendaftaran%20bimbel" target="_blank" rel="noreferrer" className="btn btn-outline" style={{ fontSize: '0.95rem', padding: '14px 24px', borderRadius: '14px', color: '#ffffff', borderColor: 'rgba(255,255,255,0.3)' }}>
-                Konsultasi Gratis via WA 💬
+                 Konsultasi Gratis via WA
               </a>
             </div>
 
             {/* Trust points */}
             <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', marginTop: '8px' }}>
               {[
-                { icon: <CheckCircle2 size={16} color="#34D399" />, text: 'Garansi Kualitas & Pengajar Terbaik' },
-                { icon: <Laptop size={16} color="#60A5FA" />, text: 'Laporan Absensi & Nilai ke WA Wali' },
-                { icon: <Award size={16} color="#FBBF24" />, text: 'Ribuan Alumni Lulus PTN Favorit' },
+                { icon: <CheckCircle2 size={16} color="#000000" />, text: 'Garansi Kualitas & Pengajar Terbaik' },
+                { icon: <Laptop size={16} color="#000000" />, text: 'Laporan Absensi & Nilai ke WA Wali' },
+                { icon: <Award size={16} color="#000000" />, text: 'Ribuan Alumni Lulus PTN Favorit' },
               ].map((t, i) => (
                 <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'rgba(255,255,255,0.85)', fontSize: '0.85rem', fontWeight: 500 }}>
                   {t.icon} {t.text}
@@ -279,37 +271,6 @@ export default function BsmartLandingPage() {
                 objectFit: 'contain',
               }}
             />
-
-            {/* Floating stat badges — positioned cleanly without overlapping left text */}
-            <div className="floating-badge animate-float" style={{ top: '4%', right: '4%', animationDelay: '0s' }}>
-              <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#DBEAFE', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <GraduationCap size={18} color="#2563EB" />
-              </div>
-              <div>
-                <div style={{ fontSize: '1rem', fontWeight: 900, color: '#1D4ED8' }}>2000+</div>
-                <div style={{ fontSize: '0.7rem', color: '#64748B', fontWeight: 400 }}>Siswa Aktif</div>
-              </div>
-            </div>
-
-            <div className="floating-badge animate-float" style={{ bottom: '14%', right: '2%', animationDelay: '1.5s' }}>
-              <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#FEF3C7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Star size={18} color="#F59E0B" fill="#F59E0B" />
-              </div>
-              <div>
-                <div style={{ fontSize: '1rem', fontWeight: 900, color: '#F59E0B' }}>4.9/5.0</div>
-                <div style={{ fontSize: '0.7rem', color: '#64748B', fontWeight: 400 }}>Rating Orang Tua</div>
-              </div>
-            </div>
-
-            <div className="floating-badge animate-float" style={{ bottom: '8%', left: '4%', animationDelay: '0.8s' }}>
-              <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#D1FAE5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Award size={18} color="#10B981" />
-              </div>
-              <div>
-                <div style={{ fontSize: '1rem', fontWeight: 900, color: '#10B981' }}>12+ Tahun</div>
-                <div style={{ fontSize: '0.7rem', color: '#64748B', fontWeight: 400 }}>Berpengalaman</div>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -354,7 +315,7 @@ export default function BsmartLandingPage() {
             </div>
             <div style={{ position: 'absolute', bottom: '-20px', right: '-20px', background: '#fff', borderRadius: '20px', padding: '18px 24px', boxShadow: '0 12px 40px rgba(37,99,235,0.18)', border: '1.5px solid #DBEAFE', display: 'flex', alignItems: 'center', gap: '14px' }}>
               <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'linear-gradient(135deg, #2563EB, #1D4ED8)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <GraduationCap size={24} color="#fff" />
+                <GraduationCap size={24} color="#000000" />
               </div>
               <div>
                 <div style={{ fontWeight: 900, fontSize: '1rem', color: '#0F172A' }}>Lulusan Terbaik</div>
@@ -366,7 +327,7 @@ export default function BsmartLandingPage() {
           {/* Right text */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#DBEAFE', borderRadius: '999px', padding: '8px 18px', width: 'fit-content' }}>
-              <Heart size={16} color="#2563EB" />
+              <Heart size={16} color="#000000" />
               <span style={{ color: '#1D4ED8', fontWeight: 600, fontSize: '0.85rem' }}>Tentang Kami</span>
             </div>
 
@@ -406,7 +367,7 @@ export default function BsmartLandingPage() {
         <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '52px' }}>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#DBEAFE', borderRadius: '999px', padding: '8px 18px', marginBottom: '16px' }}>
-              <BookOpen size={16} color="#2563EB" />
+              <BookOpen size={16} color="#000000" />
               <span style={{ color: '#1D4ED8', fontWeight: 600, fontSize: '0.85rem' }}>Program Unggulan</span>
             </div>
             <h2 style={{ fontSize: '2.4rem', fontWeight: 900, color: '#0F172A' }}>
@@ -451,7 +412,7 @@ export default function BsmartLandingPage() {
           {/* Header & Badges */}
           <div style={{ textAlign: 'center', marginBottom: '48px' }}>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#DBEAFE', borderRadius: '999px', padding: '8px 20px', marginBottom: '16px' }}>
-              <Sparkles size={16} color="#2563EB" />
+              <Sparkles size={16} color="#000000" />
               <span style={{ color: '#1D4ED8', fontWeight: 600, fontSize: '0.85rem', letterSpacing: '0.04em' }}>GALERI KEGIATAN & SUASANA BELAJAR</span>
             </div>
             <h2 style={{ fontSize: '2.5rem', fontWeight: 700, color: '#0F172A', lineHeight: 1.2 }}>
@@ -639,9 +600,7 @@ export default function BsmartLandingPage() {
 
         <div style={{ maxWidth: '1280px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
           <div style={{ textAlign: 'center', marginBottom: '52px' }}>
-            <h2 style={{ fontSize: '2.4rem', fontWeight: 900, color: '#fff' }}>
-              Komitmen Kualitas Utama: <span style={{ color: '#FBBF24' }}>"Quality is Our Prime Concern"</span>
-            </h2>
+            <h2 style={{ fontSize: '2.4rem', fontWeight: 900, color: '#fff' }}>Komitmen Kualitas Utama:</h2>
             <p style={{ color: 'rgba(255,255,255,0.9)', maxWidth: '640px', margin: '16px auto 0', fontWeight: 400, fontSize: '1.05rem', lineHeight: 1.7 }}>
               Bagi kami, setiap anak adalah calon pemimpin berharga. Kami menghadirkan standar bimbingan terbaik, pengajar penyabar yang berjiwa pendidik, serta teknologi laporan belajar modern bagi orang tua.
             </p>
@@ -678,7 +637,7 @@ export default function BsmartLandingPage() {
         <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '52px' }}>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#DBEAFE', borderRadius: '999px', padding: '8px 18px', marginBottom: '16px' }}>
-              <Building2 size={16} color="#2563EB" />
+              <Building2 size={16} color="#000000" />
               <span style={{ color: '#1D4ED8', fontWeight: 600, fontSize: '0.85rem' }}>3 Lokasi Strategis</span>
             </div>
             <h2 style={{ fontSize: '2.4rem', fontWeight: 900, color: '#0F172A' }}>
@@ -728,7 +687,7 @@ export default function BsmartLandingPage() {
         <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '52px' }}>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#FEF3C7', borderRadius: '999px', padding: '8px 18px', marginBottom: '16px' }}>
-              <Star size={16} color="#F59E0B" fill="#F59E0B" />
+              <Star size={16} color="#000000" fill="#000000" />
               <span style={{ color: '#92400E', fontWeight: 600, fontSize: '0.85rem' }}>Kata Orang Tua</span>
             </div>
             <h2 style={{ fontSize: '2.4rem', fontWeight: 900, color: '#0F172A' }}>
@@ -750,7 +709,7 @@ export default function BsmartLandingPage() {
                     <div style={{ fontWeight: 800, fontSize: '0.95rem', color: '#0F172A' }}>{t.name}</div>
                     <div style={{ fontSize: '0.8rem', color: '#2563EB', fontWeight: 400 }}>{t.role}</div>
                     <div style={{ display: 'flex', gap: '3px', marginTop: '4px' }}>
-                      {Array.from({ length: t.rating }).map((_, j) => <Star key={j} size={13} fill="#F59E0B" color="#F59E0B" />)}
+                      {Array.from({ length: t.rating }).map((_, j) => <Star key={j} size={13} fill="#000000" color="#000000" />)}
                     </div>
                   </div>
                 </div>

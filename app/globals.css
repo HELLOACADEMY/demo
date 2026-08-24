@@ -482,12 +482,16 @@ a {
 .marquee-track:hover { animation-play-state: paused; }
 
 /* ============================================================ */
-/*  MOBILE                                                         */
+/*  MOBILE */
 /* ============================================================ */
+
 .mobile-only { display: none !important; }
 .desktop-only { display: flex; }
 
-@media (max-width: 768px) {
+/* ------------------------------------------------------------- */
+/*  MOBILE – EXTRA SMALL (≤ 480px) */
+/* ------------------------------------------------------------- */
+@media (max-width: 480px) {
   .desktop-only { display: none !important; }
   .mobile-only  { display: flex !important; }
 
@@ -497,7 +501,7 @@ a {
   }
 
   .section-container {
-    padding: 40px 16px !important;
+    padding: 30px 12px !important;
     grid-template-columns: 1fr !important;
   }
 
@@ -506,8 +510,41 @@ a {
     -webkit-overflow-scrolling: touch;
   }
 
-  h1 { font-size: 1.9rem !important; }
-  h2 { font-size: 1.5rem !important; }
+  h1 { font-size: 1.2rem !important; }
+  h2 { font-size: 1rem !important; }
+
+  .btn {
+    padding: 10px 14px !important;
+    font-size: 0.82rem !important;
+  }
+
+  .responsive-card {
+    width: 100% !important;
+    margin-bottom: 12px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 1024px) {
+  .desktop-only { display: flex !important; }
+  .mobile-only  { display: none !important; }
+
+  html, body {
+    overflow-x: hidden !important;
+    width: 100% !important;
+  }
+
+  .section-container {
+    padding: 40px 24px !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .table-container {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  h1 { font-size: 1.7rem !important; }
+  h2 { font-size: 1.3rem !important; }
 }
 
 /* ============================================================ */
@@ -676,3 +713,10 @@ a {
   }
 }
 
+
+/* ------------------------------------------------------------- */
+/* Utility classes for responsive cards & grids */
+/* ------------------------------------------------------------- */
+.responsive-card { width: 100% !important; margin-bottom: 12px; }
+.summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+@media (max-width: 480px) { .summary-grid { grid-template-columns: 1fr !important; } }
